@@ -7,7 +7,7 @@ description: 奴道草木系蛊虫，原文明文「奴道，三转，草傀蛊�
 date: 2026-09-28
 tags: [gu, 奴道, 木行, 傀儡, 炮灰, 南疆]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

@@ -7,7 +7,7 @@ description: 奴道控制人而非兽的代表蛊：一转到五转皆有，一�
 date: 2026-09-28
 tags: [gu, enslavement-path, rank5, human-control, soul-cost, identity-boundary]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

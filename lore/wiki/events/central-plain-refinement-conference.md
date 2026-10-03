@@ -8,7 +8,7 @@ description: 中洲十大古派主办、天庭幕后推动的百年一届炼道�
 date: 2026-09-26
 tags: [中洲, 炼道, 天庭, 宿命蛊, 方源, 段四]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"

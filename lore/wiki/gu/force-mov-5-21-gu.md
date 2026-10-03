@@ -7,7 +7,7 @@ description: 力道系仙蛊，原文两处明文「六转」：首次出现于�
 date: 2026-09-28
 tags: [gu, strength-path, immortal-gu, promotion-gu, probability-trigger, ownership-transfer, trade-value, thin-evidence-entity]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

@@ -7,7 +7,7 @@ description: 开窍步数分级、资质比例、十绝体与凡窍→仙窍形�
 date: 2026-10-01
 tags: [world, aptitude, aperture, immortal-aperture]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-APTITUDE-001"
   - "canon-index:CAN-APTITUDE-002"
   - "canon-index:CAN-APTITUDE-003"

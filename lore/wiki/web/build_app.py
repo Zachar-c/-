@@ -1,6 +1,7 @@
 """Build a read-only view of the existing Wiki and game art snapshots."""
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import re
@@ -16,6 +17,7 @@ from PIL import Image, ImageOps
 PROJECT = Path(__file__).resolve().parents[3]
 WIKI = PROJECT / "lore/wiki"
 ART = PROJECT / "game/assets/wenzhen"
+VISUAL = PROJECT / "lore/visual"
 ROOT = Path(__file__).resolve().parent
 WEB = ROOT / "app"
 DIST = WEB / "dist"
@@ -98,6 +100,67 @@ GAME = PROJECT / "game/data"
 md = MarkdownIt("default", {"html": False, "linkify": False}).enable("table")
 
 # 「主题档案」页型（提案结构）：每个主题内按三层知识区分
+# --- EPUB 原文抽取 -------------------------------------------------------------
+# 页面里的 `EPUB chapter_0020 para_019` 定位在网页上可点击展开对应段落原文，
+# 让证据在浏览器内可直接核对。约定：para_N 为章节标题行之后的第 N 行（1-based），
+# 与 evidence-locators.json / eid-migration-map 的 chapter:para 口径一致。
+CANON = PROJECT / "source" / "蛊真人-epub-canon.txt"
+_CHAPTER_RE = re.compile(r"^=== chapter_(\d+)｜")
+_canon_cache: dict[int, list[str]] | None = None
+# 单段与整章引文的长度上限：正文段落本身不长，但防御性截断避免异常长行撑爆页面
+MAX_EXCERPT_CHARS = 600
+
+
+def canon_paragraphs() -> dict[int, list[str]]:
+    """章节号 -> 该章段落行列表（不含标题行）。只解析一次。"""
+    global _canon_cache
+    if _canon_cache is not None:
+        return _canon_cache
+    chapters: dict[int, list[str]] = {}
+    if CANON.is_file():
+        current: int | None = None
+        for line in CANON.read_text(encoding="utf-8").split("\n"):
+            header = _CHAPTER_RE.match(line)
+            if header:
+                current = int(header.group(1))
+                chapters[current] = []
+                continue
+            if current is not None and line.strip():
+                chapters[current].append(line.strip())
+    _canon_cache = chapters
+    return chapters
+
+
+# 存量页面把定位拆成两段代码（`chapter_0020` `para_019`），迁移后的页面是
+# 连续写法（`EPUB chapter_0020 para_019`）。按纯文本扫描，两种写法都能覆盖。
+EPUB_LOCATOR_RE = re.compile(r"chapter_(\d{4})\s+para_(\d{3})")
+
+
+def epub_excerpts(plain_text: str) -> list[dict]:
+    """抽出该页引用到的 EPUB 段落原文，按定位去重。"""
+    chapters = canon_paragraphs()
+    if not chapters:
+        return []
+    seen: set[tuple[int, int]] = set()
+    out: list[dict] = []
+    for raw_chapter, raw_para in EPUB_LOCATOR_RE.findall(plain_text):
+        chapter, para = int(raw_chapter), int(raw_para)
+        if (chapter, para) in seen:
+            continue
+        paragraphs = chapters.get(chapter)
+        # para_N 为 1-based
+        if not paragraphs or not 1 <= para <= len(paragraphs):
+            continue
+        text = paragraphs[para - 1]
+        seen.add((chapter, para))
+        out.append({
+            "c": chapter, "p": para,
+            "t": text if len(text) <= MAX_EXCERPT_CHARS else text[:MAX_EXCERPT_CHARS] + "…",
+            "n": len(paragraphs),
+        })
+    return out
+
+
 THEME_LAYERS = {"原著事实": "canon", "合理推导": "research", "《问真》实现": "game"}
 BULLET_RE = re.compile(r"^-\s+\*\*(原著事实|合理推导|《问真》实现)\*\*")
 # 主题内的三层也可以用 H4 小标题写（`#### 原著事实`），与 `- **原著事实**` 等价，两种写法都要认
@@ -348,7 +411,8 @@ def render_page(source: Path, known: set[str], game_index: dict) -> dict:
     meta, body = split_frontmatter(raw)
     route = route_for(source)
     category = source.relative_to(WIKI).parts[0] if source != WIKI / "index.md" else "home"
-    title = str(meta.get("name") or re.search(r"^#\s+(.+)$", body, re.M).group(1) if re.search(r"^#\s+(.+)$", body, re.M) else source.stem)
+    heading = re.search(r"^#\s+(.+)$", body, re.M)
+    title = str((meta.get("name") or heading.group(1)) if heading else source.stem)
     soup = BeautifulSoup(md.render(body), "html.parser")
     heading_counts = Counter()
     for heading in soup.find_all(re.compile(r"^h[1-6]$")):
@@ -363,10 +427,8 @@ def render_page(source: Path, known: set[str], game_index: dict) -> dict:
         target = (source.parent / href.split("#", 1)[0]).resolve()
         if target.is_relative_to(WIKI.resolve()) and target.suffix.lower() == ".md":
             target_route = route_for(target)
-            if target_route in known:
-                link["href"] = "#" + target_route
-            else:
-                link["href"] = "#" + target_route
+            link["href"] = "#" + target_route
+            if target_route not in known:
                 link["class"] = link.get("class", []) + ["unavailable-link"]
                 link["title"] = "此目标未收录在知识页面中"
         else:
@@ -403,6 +465,7 @@ def render_page(source: Path, known: set[str], game_index: dict) -> dict:
         "audit": {"gapItems": gap_items, "hasGapSection": bool(gap), "inferred": inferred,
                   "unresolved": unresolved, "evidenceIds": len(evidence_ids), "rawRefs": raw_refs,
                   "evidence": evidence},
+        "epubRefs": epub_excerpts(plain),
     }
     doc = build_doc(body)
     if doc:
@@ -439,7 +502,31 @@ def sync_web_assets() -> int:
     assets = [p for p in sorted(WEB.glob("*")) if p.is_file()]
     for asset in assets:
         shutil.copyfile(asset, DIST / asset.name)
+    stamp_asset_versions()
     return len(assets)
+
+
+def stamp_asset_versions() -> str:
+    """按 app.js/style.css 的内容哈希改写 dist/index.html 里的 ?v= 缓存版本号。
+
+    此前 ?v= 靠人手改，实测改了 app.js 而忘了改版本号时，浏览器仍加载旧脚本——
+    导航改造对新访客可见、对回访者不可见，且会让本地验收读到缓存产物。
+    这里让版本号随内容自动变化，不再依赖记忆。
+    """
+    digest = hashlib.sha256()
+    for name in ("app.js", "style.css"):
+        path = DIST / name
+        if path.is_file():
+            digest.update(path.read_bytes())
+    stamp = digest.hexdigest()[:8]
+    index = DIST / "index.html"
+    if not index.is_file():
+        return stamp
+    text = index.read_text(encoding="utf-8")
+    updated = re.sub(r'((?:href|src)="(?:app\.js|style\.css)\?v=)[^"]*"', rf'\g<1>{stamp}"', text)
+    if updated != text:
+        index.write_text(updated, encoding="utf-8")
+    return stamp
 
 
 def main() -> None:
@@ -452,14 +539,29 @@ def main() -> None:
     for warn in game_meta["warnings"]:
         print(f"GAME WARN: {warn}")
     pages = [render_page(p, known, game_index) for p in paths]
+    wiki_art = json.loads((VISUAL / "wiki-gu-art.json").read_text(encoding="utf-8"))["items"]
+    page_by_route = {p["route"]: p for p in pages}
+    mapped = {}
+    for item in wiki_art:
+        route = item["route"]
+        source = (VISUAL / item["file"]).resolve()
+        if route in mapped or route not in known or page_by_route[route]["kind"] != "gu":
+            raise ValueError(f"Invalid or duplicate Wiki art route: {route}")
+        if not source.is_relative_to((VISUAL / "assets/gu").resolve()) or not source.is_file():
+            raise ValueError(f"Missing or out-of-scope Wiki art: {source}")
+        rel = Path("wiki-gu") / source.name
+        if rel in {entry[1] for entry in mapped.values()}:
+            raise ValueError(f"Duplicate Wiki art filename: {source.name}")
+        mapped[route] = (source, rel, item)
+        page_by_route[route]["art"] = {"path": "art/" + rel.as_posix() + ".webp", "caption": item["caption"]}
     art = []
     out_art = DIST / "art"
     out_art.mkdir(parents=True, exist_ok=True)
-    sources = [p for p in sorted(ART.rglob("*")) if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp")]
-    old_names = Counter((p.relative_to(ART).with_suffix(".webp")).as_posix() for p in sources)
+    sources = [(p, p.relative_to(ART), None) for p in sorted(ART.rglob("*")) if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp")]
+    sources.extend(mapped.values())
+    old_names = Counter(rel.with_suffix(".webp").as_posix() for _, rel, _ in sources)
     wanted = set()
-    for source in sources:
-        rel = source.relative_to(ART)
+    for source, rel, wiki_item in sources:
         target = out_art / (rel.as_posix() + ".webp")
         wanted.add(target)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -478,9 +580,9 @@ def main() -> None:
         with Image.open(target) as built:
             width, height = built.size
         art.append({"path": "art/" + rel.as_posix() + ".webp",
-                    "name": source.stem.replace("_", " ").replace("-", " "),
-                    "original": rel.as_posix(), "group": group,
-                    "groupName": ART_GROUPS.get(group, group),
+                    "name": wiki_item["name"] if wiki_item else source.stem.replace("_", " ").replace("-", " "),
+                    "original": "lore/visual/" + wiki_item["file"] if wiki_item else rel.as_posix(), "group": group,
+                    "groupName": "蛊虫研究卡面" if wiki_item else ART_GROUPS.get(group, group),
                     "w": width, "h": height})
     for old_file in out_art.rglob("*"):
         if old_file.is_file() and old_file not in wanted:

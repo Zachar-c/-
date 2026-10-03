@@ -7,7 +7,7 @@ description: 火道五件递进蛊族的起手件：原文明文一转、全名 
 date: 2026-09-28
 tags: [gu, fire-path, refine-chain, rank1, thin-evidence]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

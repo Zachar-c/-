@@ -7,7 +7,7 @@ description: 弧七事件枢纽页（ZGM 簇）：方源以北原「沙黄」与
 date: 2026-09-26
 tags: [event, zangmeng, dream-path, arc7]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/D1-135001-157500.md"
   - "notes:game/分支：六卷精编版/读书笔记/D2-157501-180000.md"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"

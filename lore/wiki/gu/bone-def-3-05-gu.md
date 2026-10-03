@@ -7,7 +7,7 @@ description: 白骨山传承中的骨系改造蛊：永久把蛊师骨骼改造�
 date: 2026-09-28
 tags: [gu, bone, body-modification, consumable, white-bone-mountain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

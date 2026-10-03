@@ -6,6 +6,8 @@
 
 | 路径 | 类型 | 现状 | 处理 | 权威/理由 |
 |---|---|---|---|---|
+| [Wiki蛊虫研究卡面](../lore/visual/assets/gu/README.md) | KEEP | 2026-10-02 用户授权31张已交付卡面接入Wiki；原生图、提示词与证据转存长期目录，明确路由关联、形态/阶段图注；不改原著事实或游戏 | 原有36个有图条目不替换；剩余19项证据不足、6项旧源图未本批关联，继续按证据增补；重建本地快照不等于远程发布 | 用户“接入Wiki”；[关联清单](../lore/visual/wiki-gu-art.json)；[GitHub #19](https://github.com/Zachar-c/-/issues/19) |
+| [Visual KB V2](../lore/visual/MEMORY.md) | KEEP | 2026-10-01 从用户 Windows 目录完整复制 61 个文件，逐文件 SHA-256 一致；原 README 标题及部分合并版保留 V1 字样，当前数据以根目录 STATUS、V2 合并版和 machine 为准 | 保留原件及来源，执行时完整读取目标档案；取消先行画风要求，仅生成完整度与置信度高的人物，medium 条目暂缓；原文事实与设计推导按证据区分 | 用户当前裁决；[执行约定](../lore/visual/AGENTS.md)；原包 hash 见任务记忆 |
 | [EPUB Canonical Novel Source cutover](../lore/wiki/2026-09-28-epub-canon-migration-report.md) | REVIEW | 2026-09-30 切源完成并获指针切换授权：runtime 绑定 EPUB 正文（219,942 行，hash `9f6952f8…`），旧 E-ID 与旧行号保留作历史回查；live 6,515 个 E-ID = 6,405 `auto_verified` + 15 `human_approved` + 95 `blocked`；runtime 使用 1,997 个 = 1,979 + 15 + 3 未决（`unresolved_evidence_count = 3`）。口径 v4（`context_window` 5→12）经 L1 追认，判据不变。**已知源缺口**：一段·第七十七节「阴差阳错」、六段·第六百七十七节在原 EPUB 的 spine 与目录中即不存在（原件 SHA-256 `be1c357f…` 与 `epub_sha256` 一致），3 条 runtime 未决全部出自该缺口，不建旧 TXT 回退 | 收口项：剩余 95 条 live `blocked` 按需人工复核（不阻塞指针切换）；引用该缺节的锚点只保留旧行号回查，不得声称已在 Canon 定位；Q9（`sources:` 是否新增 EPUB 命名空间，属 schema）与 Q10（`section-index.md`／`compress_full_book.py` 是否改指 EPUB）仍未裁决 | 2026-09-30 L1 DECISION PACKET（CONTINUE，D1 追认 / D2 同步）；迁移报告 §11；[GitHub #13](https://github.com/Zachar-c/-/issues/13) |
 | [流派机制差异审计](design/rank1-9-model/path-mechanics-audit.md) | REVIEW | 2026-09-28：Wiki 有 41 个流派页，但研究蛊库 69 蛊中 46 蛊未定流派，三套数值测试配置按爆发/均衡/续航组织，无法证明各派玩法有别；14 派具机制候选、11 派仅具实例或代价线索、16 派仍缺可重复操作规则 | 保留数值骨架作预算工具；从完整构筑与反制个案逐派回原文取证，达到可玩机制门槛后交 L1 建模，不批量换皮填充 | 用户明确指出流派同质化；Wiki 流派总表与独立页；研究审计；[GitHub #9](https://github.com/Zachar-c/-/issues/9) |
 | [现有库存体系搭配](design/rank1-9-model/inventory-combinations.md) | REVIEW | 2026-09-28：69 蛊已登记 17 条分层关系记录（10 已核、4 已核但库存缺件、2 规则串接推导、1 角色计划）、涉及 20 蛊，另有 4 条基于作用特性的游戏适配假设；严格按现库存可实际组出的完整流派战斗构筑为 0。方源力道是原著材料足以设计、但现库存缺件的 1 套样本；龙公变化/气道是完整杀招体系功能样本，不是逐蛊构筑。现有模型还将血滴子、木魅、月影误塞入通用动作槽 | 不盲目扩库存；先逐只验证候选的作用对象、资源流和使用条件，具体缺件按原著取证后交 L1 审查。三套旧数值配置不得称完整流派构筑 | 用户要求现有库存按特性搭配并明确询问完整构筑数量；本地原文与 Wiki 蛊虫关系页；[GitHub #9](https://github.com/Zachar-c/-/issues/9) |
@@ -74,3 +76,22 @@
 | rank1-9-model 渠道 priceMultiplier 未进引擎记账 | REVIEW | 2026-09-27 引擎现状：supply_limited 的稀缺溢价（market ×1.4）未作用于购置费（引擎无购置扣费），仅供养按行内倍率计；渠道稀缺当前表现为「当期不可得→fallback/占位」 | 补购置/等待期模型时一并实现；先以 availability 为主口径 | rank1-9-model/engine-v02.md §7；supply-model.md §4.1；[GitHub #9](https://github.com/Zachar-c/-/issues/9) |
 
 | game/data/gu.json 802 蛊 | **VOID** | L0 决断 2026-09-26：生成器 802 高度重复无创意，撑不起牌组构筑与玩法创意——**全部删除、不予参考**；与审计一致（742/802 role 兜底同质）。新蛊池必须从 lore/wiki Canon + 玩法支柱分层重设计（Canon 核/Derived/Creative），禁止再批量同质生成。文件已置 []，gu_names.json 置 {}；历史在 git | 新血设计批次（L1 Production View P0） | L0 2026-09-26 | L1 方向书 §7 |
+
+
+## 2026-10-02 蛊虫关系图谱首批边界
+
+- [关系图谱](design/gu-relations/README.md)本次已建立首批。13份附件与5条近况会话保存在本地 `source/gu-relations-session-2026-10-02/`，原件不改写、不提交；[来源清单](design/gu-relations/sources.json)保留文件名、Library标识与SHA-256。其他环境缺少原件时不能声称重新核验附件已通过，已存证据摘要仍可阅读。
+- 金睛—金刚怒目关系已直接核验当前EPUB章段，尚缺Wiki专门蒸馏；沿用[现有Lore审查债务 #6](https://github.com/Zachar-c/-/issues/6)，本批不覆盖其他Wiki任务的未提交改动。
+- 三痕月完整正式投料、用量、辅蛊去留与替代方案未记录，作为本局过程研究保留；H001–H003保持未决设计候选，未接产品规则。
+
+
+## 2026-10-02 构筑试玩待验证
+
+- [可试玩样本](design/gu-relations/playable-builds.md)已有两路合法胜利与组合因果证据；“有趣”、路线平衡和奖励选择价值仍需真实试玩反馈，不以自动测试代替。先根据反馈修整样本，再决定正式游戏接入；数值校准沿用[研究模型审查 #9](https://github.com/Zachar-c/-/issues/9)，不另外虚构原著数值。
+- 预设兽力不能替代获得链，确定合炼不能替代完整蛊方与炼制风险。后续纳入新蛊须按构筑验收展示操作变化和拒绝理由；月痕/三痕月需先实现射程或多核结构消费者。
+
+- 玩家本轮将购买/奖励/路线列为55%优先级，组合差异30%，操作反馈15%。已修复第二战同奖励和战前缺少战利预告；剩余元石供应偏宽松，交易次数常先于资金形成限制。后续根据试玩行为校准购买/恢复/存钱，不用自动胜路代替玩家趣味反馈。
+
+- 获取取舍已新增有限盘缠24/12对照，保留宽裕48/24。正常获得链上的15元石不能同时支付12元石养伤与12元石购调用器，两条分叉都可胜；仍需玩家核验惩罚感、构筑发现与重玩意愿。对照值不接正式游戏、不写回Wiki。
+
+- 用户报告内嵌样本无法打开：本地六路走盘不等于用户可试玩，交付未通过。当前先核对成熟成品游戏改造路线，停止内嵌演武扩展；用户已澄清“可独立发布”仅衡量质量，不要求实际发行或完整开源基础；见[成品基础筛选](design/gu-relations/playable-builds.md#成品基础筛选)。平台/本体条件尚待确认，不能标记趣味目标完成。

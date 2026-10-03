@@ -49,6 +49,27 @@ test('graph generation is deterministic and every preparation row has three succ
   }
 });
 
+test('stage normalization preserves fallback, clamping, and fractional behavior', () => {
+  assert.equal(flow.stageIndexFor('2'), 2);
+  assert.equal(flow.stageIndexFor(0), 0);
+  assert.equal(flow.stageIndexFor(Number.NaN), 0);
+  assert.equal(flow.stageIndexFor(undefined), 0);
+  assert.equal(flow.stageIndexFor(-2), 0);
+  assert.equal(flow.stageIndexFor(99), 3);
+  assert.equal(flow.stageIndexFor(1.5), 1.5, 'stage values are clamped but not rounded');
+
+  assert.equal(flow.stageLabel('3', '2'), '3 转高阶');
+  assert.equal(flow.stageLabel(0, 0), '1 转初阶');
+  assert.equal(flow.stageLabel(undefined, undefined), '1 转初阶');
+  assert.equal(flow.stageLabel(-2, 0), '1 转初阶');
+  assert.equal(flow.stageLabel(99, 0), '5 转初阶');
+  assert.equal(flow.stageLabel(Number.NaN, 99), '1 转巅峰');
+  assert.equal(flow.stageLabel(2, 1.5), '2 转undefined');
+
+  const fractional = flow.nextBreakthrough({ rank: 2, stageIndex: 1.5 });
+  assert.equal(fractional.targetStageIndex, 2.5);
+});
+
 test('small breakthrough accepts current-rank sari gu only', () => {
   const config = {
     smallBreakthroughCosts: { 2: [4, 6, 8] },

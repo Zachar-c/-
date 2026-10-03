@@ -7,7 +7,7 @@ description: 真元阶位颜色、换算比与凝练补充规则的世界规则�
 date: 2026-09-26
 tags: [world, true-qi, resources]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-CULTIVATION-002"
   - "canon-index:CAN-APTITUDE-002"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"

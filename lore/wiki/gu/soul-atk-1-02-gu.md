@@ -7,7 +7,7 @@ description: 魂道辅助修行仙蛊：精炼魂魄、剔除杂质，过度使�
 date: 2026-09-28
 tags: [gu, soul-path, xian-gu, feeding-cost, killer-move-core]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

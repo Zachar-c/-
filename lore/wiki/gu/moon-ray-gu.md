@@ -7,7 +7,7 @@ description: 月光蛊＋痕石蛊合炼的月系分支：攻击力不变、攻�
 date: 2026-09-28
 tags: [gu, combat, refinement, ancient-moon-clan, moon-blade]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-MOONRAY-001"
 schema: 2
 ---

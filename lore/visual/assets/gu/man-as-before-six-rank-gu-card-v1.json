@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "人如故",
+  "route": "/gu/man-as-before-gu",
+  "file": "man-as-before-six-rank-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/man-as-before-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0612｜第二百零六节：江山如故",
+    "line": 56447,
+    "excerpt": "一只五光十色的蝴蝶，窈窕而飞，所行之处，洒下五色虹光"
+  },
+  "design_boundary": "选太白云生六转破茧彩蝶，非七转白嫩小人躯干；五彩虹光为原著锚，具体蝶翼纹理及环境为设计。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE elegant MULTICOLORED BUTTERFLY Gu, canonical newly refined SIX-RANK stage, normal butterfly torso NOT tiny human body. Four complete delicately curved butterfly wings and slender natural insect body, wing membranes shimmering in five colors, rich blue, green, amber, muted red and violet softly blending as structural iridescence in living tissue. Not gold jewellery, faceted crystal wings, fairy woman, ordinary fixed jade-green butterfly or gacha glitter. Real fine scales, subtle vein networks and delicate thin edge transmission, calm tiny eyes, two understated antennae. Gracefully hovering at slight three-quarter angle, wings half-open in a natural asymmetrical flight pose but all four wings visible and not duplicated. Behind it just one short faint five-color flowing flight trail fading into empty blue-grey air, not an encircling halo, huge rainbow, portal, magic spiral or full landscape. Environmental soft side light with realistic membrane thinness, modest colorful glow stays near creature, not overexposed white core. Primary is butterfly body not trail, entire subject inside silver frame. No human figure, cocoon added, healing heart, clocks, green magic pool, star field, numbers or gemstones. Dreamlike chromatic life made tangible, not anime.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用：六转彩蝶阶段",
+    "visible_facts": [
+      "单一四翼五色蝴蝶，正常昆虫躯干，无七转小人身体混入",
+      "翅膜薄度、自然光与短五色路径有层次，主体清晰"
+    ],
+    "risks": [
+      "具体色块翼纹设计不锁蝶种；虹光路径稍长且有细点",
+      "蝶眼高光偏亮但不是萌化脸部"
+    ]
+  }
+}

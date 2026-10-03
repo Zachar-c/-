@@ -1,0 +1,472 @@
+{
+  "date": "2026-10-02",
+  "authorization": "用户：接入Wiki。仅授权本地Wiki站点关联及构建；未授权游戏接入、提交、推送或远程发布。",
+  "items": [
+    {
+      "route": "/gu/blood-atk-5-12-gu",
+      "name": "血本仙蛊",
+      "file": "assets/gu/blood-asset-gu-card-v1.png",
+      "record": "assets/gu/blood-asset-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1068｜第三十七节：仙蛊血本",
+        "line": 97758,
+        "excerpt": "此蛊浑圆如珠，有鹅蛋大小，珠子上无数氤氲光纹"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "c1f68f5243e68dc361a5401146d1969b6bc3348dc84c7b059b8eca9d4cb18785"
+    },
+    {
+      "route": "/gu/bone-def-3-01-gu",
+      "name": "骨枪蛊",
+      "file": "assets/gu/bone-spear-gu-card-v1.png",
+      "record": "assets/gu/bone-spear-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0223｜第二十三节：白骨传承（上）",
+        "line": 19456,
+        "excerpt": "大小如常人食指，通体皆白。一头圆润，一头尖锐，如微型长枪。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "ee6113e6f10e7400c0bd086e73338412bca365e032e31885ed15bd6eac0ff198"
+    },
+    {
+      "route": "/gu/bone-def-3-05-gu",
+      "name": "玉骨蛊",
+      "file": "assets/gu/jade-bone-gu-card-v1.png",
+      "record": "assets/gu/jade-bone-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0226｜第二十六节：玉骨铁骨",
+        "line": 19832,
+        "excerpt": "这根骨头，两端圆润，中间修长，通体泛绿好似碧光玉石。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "5bc18933460fd12edc84a6fbd62c6bef91fc8eb6c376f070236343f4fc40bfde"
+    },
+    {
+      "route": "/gu/earth-atk-5-03-gu",
+      "name": "地藏花蛊",
+      "file": "assets/gu/earth-treasury-flower-gu-card-v1.png",
+      "record": "assets/gu/earth-treasury-flower-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0065｜第六十三节：月下赠玉皮，地花藏白豕",
+        "line": 4944,
+        "excerpt": "花苞表面细腻如绸，暗金作色，显得幽静神秘而又高贵典雅。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "3e24cd077736988f3beaec8cca3856f3afda34fdd48e9c8bb015ffe9eca1640a"
+    },
+    {
+      "route": "/gu/fixed-immortal-travel-gu",
+      "name": "定仙游蛊",
+      "file": "assets/gu/fixed-immortal-travel-gu-card-v1.png",
+      "record": "assets/gu/fixed-immortal-travel-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0597｜第一百九十一节：早有准备，墨瑶惊疑",
+        "line": 54970,
+        "excerpt": "绿光莹莹，翩翩飞舞，形如翠玉蝴蝶。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "b4e808c82c69a0abafb495a366f55d5a15fdeb8dbd6583fe229e9ac5070a48bb"
+    },
+    {
+      "route": "/gu/force-atk-3-29-gu",
+      "name": "天蓬蛊",
+      "file": "assets/gu/heavenly-canopy-gu-card-v1.png",
+      "record": "assets/gu/heavenly-canopy-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0156｜第一百五十五节：借",
+        "line": 13101,
+        "excerpt": "外形，就像是一只大瓢虫。半圆形乳白色的甲壳上，点缀着点点黑斑。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "d346fc3c97ad52eab8cd5b61ca2f774b0e4f3296e894e51edb61ed48cb3d6250"
+    },
+    {
+      "route": "/gu/gold-atk-4-14-gu",
+      "name": "黄金舍利蛊",
+      "file": "assets/gu/golden-relic-gu-card-v1.png",
+      "record": "assets/gu/golden-relic-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0359｜第一百五十九节：新底牌",
+        "line": 33186,
+        "excerpt": "它通体金黄，只有拇指大小，在山洞昏暗的光线中，散发着幽幽的金属光辉。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "4c16b16b35dc9490062df3e4226c1679bdb0e6e5fd35e0bcfca55f0d6ec5dd74"
+    },
+    {
+      "route": "/gu/gold-def-3-09-gu",
+      "name": "古铜皮蛊",
+      "file": "assets/gu/ancient-bronze-skin-gu-card-v1.png",
+      "record": "assets/gu/ancient-bronze-skin-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0355｜第一百五十五节：古铜皮蛊",
+        "line": 32823,
+        "excerpt": "它形似臭虫，又扁又宽，头很小，身体呈现椭圆形状。通体都黄橙橙的"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "68e76b1c94c35763da4a9b5e91c38d42cc6176ecb43fb3c73ad0ea9e0abf9b6e"
+    },
+    {
+      "route": "/gu/heaven-atk-5-03-gu",
+      "name": "天妒仙蛊",
+      "file": "assets/gu/heavenly-envy-gu-card-v1.png",
+      "record": "assets/gu/heavenly-envy-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_2160｜第一百六十九节：肝命大阵",
+        "line": 198891,
+        "excerpt": "仿佛是水晶所制的跳蚤，拳头大小，一直团成一团。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "9a5c6389b96c4bbf4a080278ee51931e63f2f453de8c1ba57c0ae14dbf23fa6a"
+    },
+    {
+      "route": "/gu/heaven-atk-5-06-gu",
+      "name": "天机蛊",
+      "file": "assets/gu/heavenly-secret-gu-card-v2.png",
+      "record": "assets/gu/heavenly-secret-gu-card-v2.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1494｜第四百五十六节：天机蛊成！",
+        "line": 138188,
+        "excerpt": "身体很是细长，像是柳枝，十分柔软。柳枝的两侧分别是七片羽翼，薄如轻纱"
+      },
+      "design_boundary": "柳枝形、七对羽翼、轻纱绿色和缓飘为原著锚。叶脉、具体绿色和细节材质为设计。v1只有六对大翼，v2定点修正，未将错误版作为完成。",
+      "sha256": "c53db2f3acc877692f94d3216e48c0feb554bd156e872284b1798b61216fa3b7"
+    },
+    {
+      "route": "/gu/heaven-atk-5-07-gu",
+      "name": "寿蛊",
+      "file": "assets/gu/lifespan-gu-300-year-card-v1.png",
+      "record": "assets/gu/lifespan-gu-300-year-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 三百年形态；非所有寿蛊的统一外形",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0403｜第二百零三节：一切皆在我掌控之中",
+        "line": 37133,
+        "excerpt": "这只三百年寿蛊，仿佛是参须，如蛇般盘成一圈，粗糙沧桑。"
+      },
+      "design_boundary": "本图选三百年个案形态，不将其推广为所有寿蛊唯一形态；转数未明，不标五转。灰棕色、土面、根须细节、光照为美术推断；主体为根状蛊，不画真蛇、植物人或普通甲虫。",
+      "sha256": "815a1386952f942e7c64b2f1f5767ff448b8fae24f38bb5b87989311674db757"
+    },
+    {
+      "route": "/gu/human-atk-1-01-gu",
+      "name": "自己蛊",
+      "file": "assets/gu/self-miniature-form-gu-card-v1.png",
+      "record": "assets/gu/self-miniature-form-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 微缩自身示意；不锁人祖身份外貌",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0647｜第二百四十一节：人生路",
+        "line": 60038,
+        "excerpt": "这只蛊虫，栩栩如生。和他一模一样。只是缩小了千万倍，只有蚂蚁般大小。"
+      },
+      "design_boundary": "人祖所见蚂蚁大小微缩自身为原著硬锚；只用微小背影表达，不锁未核人祖五官、发式、衣物或唯一人族美术。不是重启人物立绘。",
+      "sha256": "08bd75e5a18c5f4c31fc06b31309fe5948fd44079cb4f8c43f91e0ce868dac1f"
+    },
+    {
+      "route": "/gu/human-atk-5-02-gu",
+      "name": "爱情蛊",
+      "file": "assets/gu/love-grey-pebble-view-gu-card-v1.png",
+      "record": "assets/gu/love-grey-pebble-view-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 特定观察者所见灰石；外貌随观察者变化",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1243｜第二百零九节：爱情.蛊（下）",
+        "line": 114745,
+        "excerpt": "在我看来，它却灰不溜秋，宛若路边石子一枚。"
+      },
+      "design_boundary": "只画灵缘斋太上大长老观察视角的灰石子，不是爱情蛊唯一客观外形；其余观察者可见彩霞、清水或桃花。无事实改写。",
+      "sha256": "f07ef22ecf5b68cf3729a39c081935eb0325547cdec809ce95181a67826b5390"
+    },
+    {
+      "route": "/gu/human-atk-5-34-gu",
+      "name": "悔蛊",
+      "file": "assets/gu/regret-gu-card-v3.png",
+      "record": "assets/gu/regret-gu-card-v3-edit.json",
+      "caption": "AI美术诠释（非原文插图） · 苍白纸质长体与半透明软须",
+      "evidence": null,
+      "design_boundary": null,
+      "sha256": "1309aeb3fba5ce2fa56743078f884264c4c42d7387f5dffb889b8bfcc26d6e6c"
+    },
+    {
+      "route": "/gu/human-def-1-32-gu",
+      "name": "山盟蛊",
+      "file": "assets/gu/mountain-pledge-gu-card-v1.png",
+      "record": "assets/gu/mountain-pledge-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0661｜第十一节：雪山立盟",
+        "line": 61196,
+        "excerpt": "乃是一头兜虫，体型粗壮，比成年人巴掌还大。浑身宛若灰色石质"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "1390263298a079c5279ce99935b401d9be6a69de3ea9d5a8d06439f50273cb08"
+    },
+    {
+      "route": "/gu/landscape-as-before-gu",
+      "name": "江山如故",
+      "file": "assets/gu/landscape-as-before-gu-card-v1.png",
+      "record": "assets/gu/landscape-as-before-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 六转碧玉瓢虫形态",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0612｜第二百零六节：江山如故",
+        "line": 56440,
+        "excerpt": "形如瓢虫，拳头大小，浑身碧玉也似。圆滚滚的背壳有天生纹路。",
+        "additional_line": 56912,
+        "hard_constraints": [
+          "碧玉般的瓢虫",
+          "圆背",
+          "天生纹路一半江河湖海、一半山丘峰峦"
+        ]
+      },
+      "design_boundary": "玉壳具体纹理色差、左右分配、腿数/触角的自然瓢虫结构、石面与光照是美术表达，不新增原著事实；纹路不是贴图或实体微缩山河。卡面不锁放大后现实尺度。",
+      "sha256": "835016cbb968370e8b7b75d7c5e406964f677463ea3d07d6d0bd098113c91cb0"
+    },
+    {
+      "route": "/gu/luck-atk-1-03-gu",
+      "name": "招灾蛊",
+      "file": "assets/gu/disaster-beckoning-gu-card-v1.png",
+      "record": "assets/gu/disaster-beckoning-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0568｜第一百六十二节：人生为何早有悟（六千二大章）",
+        "line": 51994,
+        "excerpt": "它形如蚕茧。浑身灰白，只有小拇指大小，在水里载沉载浮。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "dfe62b9d2bf6a3c1752f197be6ed1dd32e03d18d69b57f611af3d8a775cfb9a3"
+    },
+    {
+      "route": "/gu/luck-atk-5-01-gu",
+      "name": "鸿运齐天蛊",
+      "file": "assets/gu/fortune-rivaling-heaven-gu-card-v1.png",
+      "record": "assets/gu/fortune-rivaling-heaven-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 无形气运的美术可视化；非实体虫身",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0618｜第二百一十二节鸿运之因",
+        "line": 57052,
+        "excerpt": "它无形无质，本就是一团恢弘气运"
+      },
+      "design_boundary": "无形无质为硬锚；折射、暖冷光与涡流都是显现无形气运的美术解释，不冻结其颜色或实体轮廓。",
+      "sha256": "7d64ec11ac32aacdb01d1d3c58925f4ad1a245e435a18becc6b630d9086f4326"
+    },
+    {
+      "route": "/gu/luck-atk-5-04-gu",
+      "name": "狗屎运蛊",
+      "file": "assets/gu/dog-shit-luck-gu-card-v1.png",
+      "record": "assets/gu/dog-shit-luck-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_2103｜第一百一十三节：八转狗屎运",
+        "line": 193517,
+        "excerpt": "全体都是黄金作色，身躯分为头、胸腹、尾三段。头部如半月铲"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "44139b4f883b376d25140d99f25409c71d81bf6b11ad5e1037b9b52de33df113"
+    },
+    {
+      "route": "/gu/man-as-before-gu",
+      "name": "人如故",
+      "file": "assets/gu/man-as-before-six-rank-gu-card-v1.png",
+      "record": "assets/gu/man-as-before-six-rank-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 六转彩蝶形态；不代表七转形态",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0612｜第二百零六节：江山如故",
+        "line": 56447,
+        "excerpt": "一只五光十色的蝴蝶，窈窕而飞，所行之处，洒下五色虹光"
+      },
+      "design_boundary": "选太白云生六转破茧彩蝶，非七转白嫩小人躯干；五彩虹光为原著锚，具体蝶翼纹理及环境为设计。",
+      "sha256": "95d16edf92cf1bc6fbf70ba3c76778de1465ee73e6fb24ac366ab3eba41b1db5"
+    },
+    {
+      "route": "/gu/myriads-self-immortal-gu",
+      "name": "万我仙蛊",
+      "file": "assets/gu/myriad-self-gu-card-v2.png",
+      "record": "assets/gu/myriad-self-gu-card-v2.json",
+      "caption": "AI美术诠释（非原文插图） · 密集硬足示意；不能逐足核验10000条",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1778｜第七百四十二节：天庭来攻",
+        "line": 162442,
+        "excerpt": "此蛊体型修长，长达数丈，它形如蜈蚣，宛若赤铜浇筑"
+      },
+      "design_boundary": "数丈赤铜蜈蚣、额前双长须、左右各五千足为硬锚。图需表现密集万足的量级，不声称每根足可逐根核实，不能照搬悔蛊的足须替代。",
+      "sha256": "9f0a2f06d8f49932ce15a817bbb47c39912cb9ebeb16de0e485dd799acf22e79"
+    },
+    {
+      "route": "/gu/persistence-gu",
+      "name": "坚持仙蛊",
+      "file": "assets/gu/persistence-gu-card-v1.png",
+      "record": "assets/gu/persistence-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1301｜第二百六十六节：智劝雪胡老祖",
+        "line": 119893,
+        "excerpt": "它形如石碑，体积颇大，竟有巨鲸似的体积。底宽上窄，四四方方"
+      },
+      "design_boundary": "画原著巨鲸般石碑本体；黑铁色非确定铁材。海岸和波浪用于美术尺度参照，不声明原著出生地点为海岸。",
+      "sha256": "9ab0408003dfac03155c4f9fa1ffe60619f549dd0ddcce6e9482c2ca96576cd2"
+    },
+    {
+      "route": "/gu/qi-atk-1-01-gu",
+      "name": "硬气蛊",
+      "file": "assets/gu/hard-qi-gu-card-v1.png",
+      "record": "assets/gu/hard-qi-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0316｜第一百一十六节：硬气蛊",
+        "line": 29141,
+        "excerpt": "此蛊如拳头大小，甲虫形态，黑色似铁。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "9282e15c5aeeb453bada84dca1492f85f33be4690813f3d8576f4c1e709b6e96"
+    },
+    {
+      "route": "/gu/soul-atk-1-02-gu",
+      "name": "净魂仙蛊",
+      "file": "assets/gu/soul-cleanse-gu-card-v1.png",
+      "record": "assets/gu/soul-cleanse-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1463｜第四百二十五节：青丝成空",
+        "line": 135452,
+        "excerpt": "它形如蝌蚪，但有方源的拳头大小，通体灰白"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "fb96bd4126985d372cd2ca5e15a532e4b0e73d72dd6f2992e4f9d860bf4ba309"
+    },
+    {
+      "route": "/gu/soul-atk-5-01-gu",
+      "name": "魂灯蛊",
+      "file": "assets/gu/soul-lantern-gu-card-v1.png",
+      "record": "assets/gu/soul-lantern-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 由破碎瓢虫及淡蓝微光描写重建完整态",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1358｜第三百二十二节：兄去弟继掌权柄",
+        "line": 125232,
+        "excerpt": "魂灯蛊毁灭后，则是一块碎裂的瓢虫，再也发不出晦暗的淡蓝烛光。"
+      },
+      "design_boundary": "原著破碎描述支持瓢虫形和生前淡蓝烛光；完整态中性壳色、纹理、解剖细节是重建设计，非新增明确事实。",
+      "sha256": "278f2b71fc9da61609076a5ea564df5ebaa0569e591a2da5387ae7f31266b1b4"
+    },
+    {
+      "route": "/gu/star-gate-gu",
+      "name": "星门蛊",
+      "file": "assets/gu/star-gate-gu-card-v1.png",
+      "record": "assets/gu/star-gate-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0466｜第六十节：今夜星空真美",
+        "line": 42740,
+        "excerpt": "拿着这两颗蓝宝石样儿的蛊虫"
+      },
+      "design_boundary": "画成一对椭圆蓝宝石样蛊，补锚42739椭圆石头。晶面及布置为设计；不将催动星门拱门当本体。",
+      "sha256": "637e3f8d69ff6b00997ddb27831d21f99436a466bbec4e1d8ea14b844d99c141"
+    },
+    {
+      "route": "/gu/supreme-immortal-fetus-gu",
+      "name": "至尊仙胎蛊",
+      "file": "assets/gu/supreme-immortal-fetus-gu-card-v1.png",
+      "record": "assets/gu/supreme-immortal-fetus-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图） · 催动阶段黑球与胎膜；非唯一常态",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1028｜第三百七十三节还不归来？",
+        "line": 93750,
+        "excerpt": "在这漆黑如墨的圆球之中，一个胎盘外散绚烂的华彩，若隐若现。"
+      },
+      "design_boundary": "仅选催动转化的黑球/元胎酝酿瞬间，不代表未催动稳定种属。画非人形抽象生命胎膜，不能当方源新身体身份图。",
+      "sha256": "238c941b44c29a2b1cb846a795f5893df6eba002d4879012a9bcdb66fbb1cdd3"
+    },
+    {
+      "route": "/gu/sword-atk-5-02-gu",
+      "name": "飞剑蛊",
+      "file": "assets/gu/flying-sword-gu-card-v1.png",
+      "record": "assets/gu/flying-sword-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1001｜第三百四十七节：八转慧剑蛊",
+        "line": 91012,
+        "excerpt": "第四只仙蛊。是飞剑蛊。外形看去。是一副银翅蜻蜓模样。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "2029cf7c3d26a60c112bc65a4212cad276622e78274ca825d1eb7d2a6b14cd13"
+    },
+    {
+      "route": "/gu/water-rec-5-04-gu",
+      "name": "浪迹天涯仙蛊",
+      "file": "assets/gu/worldly-wave-trace-gu-card-v1.png",
+      "record": "assets/gu/worldly-wave-trace-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_0642｜第二百三十六节：方源VS巨阳意志（续）",
+        "line": 59675,
+        "excerpt": "此蛊宛若水母，小如婴儿拳头，包裹着一颗青提仙元，徐徐吞化。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "cd5e699bc4ee16664106ddfa44efdbedc39f77f34ef2444f7622a8523db079a8"
+    },
+    {
+      "route": "/gu/wisdom-atk-5-05-gu",
+      "name": "慧剑蛊",
+      "file": "assets/gu/wisdom-sword-gu-card-v1.png",
+      "record": "assets/gu/wisdom-sword-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1001｜第三百四十七节：八转慧剑蛊",
+        "line": 91052,
+        "excerpt": "就像是一个气泡。飘飘荡荡，其貌不扬。"
+      },
+      "design_boundary": "具体尺寸、地面、色彩和薄膜干涉为美术表达；不锁原文未给的大小、气泡成分或剑形。",
+      "sha256": "7bd94bb546dbf1fc4e5c1d1cc7d8f763cd52b074b24b76263f59c21d9de67b84"
+    },
+    {
+      "route": "/gu/year-gu",
+      "name": "年蛊",
+      "file": "assets/gu/year-gu-card-v1.png",
+      "record": "assets/gu/year-gu-card-v1.json",
+      "caption": "AI美术诠释（非原文插图）",
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1140｜第一百零八节：黑凡四珍（下）",
+        "line": 104848,
+        "excerpt": "它形如瓢虫，大拇指头般体型，全身都是黑色，但在背甲上却有金色的纹路。"
+      },
+      "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+      "sha256": "9223aeeb3c7e50e7b27605f46c1ae3e729dd79adb8b754b2c23178268dfde67b"
+    }
+  ]
+}

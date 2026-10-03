@@ -7,7 +7,7 @@ description: 四转气道天然蛊：形如蝴蝶，吸收生命活力、从风�
 date: 2026-09-28
 tags: [gu, qi-path, rank4, natural-gu, group-effect]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

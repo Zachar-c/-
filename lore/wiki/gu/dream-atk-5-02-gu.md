@@ -7,7 +7,7 @@ description: 六转梦道侦查仙蛊，由纯梦分身的本命五转梦蝶凡�
 date: 2026-09-28
 tags: [gu, dream-path, immortal-gu, scouting, six-rank]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

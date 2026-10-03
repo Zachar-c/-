@@ -7,7 +7,7 @@ description: 弧三事件页：黄龙江逃生、白骨山传承与商队/商家
 date: 2026-09-25
 tags: [event, caravan, yellow-dragon-river, white-bone-mountain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
 schema: 2
 ---

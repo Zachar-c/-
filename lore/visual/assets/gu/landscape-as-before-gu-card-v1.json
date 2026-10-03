@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-02",
+  "name": "江山如故",
+  "wiki_id": "landscape-as-before-gu",
+  "stage": "太白云生升仙生成的六转独立仙蛊，非江如故/山如故两只凡蛊",
+  "status": "approved_by_user",
+  "file": "landscape-as-before-gu-card-v1.png",
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "已验收卡框、画幅、克制物质表现；不复制虫体/配色/背景。寿蛊仅获继续指令、未明确验收，不能默认为已验收参考。",
+  "source_paths": [
+    "lore/wiki/gu/landscape-as-before-gu.md",
+    "lore/visual/dossiers/gu/landscape_as_before.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0612｜第二百零六节：江山如故",
+    "line": 56440,
+    "excerpt": "形如瓢虫，拳头大小，浑身碧玉也似。圆滚滚的背壳有天生纹路。",
+    "additional_line": 56912,
+    "hard_constraints": [
+      "碧玉般的瓢虫",
+      "圆背",
+      "天生纹路一半江河湖海、一半山丘峰峦"
+    ]
+  },
+  "design_boundary": "玉壳具体纹理色差、左右分配、腿数/触角的自然瓢虫结构、石面与光照是美术表达，不新增原著事实；纹路不是贴图或实体微缩山河。卡面不锁放大后现实尺度。",
+  "prompt": "Use case: stylized-concept.\nAsset type: 《问真》 one Gu collectible card, 5:7 portrait, single clear creature.\nGenerate a NEW 江山如故 (Landscape As Before Gu) card. This is a creature portrait, not a landscape painting.\nInput image: approved Regret Gu card ONLY provides slim silver double-line rounded-corner border with delicate curled corners, 5:7 proportions, subdued card presentation and physically credible lighting/materials. NOT an edit of its pale centipede. Do not copy its body, white colour, feelers or floor layout. New creature's colour comes from its own canonical appearance.\nSubject, hard canon: exactly ONE fist-size LADYBIRD-shaped Gu, rounded convex back, its whole body resembling GREEN JADE. Show a natural ladybird beetle silhouette, one short understated head, one domed shell with a fine central elytral seam, six anatomically grounded little legs and two small antennae. Calm neutral face, no expressive mammal eyes, no smile. All legs and tips within frame.\nTHE DISTINCTIVE SHELL: naturally occurring markings, one half continuous meandering and gently rippling bands evoking rivers, lakes and seas; the other half layered angular overlapping triangular ridges/veins evoking hills and mountain peaks. The halves are clearly legible on the two wings of the rounded back, but harmonize as one biological jade shell. These are NATURAL VEINS AND GROWTH PATTERNS formed IN the material, not an engraved map, printed sticker, painted scene, literal miniature mountains, water flowing on its back or diorama/terrarium inside it. The mountain side remains flush with the curved beetle shell; absolutely no actual peaks sticking out. No longitude grid, text, symbols, flags, cartography, red dots or ordinary ladybird black spots.\nMaterial: living nephrite-like celadon/deep jade-green cuticle, smooth softly waxy lustre, subtle milky mineral veins within varied jade tone, slightly translucent only near thin edges. Jade has thickness, quiet inclusions and true volumetric shading; not transparent faceted glass, diamonds, golden filigree, armour jewelry or crystal gem eyes. Legs/head share same believable jade-like living material. The soft water-like markings may be bluish green and the mountain-like markings muted grey-green, all organically integrated.\nComposition: a moderately elevated three-quarter observation so both shell halves are visible, body angled slightly diagonally, entire subject occupies roughly central 60% card width. Subject stands on one unobtrusive small water-worn grey pebble against dark neutral softly receding ground. Ground and background are a quiet low-contrast setting, never a large epic mountain or lush forest. The shell's own markings carry the landscape identity. Preserve space around subject and a complete thin silver border on all four sides. Full bleed artwork, no outer mockup or text panel.\nLighting: physical soft side/top light, natural contact shadows under the legs, jade highlights and restrained edge transmission, gentle atmospheric depth and background falloff. Rich jade body against cool charcoal-neutral background. No neon green glow, explosion, halo, magical spiral, star glitter or dramatic restoration tableau. Dreamlike credibility from impossible jade insect and subtly landscape-like natural markings, not decorative magic.\nAvoid: copy of a cute jade beetle garden card; giant doll eyes, round toddler face, red ladybird, flowers, moss garden, sunshine forest, humans/hands, giant bugs, extra creatures, crowns or gold jewellery. No trees growing on shell, waterfalls on shell, literal miniature landscape, map sticker, calligraphy scrolls, labels, rank numbers, typography, watermark. Silver frame matching the supplied card is required, but creature and stage are independent. One finished 5:7 portrait card.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用作江山如故本体卡面候选；用户已认可当前质量",
+    "visible_facts": [
+      "完整竖版细银框，单只圆背绿色玉质瓢虫；自然尺度参照未入画。",
+      "背甲一侧有曲流/波纹状玉纹，另一侧有叠峰状纹；纹理与玉质明暗结合，没有实体山峰突出背部。",
+      "侧光、六足关系与石面接触影可辨，无萌眼、绿植、地图文字或山水卷轴特效。"
+    ],
+    "risks": [
+      "叠峰纹过于明确，略有人工山水绘画/雕刻感，天然玉纹与具体山峰之间是否合适仍需用户判断。",
+      "背甲高光偏亮，头部、足爪颜色/形制属于设计而非原文明确限定。"
+    ],
+    "user_approved": true,
+    "integration_allowed": false
+  },
+  "user_approved": true,
+  "integration_allowed": false,
+  "dimensions": {
+    "width": 1060,
+    "height": 1484,
+    "aspect_ratio": "5:7"
+  },
+  "approval": {
+    "date": "2026-10-02",
+    "statement": "认可你的质量了，可以进行持续交付，直到生成完毕。"
+  }
+}

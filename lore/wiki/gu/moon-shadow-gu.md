@@ -7,7 +7,7 @@ description: 幻影月蛊的晋升上位（四转，双源明文）：一经种�
 date: 2026-09-28
 tags: [gu, moon-line, suppression, debuff, ancient-moon-clan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

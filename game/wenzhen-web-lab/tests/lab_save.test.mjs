@@ -274,3 +274,17 @@ test('clear removes the run key and tolerates storage errors', () => {
 test('KEY is the contracted local run key', () => {
   assert.equal(LabSave.KEY, 'wenzhen.lab.run.v1');
 });
+
+test('custom move component recipes round-trip, old saves remain valid and malformed shapes are rejected', () => {
+  const state = sampleState({ customMoveRecipes: [['moonlight_gu', 'small_light_gu']], killmoveDraft: ['small_light_gu'] });
+  const restored = LabSave.decode(LabSave.encode(state, CONTENT), CONTENT);
+  assert.equal(restored.ok, true);
+  assert.deepEqual(restored.state.customMoveRecipes, state.customMoveRecipes);
+  assert.deepEqual(restored.state.killmoveDraft, state.killmoveDraft);
+  assert.equal(LabSave.decode(LabSave.encode(sampleState(), CONTENT), CONTENT).ok, true);
+  for (const bad of [
+    { customMoveRecipes: {} }, { customMoveRecipes: [['moonlight_gu']] },
+    { customMoveRecipes: [['moonlight_gu', 'small_light_gu', 'small_light_gu', 'small_light_gu']] },
+    { killmoveDraft: {} }, { killmoveDraft: [123] }, { killmoveDraft: ['<bad>'] },
+  ]) assert.equal(LabSave.decode(LabSave.encode(sampleState(bad), CONTENT), CONTENT).ok, false);
+});

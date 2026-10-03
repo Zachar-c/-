@@ -7,7 +7,7 @@ description: 铜皮蛊系列的第四转形态：铜皮蛊一到三转皆有，�
 date: 2026-09-28
 tags: [gu, defense, rank4, body-forging, skin-armor, series]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

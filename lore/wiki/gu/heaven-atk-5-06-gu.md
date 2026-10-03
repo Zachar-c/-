@@ -7,7 +7,7 @@ description: 天道仙蛊（原文曾误认作智道）：令蛊师直接询问�
 date: 2026-09-28
 tags: [gu, heaven-path, wisdom-path, xian-gu, lifespan-cost, rank-multi-timepoint, fang-yuan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

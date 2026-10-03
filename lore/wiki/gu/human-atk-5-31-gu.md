@@ -7,7 +7,7 @@ description: 六转信道仙蛊、盟誓类，上古时期十分出名，与山�
 date: 2026-09-28
 tags: [gu, information-path, xian-gu, oath, shadow-sect, boundary-entity]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

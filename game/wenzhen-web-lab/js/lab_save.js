@@ -41,6 +41,11 @@ globalThis.LabSave = (() => {
     if (typeof state.blood !== 'number' || !Number.isFinite(state.blood)) return true;
     if (!Array.isArray(state.shopSold)) return true;
     if (!Array.isArray(state.equipped)) return true;
+    const componentIds = (recipe) => Array.isArray(recipe)
+      && recipe.length <= 3 && recipe.every(id => typeof id === 'string' && /^[a-z0-9_]+$/.test(id));
+    if (state.killmoveDraft != null && !componentIds(state.killmoveDraft)) return true;
+    if (state.customMoveRecipes != null && (!Array.isArray(state.customMoveRecipes)
+      || !state.customMoveRecipes.every(recipe => componentIds(recipe) && recipe.length >= 2))) return true;
     if (!Array.isArray(state.journal)) return true;
     if (!Array.isArray(state.eventLog)) return true;
     if (typeof state.page !== 'string' || !state.page) return true;

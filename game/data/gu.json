@@ -3,8 +3,14 @@
     "id": "small_light_gu",
     "source": "novel",
     "source_class": "canon_driven_v1",
-    "canon_refs": ["CAN-SMALL-LIGHT-001", "CAN-SMALL-LIGHT-002"],
-    "canon_anchors": ["E:V1-009708", "E:V1-015710"],
+    "canon_refs": [
+      "CAN-SMALL-LIGHT-001",
+      "CAN-SMALL-LIGHT-002"
+    ],
+    "canon_anchors": [
+      "E:V1-009708",
+      "E:V1-015710"
+    ],
     "rank": 1,
     "feeding_cost": 1,
     "feeding_need": {
@@ -14,17 +20,16 @@
     "essence_cost": 1,
     "true_qi_cost": 1,
     "v1_effect": {
-      "kind": "strike",
-      "amount": 1,
-      "support_school": "light",
-      "support_bonus": 2,
-      "inspect": true
+      "kind": "support",
+      "target_gu_id": "moonlight_gu",
+      "multiplier": 2,
+      "nonStacking": true
     },
-    "buildRole": "Information",
+    "buildRole": "Support",
     "buildTags": [
-      "inspect",
       "support",
-      "info_answer"
+      "moonlight_amplifier",
+      "non_stacking"
     ],
     "slot_role": "scout",
     "combat": "reveal_hidden_bonus",
@@ -51,8 +56,12 @@
     "id": "moonlight_gu",
     "source": "novel",
     "source_class": "canon_driven_v1",
-    "canon_refs": ["CAN-SMALL-LIGHT-001"],
-    "canon_anchors": ["E:V1-001472"],
+    "canon_refs": [
+      "CAN-SMALL-LIGHT-001"
+    ],
+    "canon_anchors": [
+      "E:V1-001472"
+    ],
     "rank": 1,
     "feeding_cost": 1,
     "feeding_need": {
@@ -94,8 +103,14 @@
     "id": "moon_glow_gu",
     "source": "novel",
     "source_class": "canon_driven_v1",
-    "canon_refs": ["CAN-SMALL-LIGHT-002"],
-    "canon_anchors": ["E:V1-015710"],
+    "canon_refs": [
+      "CAN-SMALL-LIGHT-002"
+    ],
+    "canon_anchors": [
+      "E:V1-015710",
+      "E:V1-017150",
+      "E:V1-017154"
+    ],
     "rank": 2,
     "feeding_cost": 2,
     "feeding_need": {
@@ -105,14 +120,14 @@
     "essence_cost": 2,
     "v1_effect": {
       "kind": "strike",
-      "amount": 4,
-      "suppressWhenRevealed": true,
-      "suppress": true
+      "amount": 9,
+      "ignoreEvasion": true
     },
-    "buildRole": "Support",
+    "buildRole": "Core",
     "buildTags": [
-      "suppress",
-      "info_answer"
+      "high_output",
+      "true_qi_investment",
+      "stable_hit"
     ],
     "slot_role": "attack",
     "combat": "moonlight_strike",
@@ -135,7 +150,9 @@
     "core_depth": "hub",
     "branch_recipes": [
       "moon_shadow_locked"
-    ]
+    ],
+    "true_qi_cost": 4,
+    "effect_note": "原著月芒为月光+小光×2合炼的二转主攻，攻击三倍且射程不增；试玩伤9/真元4，稳定命中沿用既有月刃问题轴适配，不宣称原著必中或统一耗元公式。无信息压制。"
   },
   {
     "id": "moon_ray_gu",
@@ -202,24 +219,33 @@
     "school": "light",
     "role": "movement",
     "rarity": "rare",
-    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shift" },    "canon_anchors": ["E:V1-002648", "E:V1-026794"],    "effect_note": "月影蛊最擅隐藏，种入空窍压制真元使用（E:V1-002648/026794）；amount 走曲线投影"  },
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "shift"
+    },
+    "canon_anchors": [
+      "E:V1-002648",
+      "E:V1-026794"
+    ],
+    "effect_note": "月影蛊最擅隐藏，种入空窍压制真元使用（E:V1-002648/026794）；amount 走曲线投影"
+  },
   {
     "id": "vitality_grass_gu",
     "source": "novel",
-    "rank": 1,
-    "feeding_cost": 1,
+    "rank": 2,
+    "feeding_cost": 0,
     "feeding_need": {
-      "feed_points": 1
+      "feed_points": 0
     },
     "value": 3,
-    "essence_cost": 0,
+    "essence_cost": 2,
     "buildRole": "Resource",
     "buildTags": [
       "sustain",
       "heal"
     ],
     "slot_role": "logistics",
-    "combat": "vitality_grass_remedy",
+    "combat": "",
     "field_actions": [
       "remedy"
     ],
@@ -232,10 +258,70 @@
       "heal",
       "nature"
     ],
-    "school": "light",
+    "school": "wood",
     "role": "logistics",
     "rarity": "common",
-    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "heal" },    "canon_anchors": ["E:V1-017128"],    "effect_note": "九叶生机草蛊，山寨普及疗伤草蛊（E:V1-017128）；amount 走曲线投影"  },
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "production",
+      "amount": 1,
+      "output_gu_id": "vitality_leaf_gu"
+    },
+    "canon_anchors": [
+      "E:V1-016490",
+      "E:V1-016494",
+      "E:V1-017106",
+      "E:V1-017114"
+    ],
+    "effect_note": "二转九叶生机草耗真元催生一转生机叶，本体不作为主动回血按钮；试玩每节点整备一次、真元2产叶1，时间与成本为适配，非原著通用公式。"
+  },
+  {
+    "id": "vitality_leaf_gu",
+    "source": "novel",
+    "rank": 1,
+    "feeding_cost": 0,
+    "feeding_need": {
+      "feed_points": 0
+    },
+    "value": 2,
+    "essence_cost": 0,
+    "buildRole": "Resource",
+    "buildTags": [
+      "sustain",
+      "heal",
+      "consumable"
+    ],
+    "slot_role": "logistics",
+    "combat": "vitality_leaf_remedy",
+    "field_actions": [
+      "remedy"
+    ],
+    "synergy_hooks": [
+      "restore_health"
+    ],
+    "replace_value": 2,
+    "tags": [
+      "remedy",
+      "heal",
+      "nature"
+    ],
+    "school": "wood",
+    "role": "logistics",
+    "rarity": "common",
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "heal",
+      "amount": 3,
+      "consumable": true,
+      "recovery_per_node": true
+    },
+    "canon_anchors": [
+      "E:V1-016494",
+      "E:V1-016496",
+      "E:V1-016498"
+    ],
+    "effect_note": "生机叶一转消耗型，用后消失，一小时内再次使用无疗效；试玩恢复气血3，每节点限一次有效疗伤（节点折算时间），不宣称原著血量或时间公式。"
+  },
   {
     "id": "force_gu",
     "source": "novel",
@@ -315,15 +401,17 @@
     "value": 10,
     "essence_cost": 1,
     "v1_effect": {
-      "kind": "strike",
-      "amount": 2,
-      "armorBreak": 2,
-      "pierce": 2
+      "kind": "body_training",
+      "trigger": "out_of_combat",
+      "attribute": "attack",
+      "amount": 1,
+      "cap": 3,
+      "parameter_basis": "lab_existing_force_power_3"
     },
     "buildRole": "Transform",
     "buildTags": [
-      "armorBreak",
-      "pierce",
+      "body_investment",
+      "permanent_strength",
       "burst_setup"
     ],
     "slot_role": "power",
@@ -382,7 +470,28 @@
     "school": "earth",
     "role": "defense",
     "rarity": "rare",
-    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shield", "amount": 3 },    "canon_anchors": ["E:V1-009654"],    "effect_note": "皮甲系列（铁/铜/石/玉皮，E:V1-009654）；amount 沿用本库 combat_effects 先例"  },
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "maintained",
+      "amount": 3,
+      "upkeep_qi": 1,
+      "hit_qi": 2,
+      "defense_group": "jade_skin",
+      "modifiers": [
+        {
+          "attribute": "defense",
+          "amount": 3,
+          "effect_id": "jade_protection"
+        }
+      ],
+      "focus_cost": 1
+    },
+    "canon_anchors": [
+      "E:V1-009654",
+      "E:V1-016070"
+    ],
+    "effect_note": "持续灌入真元、承击增加耗元（E:V1-016070）；防御3/5、启动1/2、每回合维持1、每击2均为授权试玩参数，同类皮甲不叠加亦为试玩裁定；持续灌元占每回合操控余量1亦为试玩节奏适配，不是原著念头库存。"
+  },
   {
     "id": "white_jade_gu",
     "source": "novel",
@@ -413,7 +522,28 @@
     "school": "earth",
     "role": "defense",
     "rarity": "epic",
-    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shield", "amount": 5 },    "canon_anchors": ["E:V1-009986"],    "effect_note": "白豕蛊+玉皮蛊合炼成二转白玉蛊（E:V1-009986）；amount 沿用 combat_effects 先例"  },
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "maintained",
+      "amount": 5,
+      "upkeep_qi": 1,
+      "hit_qi": 2,
+      "defense_group": "jade_skin",
+      "modifiers": [
+        {
+          "attribute": "defense",
+          "amount": 5,
+          "effect_id": "jade_protection"
+        }
+      ],
+      "focus_cost": 1
+    },
+    "canon_anchors": [
+      "E:V1-009986",
+      "E:V1-016070"
+    ],
+    "effect_note": "持续灌入真元、承击增加耗元（E:V1-016070）；防御3/5、启动1/2、每回合维持1、每击2均为授权试玩参数，同类皮甲不叠加亦为试玩裁定；持续灌元占每回合操控余量1亦为试玩节奏适配，不是原著念头库存。"
+  },
   {
     "id": "stone_shell_gu",
     "source": "novel",
@@ -425,8 +555,28 @@
     "value": 5,
     "essence_cost": 1,
     "v1_effect": {
-      "kind": "shield",
-      "amount": 3
+      "kind": "maintained",
+      "amount": 3,
+      "upkeep_qi": 0,
+      "hit_qi": 0,
+      "defense_group": "jade_skin",
+      "modifiers": [
+        {
+          "attribute": "defense",
+          "amount": 3,
+          "effect_id": "stone_arms_guard"
+        },
+        {
+          "attribute": "attack",
+          "amount": 1,
+          "effect_id": "stone_arms_weight"
+        },
+        {
+          "attribute": "attackDelay",
+          "amount": 1,
+          "effect_id": "stone_arms_slow"
+        }
+      ]
     },
     "slot_role": "defense",
     "combat": "guard_against_hit",
@@ -446,7 +596,13 @@
     ],
     "school": "earth",
     "role": "defense",
-    "rarity": "common"
+    "rarity": "common",
+    "canon_anchors": [
+      "E:V1-011888",
+      "E:V1-011894",
+      "E:V1-011900"
+    ],
+    "effect_note": "原著：石臂坚硬、沉重迟缓（011888/011894/011900）；免费持存是Wiki推导非原文明文。授权试玩：启动真元1，防御3，拳脚+1且晚1回合结算，维持/承击0，直至停止/封印/战斗结束；皮甲形态互斥为试玩裁定。"
   },
   {
     "id": "blood_farewell_gu",
@@ -948,7 +1104,12 @@
     ],
     "source": "school_derived",
     "combat": "blood_healing_pattern",
-    "source_class": "school_derived",    "v1_effect": { "kind": "heal" },    "effect_note": "血针蛊名不在原著（0 命中）；kind 按 role，amount 走曲线投影"  },
+    "source_class": "school_derived",
+    "v1_effect": {
+      "kind": "heal"
+    },
+    "effect_note": "血针蛊名不在原著（0 命中）；kind 按 role，amount 走曲线投影"
+  },
   {
     "id": "blood_rec_2_24_gu",
     "rank": 2,
@@ -1201,7 +1362,9 @@
     "source": "novel",
     "combat": "bone_movement_pattern",
     "source_class": "school_derived",
-    "v1_effect": { "kind": "shift" },
+    "v1_effect": {
+      "kind": "shift"
+    },
     "effect_note": "骨翼蛊：翼=飞行位移名语义 + movement role 对齐（Tier B）；amount 走曲线投影"
   },
   {
@@ -1246,7 +1409,9 @@
     "source": "novel",
     "combat": "bone_defense_pattern",
     "source_class": "school_derived",
-    "v1_effect": { "kind": "shield" },
+    "v1_effect": {
+      "kind": "shield"
+    },
     "effect_note": "骨盾蛊：盾=护盾名语义 + defense role 对齐（Tier B）；amount 走曲线投影"
   },
   {
@@ -1262,7 +1427,12 @@
     ],
     "source": "school_derived",
     "combat": "bone_attack_pattern",
-    "source_class": "school_derived",    "v1_effect": { "kind": "strike" },    "effect_note": "骨蛊名在原著（白骨山野生）但机制无据；kind 按 role，amount 走曲线投影"  },
+    "source_class": "school_derived",
+    "v1_effect": {
+      "kind": "strike"
+    },
+    "effect_note": "骨蛊名在原著（白骨山野生）但机制无据；kind 按 role，amount 走曲线投影"
+  },
   {
     "id": "bone_atk_1_09_gu",
     "rank": 1,
@@ -1725,7 +1895,9 @@
     "source": "novel",
     "combat": "dream_defense_pattern",
     "source_class": "school_derived",
-    "v1_effect": { "kind": "shield" },
+    "v1_effect": {
+      "kind": "shield"
+    },
     "effect_note": "梦甲蛊：甲=护甲名语义 + defense role 对齐（Tier B）；amount 走曲线投影"
   },
   {
@@ -3975,8 +4147,13 @@
     "source": "novel",
     "combat": "gold_defense_pattern",
     "source_class": "canon_driven_v1",
-    "v1_effect": { "kind": "shield" },
-    "canon_anchors": ["E:V1-009612", "E:V1-009616"],
+    "v1_effect": {
+      "kind": "shield"
+    },
+    "canon_anchors": [
+      "E:V1-009612",
+      "E:V1-009616"
+    ],
     "effect_note": "皮甲系（铁/铜/石/玉/兽皮同一护防系列，M0 已核 9614–9618）；kind=shield 沿系列语义与石皮/玉皮先例；amount 走曲线投影"
   },
   {
@@ -3993,8 +4170,13 @@
     "source": "novel",
     "combat": "gold_defense_pattern",
     "source_class": "canon_driven_v1",
-    "v1_effect": { "kind": "shield" },
-    "canon_anchors": ["E:V1-009612", "E:V1-009616"],
+    "v1_effect": {
+      "kind": "shield"
+    },
+    "canon_anchors": [
+      "E:V1-009612",
+      "E:V1-009616"
+    ],
     "effect_note": "皮甲系铜皮蛊（M0 9614–9618 系列锚点）；kind=shield；amount 走曲线投影"
   },
   {
@@ -4011,8 +4193,13 @@
     "source": "novel",
     "combat": "gold_defense_pattern",
     "source_class": "canon_driven_v1",
-    "v1_effect": { "kind": "shield" },
-    "canon_anchors": ["E:V1-009612", "E:V1-009616"],
+    "v1_effect": {
+      "kind": "shield"
+    },
+    "canon_anchors": [
+      "E:V1-009612",
+      "E:V1-009616"
+    ],
     "effect_note": "古铜皮蛊：皮甲系铜皮上位变体（系列语义一致）；kind=shield；amount 走曲线投影"
   },
   {
@@ -5022,7 +5209,16 @@
     ],
     "source": "novel",
     "combat": "human_insight_pattern",
-    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "inspect" },    "canon_anchors": ["E:V3-120396", "E:V3-120404"],    "effect_note": "人祖传：自己蛊助人祖审视内心、认识自己、另辟新路；role attack→recon（canon 刷新）"  },
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "inspect"
+    },
+    "canon_anchors": [
+      "E:V3-120396",
+      "E:V3-120404"
+    ],
+    "effect_note": "人祖传：自己蛊助人祖审视内心、认识自己、另辟新路；role attack→recon（canon 刷新）"
+  },
   {
     "id": "human_atk_5_02_gu",
     "rank": 5,
@@ -6646,7 +6842,15 @@
     ],
     "source": "novel",
     "combat": "qi_guard_pattern",
-    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "shield" },    "canon_anchors": ["E:V2-058640"],    "effect_note": "硬气蛊：动用杀招防御下降，此蛊弥补短板（E:V2-058640）；role attack→defense（canon 刷新）"  },
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "shield"
+    },
+    "canon_anchors": [
+      "E:V2-058640"
+    ],
+    "effect_note": "硬气蛊：动用杀招防御下降，此蛊弥补短板（E:V2-058640）；role attack→defense（canon 刷新）"
+  },
   {
     "id": "qi_atk_5_02_gu",
     "rank": 5,
@@ -6834,7 +7038,12 @@
     ],
     "source": "school_derived",
     "combat": "qi_recon_pattern",
-    "source_class": "school_derived",    "v1_effect": { "kind": "inspect" },    "effect_note": "气纹霭蛊名不在原著（0 命中）；kind 按 role"  },
+    "source_class": "school_derived",
+    "v1_effect": {
+      "kind": "inspect"
+    },
+    "effect_note": "气纹霭蛊名不在原著（0 命中）；kind 按 role"
+  },
   {
     "id": "qi_log_3_15_gu",
     "rank": 3,
@@ -9727,7 +9936,12 @@
     ],
     "source": "school_derived",
     "combat": "water_attack_pattern",
-    "source_class": "school_derived",    "v1_effect": { "kind": "strike" },    "effect_note": "浪蛊名不在原著（唯一命中为音浪蛊 substring）；source novel→school_derived 修正"  },
+    "source_class": "school_derived",
+    "v1_effect": {
+      "kind": "strike"
+    },
+    "effect_note": "浪蛊名不在原著（唯一命中为音浪蛊 substring）；source novel→school_derived 修正"
+  },
   {
     "id": "water_atk_4_09_gu",
     "rank": 4,
@@ -11363,7 +11577,9 @@
     "source": "novel",
     "combat": "wood_healing_pattern",
     "source_class": "school_derived",
-    "v1_effect": { "kind": "heal" },
+    "v1_effect": {
+      "kind": "heal"
+    },
     "effect_note": "跳跳草蛊：草蛊疗伤系 + healing role 对齐（Tier B，转数未核名单在案）；amount 走曲线投影"
   },
   {
@@ -11379,7 +11595,15 @@
     ],
     "source": "novel",
     "combat": "wood_attack_pattern",
-    "source_class": "canon_driven_v1",    "v1_effect": { "kind": "strike" },    "canon_anchors": ["E:V1-016788"],    "effect_note": "青藤蛊：藤条十五米，当做鞭子甩劈撩扫（E:V1-016788）；amount 走曲线投影"  },
+    "source_class": "canon_driven_v1",
+    "v1_effect": {
+      "kind": "strike"
+    },
+    "canon_anchors": [
+      "E:V1-016788"
+    ],
+    "effect_note": "青藤蛊：藤条十五米，当做鞭子甩劈撩扫（E:V1-016788）；amount 走曲线投影"
+  },
   {
     "id": "wood_atk_5_06_gu",
     "rank": 5,
@@ -11408,7 +11632,9 @@
     "source": "novel",
     "combat": "wood_defense_pattern",
     "source_class": "school_derived",
-    "v1_effect": { "kind": "shield" },
+    "v1_effect": {
+      "kind": "shield"
+    },
     "effect_note": "木甲蛊：甲=护甲名语义 + defense role 对齐（Tier B）；amount 走曲线投影"
   },
   {
@@ -11453,7 +11679,9 @@
     "source": "novel",
     "combat": "wood_healing_pattern",
     "source_class": "school_derived",
-    "v1_effect": { "kind": "heal" },
+    "v1_effect": {
+      "kind": "heal"
+    },
     "effect_note": "草蛊：草蛊疗伤系（九叶生机草先例）+ healing role 对齐（Tier B）；amount 走曲线投影"
   },
   {
@@ -11883,12 +12111,22 @@
     "school": "ice",
     "rarity": "rare",
     "value": 8,
-    "tags": ["ice", "defense", "body"],
+    "tags": [
+      "ice",
+      "defense",
+      "body"
+    ],
     "source": "novel",
     "combat": "ice_muscle_guard",
     "source_class": "canon_driven_v1",
-    "passive_effect": { "kind": "armor", "amount": 2 },
-    "canon_anchors": ["E:V1-023066", "E:V1-023222"],
+    "passive_effect": {
+      "kind": "armor",
+      "amount": 2
+    },
+    "canon_anchors": [
+      "E:V1-023066",
+      "E:V1-023222"
+    ],
     "effect_note": "冰肌蛊语义已按 L0 裁决 A'⑥ 落地：passive_effect.armor=练成后常驻护甲（不占回合/不耗真元、可被 armorBreak 破），amount 2 沿用库内 armorValue 先例；无 v1_effect（被动非催动效果），role fallback 无从伪造"
   },
   {
@@ -11898,12 +12136,22 @@
     "school": "ice",
     "rarity": "rare",
     "value": 8,
-    "tags": ["ice", "attack", "transformation"],
+    "tags": [
+      "ice",
+      "attack",
+      "transformation"
+    ],
     "source": "novel",
     "combat": "frost_demon_transform",
     "semantics_pending": "ice_path",
-    "v1_effect": { "kind": "strike", "armorBreak": 2 },
-    "canon_anchors": ["E:V1-023110", "E:V1-023148"],
+    "v1_effect": {
+      "kind": "strike",
+      "armorBreak": 2
+    },
+    "canon_anchors": [
+      "E:V1-023110",
+      "E:V1-023148"
+    ],
     "effect_note": "霜妖蛊语义部分落地（L0 裁决 A'⑥）：破特定防御=armorBreak 2（现有 verb）；amount 走曲线投影（消费方接入时解析）；变身/自爆后置仍 pending——完成门禁未过，bai_ice_warden 维持 innate"
   }
 ]

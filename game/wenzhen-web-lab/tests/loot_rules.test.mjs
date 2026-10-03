@@ -80,3 +80,46 @@ test('P5 掉落派生：持蛊敌人被击败后，蛊_chance 命中首选其装
   });
   assert.equal(r4.rarity, 'rare');
 });
+
+test('discovery pool adds known cross-school Gu only from represented rarity buckets', () => {
+  const table = {
+    gu_chance_pct: 100,
+    gu_pool: { by_rarity: { rare: ['fire_atk_2_01_gu', 'stone_shell_gu'] }, weights: { rare: 1 } },
+  };
+  const guById = {
+    fire_atk_2_01_gu: { id: 'fire_atk_2_01_gu', rarity: 'rare' },
+    stone_shell_gu: { id: 'stone_shell_gu', rarity: 'rare' },
+    sword_atk_2_12_gu: { id: 'sword_atk_2_12_gu', rarity: 'rare' },
+    absent_bucket_gu: { id: 'absent_bucket_gu', rarity: 'epic' },
+  };
+  const options = {
+    tick: 0, tier: 'elite', guById,
+    discoveryPool: ['sword_atk_2_12_gu', 'unknown_rank_gu', 'absent_bucket_gu'],
+  };
+  let foundCrossSchool = false;
+  for (let seed = 1; seed <= 100; seed += 1) {
+    const result = rules.rollGuChoices(table, { ...options, seed });
+    assert.equal(result.guIds.length, 3);
+    assert.equal(new Set(result.guIds).size, result.guIds.length);
+    assert.ok(!result.guIds.includes('unknown_rank_gu'));
+    assert.ok(!result.guIds.includes('absent_bucket_gu'));
+    if (result.guIds.includes('sword_atk_2_12_gu')) foundCrossSchool = true;
+    assert.deepEqual(
+      [...result.guIds],
+      [...rules.rollGuChoices(table, { ...options, seed }).guIds],
+    );
+  }
+  assert.ok(foundCrossSchool, 'cross-school discovery candidate should be selectable');
+});
+
+test('discovery pool cannot bypass the Gu drop chance', () => {
+  const result = rules.rollGuChoices({
+    gu_chance_pct: 0,
+    gu_pool: { by_rarity: { rare: ['fire_atk_2_01_gu'] }, weights: { rare: 1 } },
+  }, {
+    seed: 1, tick: 0, tier: 'elite',
+    guById: { sword_atk_2_12_gu: { id: 'sword_atk_2_12_gu', rarity: 'rare' } },
+    discoveryPool: ['sword_atk_2_12_gu'],
+  });
+  assert.deepEqual([...result.guIds], []);
+});

@@ -7,7 +7,7 @@ description: 三转力道移动蛊，与直撞蛊成对：横向冲锋、能在�
 date: 2026-09-28
 tags: [gu, strength-path, force-path, movement, south-jiang, north-plain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

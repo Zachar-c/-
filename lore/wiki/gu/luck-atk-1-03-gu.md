@@ -7,7 +7,7 @@ description: 运道七转仙蛊：替蛊仙招灾引难，将地灾天劫从原�
 date: 2026-09-28
 tags: [gu, luck-path, sacrifice, xian-gu, calamity]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

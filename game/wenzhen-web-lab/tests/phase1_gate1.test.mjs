@@ -34,19 +34,28 @@ test('Gate 1 · three live common enemies expose three distinct problem axes', (
   assert.equal(axes.size, 3);
 });
 
-test('Gate 1 · four unfrozen verbs are live on component battleEffects', () => {
-  assert.equal(guById.small_light_gu.battleEffect.inspect, true);
+test('Gate 1 · targeted support and combat modifiers follow actual component battleEffects', () => {
+  assert.equal(guById.small_light_gu.battleEffect.target_gu_id, 'moonlight_gu');
+  assert.equal(guById.small_light_gu.battleEffect.inspect, undefined, '小光辅助不伪造侦查');
   assert.equal(guById.moonlight_gu.battleEffect.ignoreEvasion, true);
-  assert.equal(guById.moon_glow_gu.battleEffect.suppress, true);
-  const ab = guById.white_boar_strength_gu.battleEffect.armorBreak
-    || guById.white_boar_strength_gu.battleEffect.pierce;
-  assert.ok(ab >= 1, 'armorBreak/pierce semantic family present');
+  assert.equal(guById.moon_glow_gu.battleEffect.suppress, undefined, 'high-output moon blade does not invent information suppression');
+  assert.equal(guById.moon_glow_gu.battleEffect.amount, 3 * guById.moonlight_gu.battleEffect.amount);
+  const whiteBoar = guById.white_boar_strength_gu;
+  assert.equal(whiteBoar.battleEffect, null, 'body training does not add a combat effect');
+  assert.deepEqual(
+    { ...whiteBoar.effect },
+    {
+      kind: 'body_training', trigger: 'out_of_combat', attribute: 'attack', amount: 1,
+      cap: 3, parameter_basis: 'lab_existing_force_power_3',
+    },
+    'White Boar is an experimental permanent attack training effect, capped at +3',
+  );
 
   const p = planOf(['small_light_gu', 'moonlight_gu', 'moon_glow_gu', 'white_boar_strength_gu']);
-  assert.equal(p.inspect, true);
+  assert.equal(p.inspect, false, '小光不代替观察，不能免费读破信息规则');
   assert.equal(p.ignoreEvasion, true);
-  assert.equal(p.suppressCounter, true);
-  assert.ok(p.armorBreak >= 2);
+  assert.equal(p.suppressCounter, false);
+  assert.equal(p.armorBreak, 0, 'White Boar training is not substituted into a combat slot');
 });
 
 test('Gate 1 · armor axis — pierce OR chip are two defensible solutions', () => {

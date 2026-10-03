@@ -7,7 +7,7 @@ description: 智道念蛊系蛊虫，由星入智——以星光蛊为主材炼�
 date: 2026-09-30
 tags: [gu, 智道, 星道, 念蛊, 推算, 一次性消耗蛊]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---

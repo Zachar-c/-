@@ -7,7 +7,7 @@ description: 六转血道魔蛊、天下十大魔蛊第七，由五转血滴子�
 date: 2026-09-28
 tags: [gu, blood-path, immortal-gu, demon-gu, six-rank, clone-kin]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

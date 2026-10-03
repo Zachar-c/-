@@ -7,7 +7,7 @@ description: 一转皮甲系最珍稀防御蛊：皮肤化玉并撑起玉光护�
 date: 2026-09-28
 tags: [gu, defense, rank1, jade-skin, primeval-essence-cost]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

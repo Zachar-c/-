@@ -7,7 +7,7 @@ description: 三转移动类雷道蛊：凝聚一对雷光羽翼令蛊师短暂�
 date: 2026-09-30
 tags: [gu, combat, movement, thunder-path, fang-yuan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

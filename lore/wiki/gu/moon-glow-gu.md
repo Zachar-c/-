@@ -7,7 +7,7 @@ description: 月光蛊＋两只小光蛊合炼成的二转进攻蛊；月刃大�
 date: 2026-09-28
 tags: [gu, combat, refinement, ancient-moon-clan, moon-blade, feeding]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-MOONGLOW-001"
 schema: 2
 ---
@@ -202,7 +202,7 @@ graph LR
 本批来源只有根原文，没有 `notes:`／`memory:` 层转述进入本页事实区。旧版（2026-09-26）派生内容的处置登记如下，供审计：
 
 - 旧版《待核对》两条（月芒蛊月刃的"作用距离、消耗与外观细节未逐条核验"）本批已核清：射程见 `E:V1-017154`／`E:V1-024162`，消耗见 `E:V1-018640`／`E:V1-020174`，外观见 `E:V1-017472`。
-- 旧版 frontmatter 声明 `canon-index:CAN-SMALL-LIGHT-002`。该 CAN 条目（"小光蛊是可参与合炼的凡蛊"，`蛊真人-clean.txt:15708-15710`）描述的是**小光蛊**，`canon-index.md` 中并无"月芒蛊"条目；按本批规则本页不再声明该字段，缺口登记于《待核对》。
+- 旧版 frontmatter 声明 `canon-index:CAN-SMALL-LIGHT-002`。该 CAN 条目（"小光蛊是可参与合炼的凡蛊"，`EPUB chapter_0099 para_032`–`EPUB chapter_0099 para_033`）描述的是**小光蛊**，`canon-index.md` 中并无"月芒蛊"条目；按本批规则本页不再声明该字段，缺口登记于《待核对》。
 - `roster-3.md` 的 `moon_glow_gu` 与本页同锚 `E:V1-015710`（月芒蛊＝二转），两者一致，无需修订。
 
 ## 分析与解读

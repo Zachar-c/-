@@ -7,7 +7,7 @@ description: 八转仙蛊，红莲魔尊在自己仙窍中依当时心境炼成�
 date: 2026-09-28
 tags: [gu, xian-gu, refinement-path, regret, red-lotus, stone-lotus-island, fang-yuan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

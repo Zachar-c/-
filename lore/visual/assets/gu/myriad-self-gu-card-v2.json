@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "万我仙蛊",
+  "route": "/gu/myriads-self-immortal-gu",
+  "file": "myriad-self-gu-card-v2.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/myriads-self-immortal-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1778｜第七百四十二节：天庭来攻",
+    "line": 162442,
+    "excerpt": "此蛊体型修长，长达数丈，它形如蜈蚣，宛若赤铜浇筑"
+  },
+  "design_boundary": "数丈赤铜蜈蚣、额前双长须、左右各五千足为硬锚。图需表现密集万足的量级，不声称每根足可逐根核实，不能照搬悔蛊的足须替代。",
+  "prompt": "Edit ONLY leg density of supplied Myriad Self Gu card. Preserve the EXACT single red-copper centipede body, S curve, head with two long antennae, metallic light, grey bare ground, thin silver 5:7 frame and composition. It canonically has FIVE THOUSAND feet on each side, TEN THOUSAND total, far more than normal centipede feet. Current legs are individually large and sparse, only hundreds. Replace existing side leg arrays with dramatically FINER SMALLER denser true articulated copper micro-feet: packed in many parallel narrow rows/tiers along both full body sides, dense comb/brush borders with thousands-scale micro-leg tips. Near head a handful of larger front foot joints can be readable but most side fringe consists of tightly packed tiny jointed limb specks, many dozens per segment. Lower visible foot planes show short hard bent articulated feet with hooks, NOT transparent soft drifting filaments (Regret Gu). Whole dense feet remain red-copper and contact ground, not decorative silky hair, gills, giant bristles or a red aura. No extra new body or antennae, no changes to shell or lighting, no crop. Deliver one density-corrected card, preserve everything else.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用作万足密度的近似卡面；不声称精确逐足计数通过",
+    "visible_facts": [
+      "单一完整赤铜长蜈蚣与双长触须，密集多层细硬足连续覆盖两侧",
+      "v2足密度显著增加、仍为接地硬关节足，无悔蛊软透明须或额外身体"
+    ],
+    "risks": [
+      "足密度表达量级，不可从二维图逐根证实两侧各5000，严格数字还原需可计数模型",
+      "数丈尺度用砂石展示，未给外部绝对尺度标尺"
+    ]
+  }
+}

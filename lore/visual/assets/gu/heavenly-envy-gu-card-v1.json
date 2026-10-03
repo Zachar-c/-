@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "天妒仙蛊",
+  "route": "/gu/heaven-atk-5-03-gu",
+  "file": "heavenly-envy-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/heaven-atk-5-03-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_2160｜第一百六十九节：肝命大阵",
+    "line": 198891,
+    "excerpt": "仿佛是水晶所制的跳蚤，拳头大小，一直团成一团。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE FIST-sized CRYSTAL FLEA Gu, in gently relaxed extended state after refinement. Authentic side-on flea silhouette: small downward-curved head, laterally COMPRESSED broad arched segmented abdomen, compact thorax, six flea legs with exaggerated but anatomically natural hinged long rear jumping pair folded under body. Tiny antennae and eyes subdued, no cute face, smile or human mouth. Crystal-like clear slightly smoky nearly colorless biological body, defined segment boundaries and delicate ridges, realistic internal refraction and tiny surface highlights, not diamond jewellery, faceted gemstone beetle, glass toy with metal joints, spider or transparent centipede. No artificial cut gemstone facets, no glowing purple core, gold or crown. Side/three-quarter view exposes flea profile and folded rear leg mechanics, whole creature rests lightly on a plain smooth dark muted blue-grey ground plane without rocks or garden. Background softly shaded cool neutral and empty. One broad soft side light creates restrained crystalline transmission and thin pale highlights without blowing out body edges; shadow/caustic gives believable existence. Crystal material is mandatory original trait for this Gu only, do not add a magical aura or luminous shards. One complete silver frame, enough room around jumping legs.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "单一透明水晶跳蚤，侧扁拱背、节体与特化后足，可辨六肢",
+      "真实晶体薄厚与折射，无金饰符文或萌脸，完整银框"
+    ],
+    "risks": [
+      "结构细节和体色无硬锁，透明微褐属于设计",
+      "前方触角细长，较普通跳蚤生物特征略夸张"
+    ]
+  }
+}

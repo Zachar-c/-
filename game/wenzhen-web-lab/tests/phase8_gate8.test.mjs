@@ -108,7 +108,7 @@ test('Gate 8a · actionStructureFor takes no rank parameter; rank in context doe
 
 test('Gate 8b · build identity is unchanged across playerRank 1→5 when owned stays fixed', () => {
   const owned = {
-    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
+    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_leaf_gu: 1,
     jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
   };
   const baseline = buildIdentity({ owned, playerRank: 1 });
@@ -123,7 +123,7 @@ test('Gate 8b · build identity is unchanged across playerRank 1→5 when owned 
 
 test('Gate 8b · adding moon_glow_gu changes the identity (signature is not a constant)', () => {
   const owned = {
-    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
+    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_leaf_gu: 1,
     jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
   };
   assert.equal(rules.kitCoverage('kit_info_suppress', owned, guById).ok, false, 'info kit incomplete at baseline');

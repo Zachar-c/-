@@ -7,7 +7,7 @@ description: 方源对立面按威胁层级与弧线的总表：个人恩怨→�
 date: 2026-09-25
 tags: [character, enemy, threat, navigation]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
@@ -31,8 +31,8 @@ schema: 2
 
 ## 原著明确内容
 
-- 天意栽培方源的动机：天意为阻止幽魂魔尊逆天炼至尊仙胎蛊，"不惜栽培'天外之魔'方源并把他送回五百年前" `蛊真人-clean.txt:337628` 附近（笔记 H2 转述，见《资料整理》）。
-- 无极魔尊对永生的判词与失败（`蛊真人-clean.txt:421604`–`421622` 已核，[永生](../themes/immortality.md)）——体系层敌人"不可战胜者"的实证。
+- 天意栽培方源的动机：天意为阻止幽魂魔尊逆天炼至尊仙胎蛊，"不惜栽培'天外之魔'方源并把他送回五百年前" `EPUB chapter_1837 para_061` 附近（笔记 H2 转述，见《资料整理》）。
+- 无极魔尊对永生的判词与失败（`EPUB chapter_2235 para_049`–`EPUB chapter_2235 para_058` 已核，[永生](../themes/immortality.md)）——体系层敌人"不可战胜者"的实证。
 
 ## 资料整理
 

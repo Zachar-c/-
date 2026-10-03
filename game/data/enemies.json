@@ -1448,9 +1448,9 @@
       "label": "驱熊扑击",
       "damage": 1,
       "speed": 1,
-      "guRefs": [
-        "white_boar_strength_gu"
-      ]
+      "guRefs": [],
+      "attackSource": "innate",
+      "mechanism_note": "驱熊扑击是兽体攻击；白豕蛊用于战前永久力量投资，不在此招中直接造成伤害。伤害1沿用现有试玩参数。"
     },
     "evasionBreakpoint": 1,
     "reactions": [

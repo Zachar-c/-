@@ -7,7 +7,7 @@ description: 气道防御蛊：动用杀招时防御下降，硬气蛊以无形�
 date: 2026-09-28
 tags: [gu, qi, defense, qi-path, killer-move-support, rank-unstated]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-QI-001"
 schema: 2
 ---

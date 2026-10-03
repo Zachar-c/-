@@ -12,6 +12,7 @@ vm.runInContext(
   dataContext,
 );
 const data = dataContext.DATA;
+const sourceRecipes = JSON.parse(fs.readFileSync(new URL('../../data/refinement_recipes.json', import.meta.url), 'utf8')).recipes;
 const rulesContext = vm.createContext({});
 vm.runInContext(fs.readFileSync(new URL('../js/gu_rules.js', import.meta.url), 'utf8'), rulesContext);
 const rules = rulesContext.GuRules;
@@ -19,16 +20,16 @@ const guById = Object.fromEntries(data.gu.map((g) => [g.id, g]));
 const recipes = rules.liveRecipes(data.recipes);
 
 const startOwned = {
-  moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
+  moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_leaf_gu: 1,
   jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
 };
 
-test('Gate 4 · live graph has ≥1 real fork node with 2 destinations', () => {
+test('Gate 4 · live graph has a real non-moon fork with 2 destinations', () => {
   const forks = rules.forkGroups(data.recipes);
   assert.ok(forks.length >= 1, 'need at least one fork');
-  const moon = forks.find((f) => f.branches.length >= 2);
-  assert.ok(moon, 'need a two-destination fork');
-  const outs = new Set(moon.branches.map((b) => b.output));
+  const fork = forks.find((f) => f.forkId === 'fork_jade_boar' && f.branches.length >= 2);
+  assert.ok(fork, 'need the live jade/boar two-destination fork');
+  const outs = new Set(fork.branches.map((b) => b.output));
   assert.ok(outs.size >= 2, 'destinations must be different outputs');
 });
 
@@ -44,22 +45,52 @@ test('Gate 4 · fork branches are not just numeric deltas', () => {
   }
 });
 
-test('Gate 4 · choosing one branch closes or delays the other future', () => {
+test('Gate 4 · moon recipes preserve canon boundaries and leave missing branches unimplemented', () => {
   const moon = data.recipes.find((r) => r.id === 'moonlight_glow');
-  const ray = data.recipes.find((r) => r.id === 'moon_ray_forged');
-  assert.ok(moon && ray);
-  assert.ok((moon.closes || []).length || (moon.delays || []).length);
-  assert.ok((ray.closes || []).length || (ray.delays || []).length);
-  assert.deepEqual([...(moon.inputs || [])].sort(), [...(ray.inputs || [])].sort());
-  const afterA = { ...startOwned };
-  for (const id of moon.inputs) afterA[id] -= 1;
-  afterA[moon.output] = (afterA[moon.output] || 0) + 1;
-  assert.equal(Number(afterA.small_light_gu || 0), 0, 'inputs consumed — other branch unreachable');
-  assert.equal(Number(afterA.moon_ray_gu || 0), 0);
+  const ray = sourceRecipes.find((r) => r.id === 'moon_ray_forged');
+  const oldFixed = sourceRecipes.find((r) => r.id === 'moon_glow_fixed');
+  assert.ok(moon && ray && oldFixed);
+  assert.deepEqual([...moon.inputs].sort(), ['moonlight_gu', 'small_light_gu', 'small_light_gu'].sort());
+  assert.equal(moon.output, 'moon_glow_gu');
+  assert.equal(moon.branchAxis, 'burst');
+  assert.match(moon.branchLabel, /月芒.*(高伤|爆发)/);
+  assert.equal(moon.stoneCost, 10, '10 stones is a public trial budget, not a canon fact');
+  assert.equal(moon.forkId, null);
+  assert.deepEqual([...moon.closes], []);
+  assert.deepEqual([...moon.delays], []);
+  assert.deepEqual(ray.input_gu_ids, ['moonlight_gu', 'small_light_gu']);
+  assert.equal(ray.output_gu_id, 'moon_ray_gu');
+  assert.equal(ray.retired, true, '月痕 requires 痕石蛊; range behavior is not implemented here');
+  assert.equal(oldFixed.retired, true, 'keep the superseded canon recipe as history');
+  assert.ok(!recipes.some((r) => ['moon_ray_forged', 'moon_glow_fixed'].includes(r.id)));
 });
 
-test('Gate 4 · same start, forge A vs B diverge in kit / matchup within 3 fights', () => {
-  const sigs = rules.forgeBranchSignatures('fork_moonlight_small', data.recipes, {
+test('Gate 4 · moon-glow forge is disabled at 9 stones and available at 10', () => {
+  const alchemyContext = vm.createContext({
+    DATA: data,
+    GuRules: rules,
+    GU_BY_ID: guById,
+    state: { owned: { moonlight_gu: 1, small_light_gu: 2 }, wild: {}, stones: 9, qi: 20 },
+    effectText: () => '',
+  });
+  vm.runInContext(
+    fs.readFileSync(new URL('../js/alchemy.js', import.meta.url), 'utf8') + ';globalThis.renderAlchemy = renderAlchemy;',
+    alchemyContext,
+  );
+  const htmlAt = (stones) => {
+    alchemyContext.state.stones = stones;
+    const root = { innerHTML: '' };
+    alchemyContext.renderAlchemy(root);
+    return root.innerHTML.match(/<div class="recipe[\s\S]*?data-forge="moonlight_glow"[\s\S]*?<\/div>/)?.[0] || '';
+  };
+  assert.match(htmlAt(9), /<button disabled data-forge="moonlight_glow">/);
+  assert.match(htmlAt(9), /元石不足/);
+  assert.match(htmlAt(10), /<button  data-forge="moonlight_glow">/);
+  assert.doesNotMatch(htmlAt(10), /元石不足/);
+});
+
+test('Gate 4 · same start, live jade/boar branches diverge in build future', () => {
+  const sigs = rules.forgeBranchSignatures('fork_jade_boar', data.recipes, {
     owned: startOwned,
     guById,
     killMoves: data.killMoves,
@@ -67,17 +98,7 @@ test('Gate 4 · same start, forge A vs B diverge in kit / matchup within 3 fight
   assert.equal(sigs.length, 2);
   assert.notEqual(sigs[0].signature, sigs[1].signature, 'A/B must diverge immediately');
 
-  const infoKit = rules.actionStructureFor('kit_info_suppress', { problemAxis: 'info' });
-  const burstKit = rules.actionStructureFor('kit_pierce_burst', { problemAxis: 'armor' });
-  assert.notEqual(infoKit.signature, burstKit.signature);
-
-  const jadeSigs = rules.forgeBranchSignatures('fork_jade_boar', data.recipes, {
-    owned: startOwned,
-    guById,
-    killMoves: data.killMoves,
-  });
-  assert.equal(jadeSigs.length, 2);
-  assert.notEqual(jadeSigs[0].signature, jadeSigs[1].signature);
+  assert.notEqual(sigs[0].signature, sigs[1].signature);
 });
 
 test('Gate 4 · products enter Phase 1 problem system (not pure stat sticks)', () => {
@@ -88,7 +109,12 @@ test('Gate 4 · products enter Phase 1 problem system (not pure stat sticks)', (
     assert.ok(tags.length > 0 || role !== 'Core' || (guById[id].battleEffect || {}).kind !== 'strike',
       `${id} should map to a solution role/verb`);
   }
-  assert.equal(guById.moon_glow_gu.battleEffect.suppress, true);
+  assert.equal(guById.moon_glow_gu.buildRole, 'Core');
+  assert.equal(guById.moon_glow_gu.battleEffect.kind, 'strike');
+  assert.equal(guById.moon_glow_gu.battleEffect.amount, 9);
+  assert.equal(guById.moon_glow_gu.battleEffect.ignoreEvasion, true);
+  assert.equal(guById.moon_glow_gu.battleEffect.suppress, undefined);
+  assert.equal(guById.moon_glow_gu.battleEffect.suppressWhenRevealed, undefined);
   const insight = rules.gainInsight('moon_ray_gu', {
     owned: { ...startOwned, moon_ray_gu: 1 },
     recipes,

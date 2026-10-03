@@ -7,7 +7,7 @@ description: 剑道穿刺性攻击蛊：指尖射出一道淡白色半透明剑�
 date: 2026-09-28
 tags: [gu, combat, sword-path, wild-gu]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

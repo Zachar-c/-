@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "浪迹天涯仙蛊",
+  "route": "/gu/water-rec-5-04-gu",
+  "file": "worldly-wave-trace-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/water-rec-5-04-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0642｜第二百三十六节：方源VS巨阳意志（续）",
+    "line": 59675,
+    "excerpt": "此蛊宛若水母，小如婴儿拳头，包裹着一颗青提仙元，徐徐吞化。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE small JELLYFISH-shaped Gu, baby-fist size canonical. Thin translucent softly domed bell, one delicate lower fringe, modest soft trailing filaments dangling naturally from underneath; closed single bell form not mushrooms, octopus head, squid, sea anemone or cluster of jellyfish. Light mostly colorless pearl-grey soft living gel, thin bell edge and volumetric transmission, very faint blue-grey shaded body (colors design). Through bell a single small dull GRAPE-GREEN essence bead subtly shows inside, wrapped by body rather than a huge radioactive core. It is the ingested essence context, not a second Gu or jewel. Whole entity gently suspended in calm dark watery blue-grey air/space, no ocean panorama or storm, no huge wave, no characters. Body in central lower middle ~55% width, complete trailing feelers visible and softly bent, smooth gel texture unlike paper or jade, subtle waterlike translucency. Soft ambient side/back lighting creates believable thickness, edges gently luminous from environment but not neon bioluminescence. Backdrop quiet dim slate blue gradient with subtle depth, no large bokeh circles, golden ornaments or reference stone floor. A fragile drifting gel Gu made real, not a cute umbrella face.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "单一水母体，透明胶质伞缘，垂软触丝，伞内有青绿色小仙元",
+      "深蓝空域中主体清晰，无巨浪场景、拟人脸或固体晶饰"
+    ],
+    "risks": [
+      "触丝数量和乳白胶质颜色为设计，不是原文定值",
+      "环境漂浮微粒略多，但未盖住主体"
+    ]
+  }
+}

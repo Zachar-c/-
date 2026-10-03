@@ -21,7 +21,7 @@ const rules = ctx.GuRules;
 const guById = Object.fromEntries(data.gu.map((g) => [g.id, g]));
 
 const startOwned = {
-  moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
+  moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_leaf_gu: 1,
   jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
 };
 

@@ -7,7 +7,7 @@ description: 一转光道辅助蛊；双蛊同催令月刃体积与攻击力各�
 date: 2026-09-28
 tags: [gu, support, light, synergy, rank1]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-SMALL-LIGHT-001"
   - "canon-index:CAN-SMALL-LIGHT-002"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"

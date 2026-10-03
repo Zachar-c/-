@@ -1,6 +1,22 @@
 {
  "offers": [
   {
+   "id": "purchase_vitality_leaf",
+   "kind": "purchase",
+   "card_key": "purchase.vitality_leaf",
+   "gu_id": "vitality_leaf_gu",
+   "stone_cost": 3,
+   "tier": 1
+  },
+  {
+   "id": "purchase_vitality_grass",
+   "kind": "purchase",
+   "card_key": "purchase.vitality_grass",
+   "gu_id": "vitality_grass_gu",
+   "stone_cost": 10,
+   "tier": 2
+  },
+  {
    "id": "soul_pill",
    "kind": "soul_boost",
    "card_key": "soul_pill",

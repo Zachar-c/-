@@ -7,7 +7,7 @@ description: 道痕的本质定义、七种取得途径（含增益放大蛊）�
 date: 2026-09-26
 tags: [rules, dao-marks, immortal-aperture, combat]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

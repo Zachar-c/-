@@ -7,7 +7,7 @@ description: 「骨蛊」在原文只是白骨山骨系野生蛊的泛称（全�
 date: 2026-09-28
 tags: [gu, bone, generic-term, white-bone-mountain, body-modification]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-BONE-001"
 schema: 2
 ---

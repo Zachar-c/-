@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-02",
+  "name": "三百年寿蛊",
+  "wiki_id": "heaven_atk_5_07_gu",
+  "status": "approved_by_user",
+  "file": "lifespan-gu-300-year-card-v1.png",
+  "generation_tool": "built-in image_gen",
+  "intent": "从零生成新对象，以已验收悔蛊作卡框、画幅和物质表现参考，不复制本体、配色与背景。",
+  "reference": "regret-gu-card-v3.png",
+  "source_paths": [
+    "lore/wiki/gu/heaven-atk-5-07-gu.md",
+    "lore/visual/dossiers/gu/lifespan_gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0403｜第二百零三节：一切皆在我掌控之中",
+    "line": 37133,
+    "excerpt": "这只三百年寿蛊，仿佛是参须，如蛇般盘成一圈，粗糙沧桑。"
+  },
+  "design_boundary": "本图选三百年个案形态，不将其推广为所有寿蛊唯一形态；转数未明，不标五转。灰棕色、土面、根须细节、光照为美术推断；主体为根状蛊，不画真蛇、植物人或普通甲虫。",
+  "prompt": "Use case: stylized-concept.\nAsset type: 《问真》 single Gu collectible card, portrait 5:7.\nCreate a NEW card for 三百年寿蛊 (three-hundred-year Lifespan Gu), NOT an edit of the reference creature.\nInput image role: the supplied approved Regret Gu card is ONLY reference for the exact thin silver double-line rounded rectangular frame with restrained curled corners, card proportions, subdued presentation, physically credible materials and light. Do NOT copy its creature, papery segments, feelers, white palette or stone floor. Retain the understated, solemn realism, not the earlier cute garden card style.\nSubject, source-backed appearance: ONE discrete coiled root-like Gu, appearing like an ancient ginseng root or weathered old tree root, rough and worn with age, coiled into a single irregular circle like a resting snake. It remains a woody/root-shaped object, NOT an actual snake, not a beetle and not an anthropomorphic ginseng man. A tapering continuous main root curls into one loop; a few asymmetrical short fine rootlets emerge organically. No serpent head, eyes, mouth, legs or separate creatures. The object must read as ONE complete distinctive aged curved root, not a heap of disconnected sticks, not an upright bonsai.\nMaterial: dry muted umber-grey wood, deep irregular grooves, aged wrinkles, twisted fibres, subtle knots, thin cracked outer layers and worn ends, convincingly tactile. Dull, not polished, precious without jewel decoration. The main root has modest thickness variation; the loop and organic twist are the visual identity. It should look neglected and ancient despite its extraordinary value. NO green tissue, leaves, flowers, fresh sprouts, crystal, gold metal, skin or paper body.\nComposition: whole coiled root occupies central/lower-middle card, about 60% frame width, complete rootlet tips visible with breathing room inside border. Slightly oblique close observation showing both loop silhouette and relief texture. Subject is set on muted dry grey-brown fine earthen ground, unobtrusive fine grains with credible contact shadows. The rear ground softly recedes into near-black unfocused empty space, not a landscape. The empty upper area modest, visual emphasis on the root. Frame is thin polished silver and subordinate to image, matching the approved reference's rounded corners/double fine lines.\nLighting: physically believable quiet raking sidelight from upper left reveals aged fibres and root thickness; muted grey-brown illuminated wood against deeper cool brown shadows. Extremely subtle atmospheric softness, true spatial falloff, subject crisp, background gently soft. Dreamlike feeling arises from strange root silhouette and quiet real lighting, NOT from glowing magic effects. No sunset, green forest, rays from sky, excessive particles, mist swallowing object or sparkle.\nConstraints: full finished 5:7 portrait card, matching supplied reference frame weight, fully in shot on all four edges, no exterior mockup, no printed title, number, rank, text, watermark or symbol. Do not add an extra narrative tableau, hand, person, container, pedestal, mountain or temple. Exact body colour, earthen staging, rootlet count and lighting are art interpretation, but rough old root and one coiled circle are nonnegotiable. It should be a calm physically believable impossible-world collectible, never cute, glamorous or ornamental. No gold-green life aura.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用作寿蛊个案候选；用户已认可当前质量",
+    "visible_facts": [
+      "完整竖版银色细双线圆角框，与已验收悔蛊保持格式。",
+      "灰棕色粗糙老根盘成单圈，纹理干枯、纤维扭曲、根须不规则；无眼、腿、叶或真蛇头。",
+      "深色土面、侧光和接触阴影体现实体厚度，无金绿生命圣光或可爱化。"
+    ],
+    "risks": [
+      "根体较粗且被细根交缠，较原文参须比喻更厚重；厚度与交缠细节为美术设计。",
+      "仍偏自然观察式呈现；是否达到用户期待的幻想感需由用户判断。"
+    ],
+    "user_approved": true,
+    "integration_allowed": false
+  },
+  "user_approved": true,
+  "integration_allowed": false,
+  "dimensions": {
+    "width": 1060,
+    "height": 1484,
+    "aspect_ratio": "5:7"
+  },
+  "approval": {
+    "date": "2026-10-02",
+    "statement": "认可你的质量了，可以进行持续交付，直到生成完毕。"
+  }
+}

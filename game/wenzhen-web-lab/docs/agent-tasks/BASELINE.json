@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-10-03T08:15:07.116179+00:00",
+  "repo": "/home/usrs/dev/codex-test",
+  "status": "uncommitted_worktree",
+  "files": {
+    "game/wenzhen-web-lab/js/main.js": "ed058716bc3f3b665568ea363a8a7674a68c54de0bb011eb7a0c57eb2a2c62b6",
+    "game/wenzhen-web-lab/js/battle.js": "4d558e324bb3c040b5b730a1d809d6cda645a3520aedc42588ac3416d440e56f",
+    "game/wenzhen-web-lab/js/lab_save.js": "308591db7a3b5172c937e40058a50d225603401e7b3fc60fefe4edbcb6c1d343",
+    "game/wenzhen-web-lab/js/gu_rules.js": "ba6487d1bad35e931f6c5c908afe6adc2abf21cdcbf52bb795382374954ea40f",
+    "game/wenzhen-web-lab/js/killmove.js": "51cc66997f2b32755d0c7105d7031c91bbf430aeea0aab5cc069f72382de0e89",
+    "game/wenzhen-web-lab/js/journey.js": "d703b59272e203b6b8af040e5e6603a87a23b75e3c1148037433ffc75c447848",
+    "game/wenzhen-web-lab/js/shop_rules.js": "0c5aabb802a97db28578ada8412cafc7f01236d50f729b9b989a363bde5acc4c",
+    "game/wenzhen-web-lab/js/loot_rules.js": "7d8c5d9f3213a14807a1f7b23b2ca1b7e1e8fdc4125c3419eeec171f76ae75c3",
+    "game/wenzhen-web-lab/tools/build_data.mjs": "f730f17c4a861dcc20eb7c3061af5680397955828f04c14b5195046803cb72bb",
+    "game/wenzhen-web-lab/js/data.js": "74d6d1c3e503c49d7a81500764845e1cccdfea9726f0ce4e441536f61ec08f9f",
+    "game/wenzhen-web-lab/tests/lab_combat.test.mjs": "96ad86178d37f8f403b001c742abb526c21bdeaa9a632a56c88ad4d096b34afa",
+    "game/wenzhen-web-lab/tests/lab_save.test.mjs": "96f55bf45b9f6db8fa4633a4212addf9fad29177d0d4c9dc8da38457eba1040f",
+    "game/wenzhen-web-lab/tests/lab_transactions.test.mjs": "4a5496b17013713ad4b8f9a875edb6de58dd155b4c7f0a5d022d0fc4b8096ac1",
+    "game/wenzhen-web-lab/tests/gu_rules.test.mjs": "46321d40f66f8672500426492b08000c719e5785d2291b39e55d58df1c5c64dd",
+    "game/wenzhen-web-lab/tests/conformance.test.mjs": "29720e1b06a0aa66422aa949c73762ea2187f60a7f9892e008199540e42074c0",
+    "game/wenzhen-web-lab/tests/phase7_gate7.test.mjs": "fdd241571ef4b27345aeb57e30ee1b260b289a0b063d8701d55563c677e09d76"
+  }
+}

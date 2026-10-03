@@ -7,7 +7,7 @@ description: 弧十（225001–270000）枢纽事件页——方源冒名武遗�
 date: 2026-09-30
 tags: [event, reverse-flow-river, shadow-sect, south-jiang]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/F-225001-270000.md"
   - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/F2b-240001-256650-补读.md"

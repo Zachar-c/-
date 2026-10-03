@@ -386,7 +386,6 @@
   "moon_glow_gu",
   "moon_ray_gu",
   "moon_shadow_gu",
-  "vitality_grass_gu",
   "light_atk_1_01_gu",
   "light_atk_3_02_gu",
   "light_atk_5_03_gu",
@@ -840,6 +839,8 @@
   "wood_rec_2_37_gu",
   "wood_log_2_38_gu",
   "wood_atk_3_39_gu",
-  "wood_atk_3_40_gu"
+  "wood_atk_3_40_gu",
+  "vitality_grass_gu",
+  "vitality_leaf_gu"
  ]
 }

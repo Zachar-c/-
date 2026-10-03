@@ -4,7 +4,7 @@ kind: world
 name: 南疆
 aliases: [南疆修行界, 南疆地理]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-NANJIANG-001"
   - "canon-index:CAN-NANJIANG-002"
   - "canon-index:CAN-NANJIANG-003"

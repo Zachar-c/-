@@ -13,12 +13,12 @@ globalThis.RunFlow = (() => {
 
   function stageLabel(rank, stageIndex) {
     const safeRank = Math.max(1, Math.min(5, Number(rank) || 1));
-    const safeStage = Math.max(0, Math.min(3, Number(stageIndex) || 0));
+    const safeStage = stageIndexFor(stageIndex);
     return `${safeRank} 转${STAGE_LABELS[safeStage]}`;
   }
 
-  function stageIndexFor(rank) {
-    return Math.max(0, Math.min(3, Number(rank) || 0));
+  function stageIndexFor(stageIndex) {
+    return Math.max(0, Math.min(3, Number(stageIndex) || 0));
   }
 
   function pickId(items, seed, salt, tick = 0) {
@@ -258,7 +258,7 @@ globalThis.RunFlow = (() => {
     owned = {},
   } = {}, config = {}) {
     const safeRank = Math.max(1, Math.min(5, Number(rank) || 1));
-    const safeStage = Math.max(0, Math.min(3, Number(stageIndex) || 0));
+    const safeStage = stageIndexFor(stageIndex);
     const aptitudeOrder = config.aptitudeOrder || ['ding', 'bing', 'yi', 'jia'];
     const currentApt = aptitudeOrder.indexOf(String(aptitude));
     const smallCosts = config.smallBreakthroughCosts || {};

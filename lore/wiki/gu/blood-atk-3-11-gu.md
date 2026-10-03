@@ -7,7 +7,7 @@ description: 二转月芒蛊＋血气蛊合炼而成的三转月系攻击蛊；�
 date: 2026-09-28
 tags: [gu, combat, blood-path, moonlight-lineage, upkeep]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

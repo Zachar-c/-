@@ -7,7 +7,7 @@ description: 二转野生增力蛊，与背甲蛊同出雄鳄王尸身；以鳄�
 date: 2026-09-28
 tags: [gu, blood-path, strength-line, wild-gu, feeding-cost, beast-force]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

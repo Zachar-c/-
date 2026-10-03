@@ -47,7 +47,8 @@ class Cdp {
     ws.onmessage = (ev) => {
       const m = JSON.parse(ev.data);
       if (m.id && this.pending.has(m.id)) {
-        const { resolve, reject } = this.pending.get(m.id);
+        const { resolve, reject, timeout } = this.pending.get(m.id);
+        clearTimeout(timeout);
         this.pending.delete(m.id);
         m.error ? reject(new Error(JSON.stringify(m.error))) : resolve(m.result);
       } else if (m.method === 'Runtime.consoleAPICalled') {
@@ -65,8 +66,9 @@ class Cdp {
     if (sessionId) msg.sessionId = sessionId;
     this.ws.send(JSON.stringify(msg));
     return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject });
-      setTimeout(() => {
+      const pending = { resolve, reject };
+      this.pending.set(id, pending);
+      pending.timeout = setTimeout(() => {
         if (this.pending.has(id)) {
           this.pending.delete(id);
           reject(new Error(`timeout: ${method}`));
@@ -208,6 +210,10 @@ export async function openLab(options = {}) {
       // 只读完整可序列化 state（main.js __labSnapshot）。
       const value = await evalJs(`(typeof __labSnapshot === 'function') ? __labSnapshot() : null`);
       return value;
+    },
+    // 只读可见界面文案，不调用领域操作或注入状态。
+    async text(selector) {
+      return evalJs(`document.querySelector(${JSON.stringify(selector)})?.innerText || ''`);
     },
     async bootInfo() {
       const value = await evalJs(`(typeof __labBootInfo === 'function') ? __labBootInfo() : null`);

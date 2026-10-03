@@ -7,7 +7,7 @@ description: 《人祖传》人道蛊：自人有生命起便居于其身、寄�
 date: 2026-09-28
 tags: [gu, human-path, renzu-legend, self-gu, soul-companion]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-SELF-001"
 schema: 2
 ---

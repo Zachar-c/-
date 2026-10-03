@@ -7,7 +7,7 @@ description: game/data/gu.json 中 270 个原著来源蛊的转数层精蒸馏�
 date: 2026-09-26
 tags: [gu, roster, game-bridge, verification]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

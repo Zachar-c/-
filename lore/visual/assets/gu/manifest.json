@@ -1,0 +1,148 @@
+{
+  "date": "2026-10-02",
+  "current_edit": "regret-gu-card-v3-edit.json",
+  "scope": "停止人物；优先补 Wiki 已有但缺专属图片的蛊虫。场景为后续方向，未在本批展开。",
+  "status": "reliable_generation_complete_with_explicit_deferrals",
+  "delivery_index": "DELIVERY.md",
+  "selected_card_count": 31,
+  "new_objects_this_batch": 28,
+  "explicit_deferrals": 19,
+  "approved_art": "regret-gu-card-v3.png",
+  "historical_next_candidate_record": "landscape-as-before-gu-card-v1.json",
+  "historical_previous_candidate_record": "lifespan-gu-300-year-card-v1.json",
+  "audit": {
+    "file": "missing-art-audit.json",
+    "wiki_gu_pages": 92,
+    "displayed": 36,
+    "not_displayed": 56,
+    "not_displayed_with_known_sources": 6,
+    "no_named_source_found": 50
+  },
+  "generation_tool": "built-in image_gen",
+  "candidates": [
+    {
+      "id": "regret_gu",
+      "wiki_id": "human_atk_5_34_gu",
+      "name": "悔蛊",
+      "status": "user_prefers_subject_style_not_final_card",
+      "file": "regret-gu-object-v1.png",
+      "asset_role": "object_art",
+      "source_paths": [
+        "lore/wiki/gu/human-atk-5-34-gu.md",
+        "lore/visual/dossiers/gu/regret_gu.md"
+      ],
+      "evidence": {
+        "source": "source/蛊真人-epub-canon.txt",
+        "chapter": "chapter_1697｜第六百六十节：我后悔了",
+        "line": 154690,
+        "excerpt": "形如蜈蚣，浑身苍白，仿佛纸质",
+        "hard_constraints": [
+          "蜈蚣形",
+          "苍白近似纸质",
+          "百足被半透明悠悠飘荡的须取代"
+        ]
+      },
+      "design_boundary": "石面背景、近景、光照和身体弯曲是美术设计；不锁正文未给出的绝对尺寸。不推断道属、不将游戏id内的5转当原著转数（正文八转）。",
+      "references": [],
+      "prompt": "Use case: stylized-concept\nAsset type: 《蛊真人》Wiki的悔蛊本体图，单对象正方形图，非卡牌UI，非人物图。\nPrimary request: 从零创作八转悔蛊。真实的幻想世界：一只现实中不存在、却以可信光影和材质存在的奇异生命。主体独特、安静、脆弱而令人不安，不用花哨装饰制造高级感。\nSubject and hard constraints: 一只完整的蜈蚣形生命，细长且连续分节的苍白身体，仿佛纸质，身体两侧本应长百足的位置全部长出半透明、极柔软的细长足须。足须不具有硬腿关节，不以脚爪撑地，是轻飘而下垂/微弯的感受器。至少清楚呈现大量沿两侧每节成对生长的细须，不是只在头上长触角。头尾完整、单一身体、没有附加翅膀或角，没有第二只蛊。不强行画成玻璃、白玉、金属或发光水晶。\nMaterials: 身体为哑光纸白的薄片状活体节壳，薄边透出少许柔和背光，细微自然褶皱、薄厚变化，白色有明暗和灰白层次而非强烈自发光。两侧足须是真实半透明丝状软组织，柔软自然弯曲，局部高光和轻微透光，使每根须有厚度且仍可以辨认。不是织物折纸作品，也不是羽毛、植物根须或海生水母。\nComposition: 一只蛊占画面约65%，置于无故事指向的暗灰青、哑光平整石面；身体仅一个浅缓的自然弯曲，舒展、可以沿节壳读到完整头尾。略俯视的近景微距观察，主体基本位于同一焦平面，所有节壳与须根清楚，背景适度柔焦。足须在身体两侧和上方轻轻悠悠飘荡，并非支撑体重的步足；身体与石面之间有可信的柔和接触阴影。画面不锁绝对现实尺寸，因为正文未明确具体长度。\nLighting: 单一柔和侧后光勾出细须和薄片厚度，来自同一环境的柔弱填光，灰青阴影与象牙纸白形成克制冷暖差，安静梦幻但真实。没有光环、符文、粒子爆炸、银河背景、彩虹滤镜或强烈曝光。\nAvoid: 正常蜈蚣的硬质百足，红色配色，红莲花，人物、手、脸、女性拟人、悲痛表情符号；装饰底座、珠宝、金边、文字、名称、转数、边框、水印；恐怖血浆、巨型怪兽、场景吞没主体、单纯漂亮昆虫模板。表现原著器官置换这一独特身体，而不是用外加图腾说明概念。",
+      "inspection": {
+        "viewed": true,
+        "verdict": "不可用作本轮补图：资产格式与现有蛊虫卡牌系列不符；保留只供追溯。",
+        "visible_facts": [
+          "单一完整分节长体，头尾在画内，纸白叠片节壳，灰黑石面与同源侧光。",
+          "两侧有大量半透明弯曲细须，无明确的硬关节步足；未出现拟人、红莲、金饰或文字。"
+        ],
+        "risks": [
+          "远端尾部失焦，足须部分贴近地面，悠悠飘荡的动态感偏弱。",
+          "百须精确数量未逐根核实，不能声称恰好100根。",
+          "石面比提示词要求更粗糙、反光更强；自然微距感成立，但梦幻程度仍需用户判断。"
+        ],
+        "integration_allowed": false
+      },
+      "user_approved": false,
+      "reference_use": "用户肯定第一版的本体风格与苍白气氛；可用于这些局部，不代表接受无框方图为最终卡面。"
+    }
+  ],
+  "integration": "候选不自动接入 Wiki/游戏；不替换现有图片、不提交或推送。",
+  "style_correction": "2026-10-02 用户否定无框微距本体图，要求先实际查看现有蛊卡风格再生成。蛊虫补图采用现有5:7竖版装饰框、主体与纵深背景平衡、梦幻及真实光影。此前人物取消旧画风的裁决不等于蛊卡无需匹配现有系列。",
+  "card_revision": {
+    "name": "悔蛊",
+    "status": "rejected_by_user_mood_and_cuteness",
+    "file": "regret-gu-card-v2.png",
+    "asset_role": "card_art",
+    "generation_tool": "built-in image_gen",
+    "references": [
+      "/home/usrs/dev/codex-test/game/assets/wenzhen/gu/cards/jade_skin_gu_card.png",
+      "/home/usrs/dev/codex-test/game/assets/wenzhen/gu/cards/stone_shell_gu_card.png"
+    ],
+    "reference_roles": "玉皮蛊：边框/构图/环境纵深/光影；石皮蛊：非晶体材质/银框/主体清晰度。只参考视觉语言，不复制主体或场景。",
+    "other_reviewed_cards": [
+      "game/assets/wenzhen/gu/cards/moonlight_gu_card.png",
+      "game/assets/wenzhen/gu/cards/blood_atk_3_11_gu_card.png"
+    ],
+    "source_rules": [
+      "game/assets/wenzhen/gu/cards/README.md",
+      "game/assets/wenzhen/gu/cards/HANDOFF-2026-09-27.md"
+    ],
+    "canon_source": {
+      "source": "source/蛊真人-epub-canon.txt",
+      "chapter": "chapter_1697｜第六百六十节：我后悔了",
+      "line": 154690,
+      "excerpt": "形如蜈蚣，浑身苍白，仿佛纸质",
+      "hard_constraints": [
+        "蜈蚣形",
+        "苍白近似纸质",
+        "百足被半透明悠悠飘荡的须取代"
+      ]
+    },
+    "design_boundary": "花雾湿地呼应Wiki食料语境；具体湿地、石唇、光照、花形、银框纹样为美术推断，不是新原著事实。卡牌展示尺度不是原著绝对尺寸。",
+    "prompt": "Use case: stylized-concept\nAsset type: Existing 《问真》 Gu collectible card series, one complete portrait 5:7 trading card illustration.\nPrimary request: Generate a BRAND NEW 悔蛊 card that belongs in precisely the same visual series as the two supplied existing Gu cards. Follow their polished fantasy rendering, physically convincing light, frame quality, subject-to-background balance and dimensional environmental depth. Not a scientific specimen photo. Do not edit any previous generated Regret Gu image.\nInput images: Image 1 jade_skin_gu_card.png is style reference only for portrait composition, thin curved metallic rounded-corner frame, dreamlike light, material detail and environment depth. Image 2 stone_shell_gu_card.png is style reference only for realistic non-glass creature material, foreground subject clarity, background depth and silver frame. Do NOT copy either creature, anatomy, jade shell, round beetle body, hard legs, forest waterfall or storage-room setting.\nFrame and layout: complete vertical 5:7 card, edge-to-edge illustration enclosed by a delicate SILVER double-line metallic ornamental border, rounded corners, subtle fine botanical curl filigree at four corners similar in weight and finish to reference 2. Border stays within image and intact on all sides. No lettering, numbers, titles, rank badges or text areas. Do not put the card on a table or show a hand holding it.\nSubject: exactly ONE 悔蛊, canonical eight-rank Gu. A slender CENTIPEDE-shaped segmented living body, entirely pale white like paper. Instead of normal centipede legs, EACH segment has thin long semi-transparent SOFT FEELERS on both sides, numerous feather-light filaments gracefully drifting rather than stiff jointed legs supporting weight. They are not claws or solid feet. No wings. Fully visible head to tail. Gentle elongated curved silhouette crossing the lower-middle card diagonally and rising into the middle, enough air around all filaments, creature occupies about 55-65% card height; this is a collectible portrait, neither a close cropped monster nor a tiny creature lost in scenery. Head has understated biological detail, no human face.\nMaterial: pale organic papery cuticle with fine folds, delicate thin overlapping segment edges and real ivory/off-white tonal depth. Diffuse soft surface, small natural highlights and subtle backlit thin edges. Keep its flesh PAPERLIKE rather than making the body jade, glass, crystal, chrome or a manufactured origami model. Translucency belongs predominantly to the drifting fine feelers. Feelers catch delicate edge light and remain clearly rooted at the body segments; no hard normal hundred feet. Gentle dreamlike motion without neon or explosive effects.\nBackdrop: original quiet flower-mist wetland inspired by the Gu's fresh flower-mist feeding context, NOT the reference cards' forest or room. Foreground a small dark soft wet-stone lip beside still water; the pale body lies lightly along it, while many soft feelers float off into air. Middle distance a low mist bank above calm dark teal water and indistinct pale flowering vegetation; far background soft atmospheric silhouettes fading into blue-grey haze. Scene opens upwards with luminous mist, giving depth and wonder, does not depict an entire epic landscape. No people, no buildings, no lotuses, no red lotus narrative. Exact flower forms and scene staging are art interpretation.\nLighting: use the reference cards' believable dimensional light and cinematic dreamy clarity: soft angled light breaking through mist from upper right, pale ivory illuminated cuticle contrasting with rich blue-grey teal shadow; gentle peach warmth in distant light. Fine scatter and mist bloom, subtle shallow reflections below creature, controlled bokeh in rear planes. The light is generated by the environment, not a glowing white Gu body. No starry sky, no orbiting magic circles, no gratuitous diamonds or glowing runes. Clear organic segmentation and silky translucent feelers at small card viewing size.\nConstraints: card-series consistency is mandatory, no square format, no unframed macro documentary image. This card must balance creature, atmospheric space, physical material and elegant silver frame like the existing series. One head, one continuous slender body, one tail. No duplicate creature, insects transplanted from references, centipede hard feet, red color contamination, blood, scary gore, text, watermark.",
+    "inspection": {
+      "viewed": true,
+      "verdict": "可用作局部卡面格式/光影候选；本体足须表达仍需修正，未定稿",
+      "visible_facts": [
+        "5:7竖幅，四边完整细银色双线圆角装饰框，无文字。",
+        "单一长形白色分节主体，纸质褶皱、柔丝高光，与花雾水边背景共享暖侧后光。",
+        "前景虚化、主体清楚、中远景花丛/水面/雾气形成纵深；卡面构图与既有系列相近。"
+      ],
+      "risks": [
+        "部分附肢根部粗厚弯折，呈步足或爪感，尚未充分落实百足全部被软须取代的硬锚点。",
+        "尾端/足须局部失焦；精确百须数量未核实。",
+        "湿地背景的苔藓/植物/暖散景较接近玉皮卡面氛围，后续不可全系列复用此背景套路。"
+      ],
+      "user_approved": false,
+      "integration_allowed": false
+    },
+    "user_approved": false,
+    "dimensions": {
+      "width": 1060,
+      "height": 1484,
+      "aspect_ratio": "5:7",
+      "matches_reference_dimensions": true
+    },
+    "reference_sha256": {
+      "jade_skin_gu_card": "7918fc541984293fc95b09bf7dc3cbacb7ddd7db0a95f59705b43cede5aea190",
+      "stone_shell_gu_card": "fa4ff08761dadc946b3fc011816ec36d614276512e5fa4110ddbc20c81cb578c"
+    },
+    "user_feedback": "绿色植被和可爱化令效果变差；第一版苍白风格更好。"
+  },
+  "latest_user_direction": "2026-10-02 用户明确认为第一版悔蛊风格更好；第二版的绿树/绿色植被、可爱化和暖光使效果变差。悔蛊本来苍白。卡牌形式与本体风格分开：以v1纸白、冷清、非可爱为局部正向参考，卡牌仅匹配竖幅/边框/布局。",
+  "next_revision_constraints": [
+    "恢复第一版纸白/苍白身体、冷清灰青环境与非可爱头部。",
+    "卡牌仅沿用5:7竖幅、精细边框与布局，不把玉皮蛊的绿色/暖光/萌化复制到悔蛊。",
+    "减少背景到暗冷雾与弱空间层次，不新增绿树、花园、暖日、宝石眼或萌脸。",
+    "百足均为软须，不能出现硬步足；是否重新生成等待下一次执行，不将反馈当作图片已验收。"
+  ],
+  "approved_art_files": [
+    "regret-gu-card-v3.png",
+    "lifespan-gu-300-year-card-v1.png",
+    "landscape-as-before-gu-card-v1.png"
+  ],
+  "delivery_authorization": {
+    "date": "2026-10-02",
+    "user_statement": "认可你的质量了，可以进行持续交付，直到生成完毕。",
+    "per_image_approval_required": false,
+    "scope": "Wiki缺专属图的蛊虫；依据不足明确暂缓；不自动改Wiki事实或接入游戏"
+  },
+  "production_queue": "continuous-delivery.json"
+}

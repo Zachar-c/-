@@ -7,7 +7,7 @@ description: 运道仙蛊，八十八角真阳楼的主要基石之一：与王�
 date: 2026-09-28
 tags: [gu, luck-path, xian-gu, true-yang-tower, royal-court]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

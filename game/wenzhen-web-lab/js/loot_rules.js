@@ -95,7 +95,7 @@ globalThis.LootRules = (() => {
   // 补足到三个不同候选。候选池仍来自构建时数据，不在这里另造实体。
   function rollGuChoices(table, {
     seed, tick, tier, lootPity = 0, pityConfig = {}, school = '', schoolPools = {},
-    guById = {}, supportPool = [], choiceCount = 3, carriedPool = [],
+    guById = {}, supportPool = [], discoveryPool = [], choiceCount = 3, carriedPool = [],
   } = {}) {
     const first = rollGu(table, {
       seed, tick, tier, lootPity, pityConfig, school, schoolPools, guById,
@@ -108,12 +108,16 @@ globalThis.LootRules = (() => {
     if (carried.length) {
       carriedFirst = carried[RunRules.seededIndex(carried.length, seed, `loot.gu.carried.${tier}`, tick)];
     }
+    const byRarity = table?.gu_pool?.by_rarity || {};
+    const discoveries = [...new Set((discoveryPool || []).map(String))]
+      .filter((id) => guById[id] && (byRarity[guById[id].rarity] || []).length > 0);
     const pool = [...new Set([
       carriedFirst || first.guId,
       first.guId,
       ...(carriedFirst ? carried : []),
-      ...Object.values(table?.gu_pool?.by_rarity || {}).flat().map(String),
+      ...Object.values(byRarity).flat().map(String),
       ...(supportPool || []).map(String),
+      ...discoveries,
     ].filter(Boolean))];
     const guIds = [String(carriedFirst || first.guId)];
     const wanted = Math.max(1, Math.floor(Number(choiceCount) || 3));

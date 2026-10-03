@@ -1,0 +1,5248 @@
+{
+  "version": "0.1",
+  "date": "2026-10-03",
+  "scope": "首批原著与跑局关系研究；不代表1000只已完成，不接游戏执行规则",
+  "boundary": "原著明确/本局记录/设计候选分层；功能概念用于检索和候选发现，不能充当配方或自动兼容证明",
+  "concepts": [
+    {
+      "id": "output",
+      "label": "攻击输出"
+    },
+    {
+      "id": "amplify",
+      "label": "输出增幅"
+    },
+    {
+      "id": "range",
+      "label": "射程"
+    },
+    {
+      "id": "curve",
+      "label": "弹道"
+    },
+    {
+      "id": "defense",
+      "label": "防护"
+    },
+    {
+      "id": "power",
+      "label": "肉身力量"
+    },
+    {
+      "id": "call",
+      "label": "调用兽力"
+    },
+    {
+      "id": "carrier",
+      "label": "离体载体"
+    },
+    {
+      "id": "healing",
+      "label": "治疗"
+    },
+    {
+      "id": "movement",
+      "label": "换位/冲锋"
+    },
+    {
+      "id": "injury",
+      "label": "受伤条件"
+    },
+    {
+      "id": "hide",
+      "label": "隐匿"
+    },
+    {
+      "id": "branch",
+      "label": "分支/分流"
+    },
+    {
+      "id": "multicore",
+      "label": "多核结构"
+    },
+    {
+      "id": "stability",
+      "label": "稳定"
+    },
+    {
+      "id": "growth",
+      "label": "成熟"
+    },
+    {
+      "id": "sync",
+      "label": "同步"
+    },
+    {
+      "id": "prime",
+      "label": "真元品质"
+    },
+    {
+      "id": "eyes",
+      "label": "眼部承载"
+    },
+    {
+      "id": "soul",
+      "label": "魂魄较量"
+    },
+    {
+      "id": "production",
+      "label": "持续产出"
+    },
+    {
+      "id": "true-essence",
+      "label": "真元投入"
+    },
+    {
+      "id": "saleable",
+      "label": "可出售"
+    },
+    {
+      "id": "currency",
+      "label": "元石收益"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "moonlight",
+      "name": "月光蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [
+        "output"
+      ],
+      "accepts": [
+        "prime"
+      ],
+      "description": "发出月刃；月系归档不证明月道道属。",
+      "evidence": [
+        "E001",
+        "E002"
+      ],
+      "rank": 1,
+      "rank_note": "一转原著蛊，见Wiki身份节",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [],
+        "relation_ids": [],
+        "no_link_groups": []
+      }
+    },
+    {
+      "id": "small-light",
+      "name": "小光蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [
+        "amplify"
+      ],
+      "accepts": [
+        "output"
+      ],
+      "description": "与月光同催增幅不叠加；也是合炼辅材。",
+      "evidence": [
+        "E002"
+      ],
+      "rank": 1,
+      "rank_note": "一转，见Wiki明文",
+      "path": "光道",
+      "path_note": "Wiki有光道辅助蛊明文",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight"
+        ],
+        "relation_ids": [
+          "R001",
+          "R002"
+        ],
+        "no_link_groups": []
+      }
+    },
+    {
+      "id": "moon-glow",
+      "name": "月芒蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [
+        "output"
+      ],
+      "accepts": [],
+      "description": "由月光与两只小光合炼；多只小光不表示战斗叠加。",
+      "evidence": [
+        "E002"
+      ],
+      "rank": 2,
+      "rank_note": "二转明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light"
+        ],
+        "relation_ids": [
+          "R001",
+          "H001"
+        ],
+        "no_link_groups": []
+      }
+    },
+    {
+      "id": "trace-stone",
+      "name": "痕石蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [],
+      "accepts": [],
+      "description": "月痕路线的辅蛊；独立效果不从名称推定。",
+      "evidence": [
+        "E001"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow"
+        ],
+        "relation_ids": [
+          "R003"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "small-light",
+              "moon-glow"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "moon-ray",
+      "name": "月痕蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [
+        "range",
+        "output"
+      ],
+      "accepts": [],
+      "description": "攻击力不变，射程扩大；与本局同名记录分开。",
+      "evidence": [
+        "E001"
+      ],
+      "rank": null,
+      "rank_note": "原著转数未明言，Wiki旁证指向二转",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone"
+        ],
+        "relation_ids": [
+          "R003"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "small-light",
+              "moon-glow"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "whirlwind",
+      "name": "旋风蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [],
+      "accepts": [],
+      "description": "月旋合炼输入；不反推任意月刃都可直接转弯。",
+      "evidence": [
+        "E003"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray"
+        ],
+        "relation_ids": [
+          "R004"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "moon-whirl",
+      "name": "月旋蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [
+        "curve",
+        "output"
+      ],
+      "accepts": [],
+      "description": "月刃弹道由直线变曲线。",
+      "evidence": [
+        "E003"
+      ],
+      "rank": null,
+      "rank_note": "转数未按存量总表填死",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind"
+        ],
+        "relation_ids": [
+          "R004"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "jade-skin",
+      "name": "玉皮蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "防护",
+      "provides": [
+        "defense"
+      ],
+      "accepts": [],
+      "description": "参与月霓裳和白玉两条合炼路线。",
+      "evidence": [
+        "E006",
+        "E004"
+      ],
+      "rank": 1,
+      "rank_note": "与一转白豕合炼的Wiki明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl"
+        ],
+        "relation_ids": [
+          "R005"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "moon-robe",
+      "name": "月霓裳",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "月系",
+      "provides": [
+        "defense"
+      ],
+      "accepts": [],
+      "description": "月光与玉皮合炼的防御路线。",
+      "evidence": [
+        "E004"
+      ],
+      "rank": null,
+      "rank_note": "五转是路线最高产物，不是当前转数",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin"
+        ],
+        "relation_ids": [
+          "R005"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "blood-qi",
+      "name": "血气蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "血月",
+      "provides": [],
+      "accepts": [],
+      "description": "血月合炼输入；独立能力与转数未补造。",
+      "evidence": [
+        "E005"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe"
+        ],
+        "relation_ids": [
+          "R006"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "blood-moon",
+      "name": "血月蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "血月",
+      "provides": [
+        "output"
+      ],
+      "accepts": [],
+      "description": "月芒与血气的三转产物；完整喂养路线待扩展。",
+      "evidence": [
+        "E005"
+      ],
+      "rank": 3,
+      "rank_note": "三转产物明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi"
+        ],
+        "relation_ids": [
+          "R006"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "white-boar",
+      "name": "白豕蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "power"
+      ],
+      "accepts": [],
+      "description": "使用所得力量留在身体；蛊虫去留与所得力量区分。",
+      "evidence": [
+        "E028",
+        "E006"
+      ],
+      "rank": 1,
+      "rank_note": "一转原著蛊",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon"
+        ],
+        "relation_ids": [
+          "R007",
+          "R008",
+          "R010"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "white-jade",
+      "name": "白玉蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "防护",
+      "provides": [
+        "defense"
+      ],
+      "accepts": [],
+      "description": "强化玉皮防御，失去继续增力能力。",
+      "evidence": [
+        "E006",
+        "E007"
+      ],
+      "rank": 2,
+      "rank_note": "二转产物明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar"
+        ],
+        "relation_ids": [
+          "R007",
+          "R008",
+          "R010"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "tianpeng",
+      "name": "天蓬蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "防护",
+      "provides": [
+        "defense"
+      ],
+      "accepts": [],
+      "description": "白玉后续升炼路线；完整辅材未整理。",
+      "evidence": [
+        "E006"
+      ],
+      "rank": 3,
+      "rank_note": "三转路线明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade"
+        ],
+        "relation_ids": [
+          "R009"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fanran",
+      "name": "幡然蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "炼制",
+      "provides": [
+        "branch"
+      ],
+      "accepts": [],
+      "description": "支持白玉逆炼的特定工具；不代表所有合炼都可逆。",
+      "evidence": [
+        "E008"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng"
+        ],
+        "relation_ids": [
+          "R010"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "tianpeng"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "all-out",
+      "name": "全力以赴蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "call"
+      ],
+      "accepts": [
+        "power"
+      ],
+      "description": "调用已有兽力虚影；本批记录三转使用阶段。",
+      "evidence": [
+        "E013",
+        "E014"
+      ],
+      "rank": 3,
+      "rank_note": "本批使用阶段；不是把所有后期形态固定为三转",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran"
+        ],
+        "relation_ids": [],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bitter-strength",
+      "name": "苦力蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "call"
+      ],
+      "accepts": [
+        "injury",
+        "power"
+      ],
+      "description": "受伤及痛苦增加可发挥力量，受底蕴上限限制。",
+      "evidence": [
+        "E011",
+        "E012"
+      ],
+      "rank": 4,
+      "rank_note": "四转明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out"
+        ],
+        "relation_ids": [
+          "R013",
+          "R015"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "self-reliance",
+      "name": "自力更生蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "healing"
+      ],
+      "accepts": [
+        "power"
+      ],
+      "description": "随力量增强疗效，仍须灌注真元。",
+      "evidence": [
+        "E009",
+        "E010"
+      ],
+      "rank": 3,
+      "rank_note": "Wiki三转；不因疗效评价提高转数",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength"
+        ],
+        "relation_ids": [
+          "R015"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "strength-qi",
+      "name": "力气蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "气力接口",
+      "provides": [
+        "carrier"
+      ],
+      "accepts": [
+        "call"
+      ],
+      "description": "为兽力虚影提供离体攻击的气流载体。",
+      "evidence": [
+        "E015",
+        "E016",
+        "E018"
+      ],
+      "rank": 3,
+      "rank_note": "该凡蛊实例三转；不与仙蛊同名记录混合",
+      "path": "气道",
+      "path_note": "原文与风气同属气道",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance"
+        ],
+        "relation_ids": [
+          "R016"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "bitter-strength",
+              "self-reliance"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wind-qi",
+      "name": "风气蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "气力接口",
+      "provides": [
+        "movement"
+      ],
+      "accepts": [],
+      "description": "可按特定复杂逆炼方法转为三转力气。",
+      "evidence": [
+        "E018",
+        "E019"
+      ],
+      "rank": 4,
+      "rank_note": "本批逆炼主体四转",
+      "path": "气道",
+      "path_note": "原文同属气道",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi"
+        ],
+        "relation_ids": [
+          "R017"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "horizontal",
+      "name": "横冲蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "movement"
+      ],
+      "accepts": [
+        "power"
+      ],
+      "description": "横向冲锋，与直撞是合炼主体。",
+      "evidence": [
+        "E020"
+      ],
+      "rank": 3,
+      "rank_note": "两主体三转明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi"
+        ],
+        "relation_ids": [],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "straight",
+      "name": "直撞蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "movement"
+      ],
+      "accepts": [
+        "power"
+      ],
+      "description": "直向冲锋，与横冲是合炼主体。",
+      "evidence": [
+        "E020"
+      ],
+      "rank": 3,
+      "rank_note": "两主体三转明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal"
+        ],
+        "relation_ids": [
+          "R018"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "combined-charge",
+      "name": "横冲直撞蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "movement"
+      ],
+      "accepts": [
+        "power"
+      ],
+      "description": "由两只主体和辅料合炼；不补造冲锋距离公式。",
+      "evidence": [
+        "E020"
+      ],
+      "rank": 4,
+      "rank_note": "Wiki四转实例",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight"
+        ],
+        "relation_ids": [
+          "R018"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "steel-tendon",
+      "name": "钢筋蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "力道",
+      "provides": [
+        "defense"
+      ],
+      "accepts": [],
+      "description": "筋上附加法则使自力更生治疗更困难。",
+      "evidence": [
+        "E021",
+        "E022"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge"
+        ],
+        "relation_ids": [],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wine-insect",
+      "name": "酒虫",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "真元",
+      "provides": [
+        "prime"
+      ],
+      "accepts": [],
+      "description": "提纯已有真元品质；与回元功能区分。",
+      "evidence": [
+        "E027"
+      ],
+      "rank": 1,
+      "rank_note": "一转基础酒虫，升炼系后续扩展",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon"
+        ],
+        "relation_ids": [],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "golden-eye",
+      "name": "金睛蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "金道",
+      "provides": [
+        "eyes"
+      ],
+      "accepts": [],
+      "description": "两枚完成眼部改造后，安全使用金刚怒目。",
+      "evidence": [
+        "E023"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect"
+        ],
+        "relation_ids": [],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vajra-gaze",
+      "name": "金刚怒目蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "金道",
+      "provides": [
+        "soul"
+      ],
+      "accepts": [
+        "eyes"
+      ],
+      "description": "需改造双眼；对视后魂魄直接较量。",
+      "evidence": [
+        "E023",
+        "E024"
+      ],
+      "rank": 5,
+      "rank_note": "chapter_0380 para_018明文",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye"
+        ],
+        "relation_ids": [],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "gold-dragon",
+      "name": "金龙蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "金道",
+      "provides": [
+        "output"
+      ],
+      "accepts": [
+        "healing"
+      ],
+      "description": "四爪金龙攻击表现可受伤；不将表现破坏等同蛊本体死亡。",
+      "evidence": [
+        "E025"
+      ],
+      "rank": 4,
+      "rank_note": "Wiki四转金道明文",
+      "path": "金道",
+      "path_note": "Wiki与chapter_0380 para_028有道属明文",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze"
+        ],
+        "relation_ids": [],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "gold-wind",
+      "name": "金风送爽蛊",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "金道",
+      "provides": [
+        "healing"
+      ],
+      "accepts": [],
+      "description": "战例中修复四爪金龙表现；四转本体。",
+      "evidence": [
+        "E026",
+        "E025"
+      ],
+      "rank": 4,
+      "rank_note": "堪比五转是效果评价",
+      "path": "金道",
+      "path_note": "chapter_0380 para_028金道蛊明文",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon"
+        ],
+        "relation_ids": [
+          "R023"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-moon-ray",
+      "name": "月痕蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "output"
+      ],
+      "accepts": [],
+      "description": "本局二转主攻/本命母体；不覆盖原著射程描述。",
+      "evidence": [
+        "E029"
+      ],
+      "rank": 2,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind"
+        ],
+        "relation_ids": [
+          "R025",
+          "R026",
+          "R027",
+          "R028",
+          "R029"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moon-glow",
+              "trace-stone",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "split-moon",
+      "name": "分月蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "branch"
+      ],
+      "accepts": [
+        "output"
+      ],
+      "description": "构建多刃与独立分支；本次三核炼制后死亡。",
+      "evidence": [
+        "E029"
+      ],
+      "rank": 2,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray"
+        ],
+        "relation_ids": [
+          "R028",
+          "R029",
+          "R032",
+          "R039"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "conceal-moon",
+      "name": "潜月蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "hide"
+      ],
+      "accepts": [],
+      "description": "隐匿并压低本局月道波动。",
+      "evidence": [
+        "E029"
+      ],
+      "rank": 2,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon"
+        ],
+        "relation_ids": [
+          "R027"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind",
+              "split-moon"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "moon-step",
+      "name": "月影步蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "movement"
+      ],
+      "accepts": [],
+      "description": "换位，为先手创造位置。",
+      "evidence": [
+        "E029"
+      ],
+      "rank": 2,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon"
+        ],
+        "relation_ids": [
+          "R027",
+          "R030"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind",
+              "split-moon"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-moon",
+      "name": "流月蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "movement",
+        "curve"
+      ],
+      "accepts": [
+        "output"
+      ],
+      "description": "推进已有月刃并控制轨迹。",
+      "evidence": [
+        "E029"
+      ],
+      "rank": 2,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon",
+          "moon-step"
+        ],
+        "relation_ids": [
+          "R028",
+          "R029",
+          "R030",
+          "R040",
+          "H003"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "split-nest",
+      "name": "分巢蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局跨道炼制",
+      "provides": [
+        "multicore"
+      ],
+      "accepts": [],
+      "description": "为本局炼制提供一体多核结构；原著道属未核。",
+      "evidence": [
+        "E032"
+      ],
+      "rank": 2,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "用户会话确认此例不属于月道，具体道属与原著身份未核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon",
+          "moon-step",
+          "flow-moon"
+        ],
+        "relation_ids": [
+          "R032",
+          "R033",
+          "R038",
+          "H002"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind",
+              "conceal-moon",
+              "moon-step",
+              "flow-moon"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "three-trace-moon",
+      "name": "三痕月蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "output",
+        "branch"
+      ],
+      "accepts": [
+        "amplify",
+        "movement"
+      ],
+      "description": "本局三核成蛊，暂定名；吸收部分分月结构。",
+      "evidence": [
+        "E035"
+      ],
+      "rank": 3,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon",
+          "moon-step",
+          "flow-moon",
+          "split-nest"
+        ],
+        "relation_ids": [
+          "R032",
+          "R033",
+          "R038",
+          "R039",
+          "R040"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind",
+              "conceal-moon",
+              "moon-step"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "moon-arc",
+      "name": "月弧蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "output"
+      ],
+      "accepts": [],
+      "description": "宽幅攻击与旧精确/隐匿系统互补。",
+      "evidence": [
+        "E030"
+      ],
+      "rank": 3,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon",
+          "moon-step",
+          "flow-moon",
+          "split-nest",
+          "three-trace-moon"
+        ],
+        "relation_ids": [
+          "R030"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind",
+              "session-moon-ray",
+              "split-moon",
+              "split-nest",
+              "three-trace-moon"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "moon-screen",
+      "name": "月幕蛊",
+      "basis": "session",
+      "kind": "gu",
+      "group": "本局月道",
+      "provides": [
+        "defense"
+      ],
+      "accepts": [],
+      "description": "对蛊力/远程/切割防御；纯物理重击较弱。",
+      "evidence": [
+        "E031"
+      ],
+      "rank": 3,
+      "rank_note": "本局记录转数；未宣称原著转数",
+      "path": null,
+      "path_note": "本局月道标签，原著身份/道属另核",
+      "admission": {
+        "review_scope": "首批回顾式关系审查，顺序为登记顺序而非获取顺序",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon",
+          "moon-step",
+          "flow-moon",
+          "split-nest",
+          "three-trace-moon",
+          "moon-arc"
+        ],
+        "relation_ids": [
+          "R031"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind",
+              "split-moon",
+              "conceal-moon",
+              "moon-step",
+              "flow-moon",
+              "split-nest",
+              "three-trace-moon",
+              "moon-arc"
+            ],
+            "reason": "本批未找到可支撑具体配方、直接作用、前置、资源中介或冲突的证据；不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "body-power",
+      "name": "已积累的肉身力量",
+      "basis": "canon",
+      "kind": "state",
+      "group": "状态/材料",
+      "provides": [
+        "power"
+      ],
+      "accepts": [],
+      "description": "历史投入留下的力量存量，蛊虫和此状态分开。",
+      "evidence": [
+        "E028"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "beast-phantom",
+      "name": "可调用兽力虚影",
+      "basis": "canon",
+      "kind": "state",
+      "group": "状态/材料",
+      "provides": [
+        "call"
+      ],
+      "accepts": [],
+      "description": "已经获得的力量由全力以赴调用；离体仍需载体。",
+      "evidence": [
+        "E013"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "injured",
+      "name": "伤势与痛苦",
+      "basis": "canon",
+      "kind": "state",
+      "group": "状态/材料",
+      "provides": [
+        "injury"
+      ],
+      "accepts": [],
+      "description": "真实伤势是苦力触发条件，同时增加生存风险。",
+      "evidence": [
+        "E011"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "gold-eyes",
+      "name": "已改造的双眼",
+      "basis": "canon",
+      "kind": "state",
+      "group": "状态/材料",
+      "provides": [
+        "eyes"
+      ],
+      "accepts": [],
+      "description": "历史金睛改造状态，不要求金睛一直占当前蛊组。",
+      "evidence": [
+        "E023"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "tendon-law",
+      "name": "筋上附加法则",
+      "basis": "canon",
+      "kind": "state",
+      "group": "状态/材料",
+      "provides": [
+        "defense"
+      ],
+      "accepts": [],
+      "description": "治疗须克服/覆盖此层法则。",
+      "evidence": [
+        "E022"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "refined-essence",
+      "name": "精炼后的真元",
+      "basis": "canon",
+      "kind": "state",
+      "group": "状态/材料",
+      "provides": [
+        "prime"
+      ],
+      "accepts": [],
+      "description": "资源品质中介，不能把酒虫画成直接通用增伤。",
+      "evidence": [
+        "E027"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "silver-vein",
+      "name": "银脉石",
+      "basis": "session",
+      "kind": "material",
+      "group": "状态/材料",
+      "provides": [
+        "branch"
+      ],
+      "accepts": [],
+      "description": "分流月力但使每路力量降低。",
+      "evidence": [
+        "E032"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "cold-sand",
+      "name": "寒月砂",
+      "basis": "session",
+      "kind": "material",
+      "group": "状态/材料",
+      "provides": [
+        "stability"
+      ],
+      "accepts": [],
+      "description": "稳定分支与多核结构。",
+      "evidence": [
+        "E032"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "moon-molt",
+      "name": "月胎虫蜕",
+      "basis": "session",
+      "kind": "material",
+      "group": "状态/材料",
+      "provides": [
+        "multicore"
+      ],
+      "accepts": [],
+      "description": "提供自然结构启发，不宣称完整必备配方。",
+      "evidence": [
+        "E032"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "moss-milk",
+      "name": "月苔乳",
+      "basis": "session",
+      "kind": "material",
+      "group": "状态/材料",
+      "provides": [
+        "growth"
+      ],
+      "accepts": [],
+      "description": "低价促成熟，暴露不同步瓶颈。",
+      "evidence": [
+        "E032"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "stone-milk",
+      "name": "月生石乳",
+      "basis": "session",
+      "kind": "material",
+      "group": "状态/材料",
+      "provides": [
+        "growth"
+      ],
+      "accepts": [],
+      "description": "品质较高，成本与竞拍竞争真实存在。",
+      "evidence": [
+        "E032"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "sync-helper",
+      "name": "同步类辅蛊（未具名）",
+      "basis": "session",
+      "kind": "requirement",
+      "group": "状态/材料",
+      "provides": [
+        "sync"
+      ],
+      "accepts": [],
+      "description": "功能需求/过程工具，不冒充一只已确认实体。",
+      "evidence": [
+        "E032"
+      ],
+      "rank": null,
+      "rank_note": "未填数值；不按名称或游戏数据回填",
+      "path": null,
+      "path_note": "仅作关系簇归档，不证明原著道属"
+    },
+    {
+      "id": "vitality-grass",
+      "name": "九叶生机草",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "草蛊/木道资源",
+      "provides": [
+        "production"
+      ],
+      "accepts": [
+        "true-essence"
+      ],
+      "description": "二转草蛊；灌注真元催生可摘取的一转生机叶。本体持续存在；叶可出售换元石，个案经济收益不等于固定游戏产出。",
+      "evidence": [
+        "E038",
+        "E039",
+        "E043"
+      ],
+      "rank": 2,
+      "rank_note": "原著明示二转；Wiki身份节",
+      "path": null,
+      "path_note": "Wiki确认草蛊与木道治疗系语境；功能用语不替代道属裁定",
+      "admission": {
+        "review_scope": "逐项回顾此前全部原著/本局蛊；先用功能索引扫描，再按具体配方、过程、前置、代价和冲突人工复核；登记顺序不是获取顺序。",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon",
+          "moon-step",
+          "flow-moon",
+          "split-nest",
+          "three-trace-moon",
+          "moon-arc",
+          "moon-screen"
+        ],
+        "relation_ids": [
+          "R044",
+          "H004",
+          "H006"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "moonlight",
+              "small-light",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "self-reliance",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "gold-dragon",
+              "gold-wind",
+              "session-moon-ray",
+              "split-moon",
+              "conceal-moon",
+              "moon-step",
+              "flow-moon",
+              "split-nest",
+              "three-trace-moon",
+              "moon-arc",
+              "moon-screen"
+            ],
+            "reason": "已扫描此前38只蛊。未发现此前蛊与九叶生机草之间有原著支持的整组炼方、共同催动、直接前置或冲突；其产叶与元石收益属于可流通资源，不能据此推定它与任一具体蛊存在协同。候选概念未命中不等于不兼容。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vitality-leaf",
+      "name": "生机叶",
+      "basis": "canon",
+      "kind": "gu",
+      "group": "草蛊/木道治疗",
+      "provides": [
+        "healing",
+        "saleable"
+      ],
+      "accepts": [
+        "injury",
+        "amplify"
+      ],
+      "description": "从九叶生机草摘取的一转消耗蛊；疗伤后即消失，并有一小时内其他叶无效的限制。Wiki另记木魅树精状态催动木行蛊时生机叶获威力增幅；该特定原著关系不推出普遍兼容。",
+      "evidence": [
+        "E040",
+        "E041",
+        "E042",
+        "E043",
+        "E044"
+      ],
+      "rank": 1,
+      "rank_note": "原著明示一转；Wiki主题二",
+      "path": "木道",
+      "path_note": "原著后文明确列为木道治疗蛊（Wiki主题二）",
+      "admission": {
+        "review_scope": "逐项回顾此前全部原著/本局蛊；检索命中只作候选，按实际对象、条件、代价和限制核查，不由共享概念推定兼容。",
+        "prior_gu_ids": [
+          "moonlight",
+          "small-light",
+          "moon-glow",
+          "trace-stone",
+          "moon-ray",
+          "whirlwind",
+          "moon-whirl",
+          "jade-skin",
+          "moon-robe",
+          "blood-qi",
+          "blood-moon",
+          "white-boar",
+          "white-jade",
+          "tianpeng",
+          "fanran",
+          "all-out",
+          "bitter-strength",
+          "self-reliance",
+          "strength-qi",
+          "wind-qi",
+          "horizontal",
+          "straight",
+          "combined-charge",
+          "steel-tendon",
+          "wine-insect",
+          "golden-eye",
+          "vajra-gaze",
+          "gold-dragon",
+          "gold-wind",
+          "session-moon-ray",
+          "split-moon",
+          "conceal-moon",
+          "moon-step",
+          "flow-moon",
+          "split-nest",
+          "three-trace-moon",
+          "moon-arc",
+          "moon-screen",
+          "vitality-grass"
+        ],
+        "relation_ids": [
+          "R044",
+          "H004",
+          "H006"
+        ],
+        "no_link_groups": [
+          {
+            "gu_ids": [
+              "small-light"
+            ],
+            "reason": "功能索引命中“增幅”，但原著小光蛊增幅月光月刃；没有证据表明它能增幅木道生机叶，不能把同标签当兼容。"
+          },
+          {
+            "gu_ids": [
+              "self-reliance",
+              "gold-dragon",
+              "gold-wind"
+            ],
+            "reason": "治疗概念相近但机制/对象不同：自力更生依宿主力量治疗；金风送爽是修复受伤金龙的具体战例；未见其与生机叶同催、替代或合炼证据。标签重合不构成关系。"
+          },
+          {
+            "gu_ids": [
+              "moonlight",
+              "moon-glow",
+              "trace-stone",
+              "moon-ray",
+              "whirlwind",
+              "moon-whirl",
+              "jade-skin",
+              "moon-robe",
+              "blood-qi",
+              "blood-moon",
+              "white-boar",
+              "white-jade",
+              "tianpeng",
+              "fanran",
+              "all-out",
+              "bitter-strength",
+              "strength-qi",
+              "wind-qi",
+              "horizontal",
+              "straight",
+              "combined-charge",
+              "steel-tendon",
+              "wine-insect",
+              "golden-eye",
+              "vajra-gaze",
+              "session-moon-ray",
+              "split-moon",
+              "conceal-moon",
+              "moon-step",
+              "flow-moon",
+              "split-nest",
+              "three-trace-moon",
+              "moon-arc",
+              "moon-screen"
+            ],
+            "reason": "逐项复核其余月系、力道、血道、金睛及本局蛊池；未找到生机叶与这些具体蛊之间可支持的配方、直接协同、前置或冲突。生机叶的通用疗伤、可出售或木道标签不自动构成兼容；无边不表示不兼容。"
+          }
+        ]
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "R001",
+      "title": "合炼月芒",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "recipe",
+      "participants": [
+        {
+          "node": "moonlight",
+          "role": "input",
+          "quantity": 1
+        },
+        {
+          "node": "small-light",
+          "role": "input",
+          "quantity": 2
+        },
+        {
+          "node": "moon-glow",
+          "role": "output",
+          "quantity": 1
+        }
+      ],
+      "mechanism": "月光＋两只小光→二转月芒。",
+      "conditions": "须秘方、真元与相应炼制过程。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "三只蛊是整组输入；不由单条连线推充分条件。",
+      "evidence": [
+        "E002"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R002",
+      "title": "小光辅助月光",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "small-light",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "moonlight",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "双蛊同催增幅月刃。",
+      "conditions": "同时催用；以月光个案为证。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "两只小光不叠加；不能推广到全部光/全部月系蛊。",
+      "evidence": [
+        "E002"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R003",
+      "title": "合炼月痕",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "recipe",
+      "participants": [
+        {
+          "node": "moonlight",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "trace-stone",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "moon-ray",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "月光＋痕石→射程路线月痕。",
+      "conditions": "特定路线秘方。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "攻击力不变，原著转数未明言。",
+      "evidence": [
+        "E001"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R004",
+      "title": "合炼月旋",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "recipe",
+      "participants": [
+        {
+          "node": "moonlight",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "whirlwind",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "moon-whirl",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "月光＋旋风→曲线弹道月旋。",
+      "conditions": "特定路线秘方。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不表示拿旋风临时同催就能改变所有投射物。",
+      "evidence": [
+        "E003"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R005",
+      "title": "合炼月霓裳",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "recipe",
+      "participants": [
+        {
+          "node": "moonlight",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "jade-skin",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "moon-robe",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "攻击底蛊借防御组件转成月霓裳路线。",
+      "conditions": "特定路线秘方。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "五转是未来路线终点，当前转数保留未知。",
+      "evidence": [
+        "E004"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R006",
+      "title": "合炼血月",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "recipe",
+      "participants": [
+        {
+          "node": "moon-glow",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "blood-qi",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "blood-moon",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "二转月芒＋血气→三转血月。",
+      "conditions": "按该配方合炼。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "血气本体转数未确认，不能由产物倒推。",
+      "evidence": [
+        "E005"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R007",
+      "title": "合炼白玉",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "recipe",
+      "participants": [
+        {
+          "node": "white-boar",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "jade-skin",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "white-jade",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "白豕＋玉皮→二转白玉。",
+      "conditions": "特定合炼秘方。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "多输入；不能从原料功能相加推导产物。",
+      "evidence": [
+        "E006"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R008",
+      "title": "白玉的能力取舍",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "tradeoff",
+      "participants": [
+        {
+          "node": "white-boar",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "jade-skin",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "white-jade",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "白玉保留并强化防御，失去继续增力功能。",
+      "conditions": "合炼成功之后。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "历史已经得到的肉身力量与产物新能力不是同一项。",
+      "evidence": [
+        "E007"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R009",
+      "title": "白玉到天蓬路线",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "lineage",
+      "participants": [
+        {
+          "node": "white-jade",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "tianpeng",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "白玉可继续走向三转天蓬。",
+      "conditions": "尚须相应秘方与未整理辅料。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "这是谱系，不能执行成单材料完整配方。",
+      "evidence": [
+        "E006"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R010",
+      "title": "白玉的特定逆炼",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "reverse",
+      "participants": [
+        {
+          "node": "white-jade",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "fanran",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "white-boar",
+          "role": "output",
+          "quantity": null
+        },
+        {
+          "node": "jade-skin",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "幡然将白玉逆炼为两只原料蛊。",
+      "conditions": "使用明文指定工具与过程。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "独立证据建立；其他合炼边不能自动反向。",
+      "evidence": [
+        "E008"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R011",
+      "title": "力量留在肉身",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "state",
+      "participants": [
+        {
+          "node": "white-boar",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "body-power",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "白豕持续使用所得力量积累并留在身体；原蛊死亡也不会抹除已得力量。",
+      "conditions": "已经使用且获得力量；进度、上限以Wiki为准。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不能把蛊虫离开等同力量清零，也不能无限增力。",
+      "evidence": [
+        "E028"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R012",
+      "title": "力量进入全力以赴",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "precondition",
+      "participants": [
+        {
+          "node": "body-power",
+          "role": "state",
+          "quantity": null
+        },
+        {
+          "node": "all-out",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "beast-phantom",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "已有兽力通过全力以赴调用。",
+      "conditions": "本批方源阶段先有相应肉身兽力底蕴；不宣称每种力量都已证实可调用。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不是无兽力也凭空生成虚影；三转阶段调用能力受限。",
+      "evidence": [
+        "E013"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R013",
+      "title": "受伤扩容调用",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "injured",
+          "role": "state",
+          "quantity": null
+        },
+        {
+          "node": "bitter-strength",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "all-out",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "beast-phantom",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "受伤并催苦力时，全力以赴可同时打出更多兽影。",
+      "conditions": "真实伤势、痛苦、个人兽力底蕴。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "有上限；受伤本身不等于施法成功或不会死亡。",
+      "evidence": [
+        "E011",
+        "E012",
+        "E013"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R014",
+      "title": "力量转成治疗收益",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "body-power",
+          "role": "state",
+          "quantity": null
+        },
+        {
+          "node": "self-reliance",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "使用者力量越强，自力更生疗效越好。",
+      "conditions": "灌注真元，对自身疗伤。",
+      "cost": "须持续投入真元；仍受伤势及治疗困难限制",
+      "limits": "伤势不是疗效的直接加成输入；治疗不是免费。",
+      "evidence": [
+        "E009",
+        "E010"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R015",
+      "title": "力道三蛊协同",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "sequence",
+      "participants": [
+        {
+          "node": "all-out",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "bitter-strength",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "self-reliance",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "调用、受伤增幅、疗伤维持形成力道协同。",
+      "conditions": "方源此阶段兽力、真元、时机与伤势管理。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不是无限回血永动；不是炼蛊配方。",
+      "evidence": [
+        "E014",
+        "E010",
+        "E012"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R016",
+      "title": "兽力借气离体",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "beast-phantom",
+          "role": "state",
+          "quantity": null
+        },
+        {
+          "node": "strength-qi",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "all-out",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "虚影附着力之气后可离体攻击。",
+      "conditions": "先调用虚影，再提供气流载体。",
+      "cost": "力气产生载体耗真元，移动/防御/全力以赴也分摊同一资源",
+      "limits": "气散则影散回体；高耗元与其他蛊争预算。",
+      "evidence": [
+        "E015",
+        "E016",
+        "E017"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R017",
+      "title": "风气逆炼力气",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "reverse",
+      "participants": [
+        {
+          "node": "wind-qi",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "strength-qi",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "四转风气为主体逆炼三转力气。",
+      "conditions": "二十多种辅料、三十多步骤，火候与时机。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "只登记已发生方向；互转原则不等于另一方向的完整配方。",
+      "evidence": [
+        "E018",
+        "E019"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R018",
+      "title": "合炼横冲直撞",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "recipe",
+      "participants": [
+        {
+          "node": "horizontal",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "straight",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "combined-charge",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "两只三转移动主体合炼四转横冲直撞。",
+      "conditions": "蛊师真元与额外辅料。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "未逐项整理辅料；谱系材料不是整方充分输入。",
+      "evidence": [
+        "E020"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R019",
+      "title": "钢筋形成附加法则",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "state",
+      "participants": [
+        {
+          "node": "steel-tendon",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "tendon-law",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "钢筋效果附在筋上形成额外法则。",
+      "conditions": "本例已经受钢筋改造。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不是所有身体改造都具有同样治疗障碍。",
+      "evidence": [
+        "E021",
+        "E022"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R020",
+      "title": "钢筋增加疗伤难度",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "conflict",
+      "participants": [
+        {
+          "node": "tendon-law",
+          "role": "state",
+          "quantity": null
+        },
+        {
+          "node": "self-reliance",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "自力更生还须克服筋上附加法则，治疗更困难。",
+      "conditions": "钢筋改造与该疗伤场景同时存在。",
+      "cost": "该场景治疗时间/困难增加，不编造固定倍率",
+      "limits": "成本冲突不是禁止共用；强化不能只记正向收益。",
+      "evidence": [
+        "E021",
+        "E022"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R021",
+      "title": "金睛留下使用资格",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "state",
+      "participants": [
+        {
+          "node": "golden-eye",
+          "role": "participant",
+          "quantity": 2
+        },
+        {
+          "node": "gold-eyes",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "两枚金睛改造双眼，形成历史承载状态。",
+      "conditions": "完成双眼改造。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "改造过程、金睛本体转数未整理。",
+      "evidence": [
+        "E023"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R022",
+      "title": "金睛承载金刚怒目",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "precondition",
+      "participants": [
+        {
+          "node": "gold-eyes",
+          "role": "state",
+          "quantity": null
+        },
+        {
+          "node": "vajra-gaze",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "已改造双眼才可安全催金刚怒目。",
+      "conditions": "对视后实际较量仍依赖魂魄底蕴。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "承载前置不等于必胜；原文明确普通眼瞳有致盲风险。",
+      "evidence": [
+        "E023",
+        "E024"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R023",
+      "title": "金风修复金龙",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "gold-wind",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "gold-dragon",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "战例中旋风治好受伤四爪金龙表现，重新参战。",
+      "conditions": "金龙表现尚可治疗的特定战例。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不把表现击毁等同蛊本体死亡；不外推所有金道蛊都可同法治疗。",
+      "evidence": [
+        "E025",
+        "E026"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R024",
+      "title": "酒虫改变资源品质",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "state",
+      "participants": [
+        {
+          "node": "wine-insect",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "refined-essence",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "提纯已有真元，建立可供其他蛊消耗的资源中介。",
+      "conditions": "当前一转阶段与相应真元；使用方法见Wiki。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不是生成新真元，也不自动跨转通用增幅。",
+      "evidence": [
+        "E027"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R025",
+      "title": "原著月痕与本局月痕对照",
+      "basis": "design",
+      "verification": "unresolved",
+      "type": "candidate",
+      "participants": [
+        {
+          "node": "moon-ray",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "session-moon-ray",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "同名记录对照；本局主核用途未由原著射程事实直接证明。",
+      "conditions": "分别阅读两组来源再作改编判断。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "这条只是差异提示，不是二者等价或可互换。",
+      "evidence": [
+        "E001",
+        "E029"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R026",
+      "title": "本局本命起点",
+      "basis": "session",
+      "verification": "attested",
+      "type": "lineage",
+      "participants": [
+        {
+          "node": "moonlight",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "session-moon-ray",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "本局月光一路升为二转月痕本命。",
+      "conditions": "按本局记录；具体早期完整秘方未保存。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不能借原著痕石配方自动填补本局缺项。",
+      "evidence": [
+        "E036"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R027",
+      "title": "本局潜行月影",
+      "basis": "session",
+      "verification": "attested",
+      "type": "sequence",
+      "participants": [
+        {
+          "node": "conceal-moon",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "moon-step",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "session-moon-ray",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "small-light",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "隐匿→换位→月痕＋小光，争取信息差第一击。",
+      "conditions": "有警戒缺口并控制位置和催动时序。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "杀招可协同不证明可以相互合炼；小光对本局月痕为本局记录。",
+      "evidence": [
+        "E029"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R028",
+      "title": "本局流光分月",
+      "basis": "session",
+      "verification": "attested",
+      "type": "sequence",
+      "participants": [
+        {
+          "node": "session-moon-ray",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "split-moon",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "small-light",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "flow-moon",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "月痕成形→分月多刃→小光增幅→流月推进。",
+      "conditions": "按记录使用顺序、资源和目标情况。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "没有冻结游戏伤害或时序数字；不是材料配方。",
+      "evidence": [
+        "E029"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R029",
+      "title": "同组改成流光围月",
+      "basis": "session",
+      "verification": "attested",
+      "type": "sequence",
+      "participants": [
+        {
+          "node": "session-moon-ray",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "split-moon",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "small-light",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "flow-moon",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "改变多刃轨迹和汇聚，绕单向防御集火。",
+      "conditions": "已有多刃且轨迹控制可执行。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "同样四蛊形成不同使用方式，不能绑定为唯一技能。",
+      "evidence": [
+        "E029"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R030",
+      "title": "三转新蛊与旧体系互补",
+      "basis": "session",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "moon-arc",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "conceal-moon",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "moon-step",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "flow-moon",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "月弧宽幅硬上限与旧精确/隐匿/机动体系分工。",
+      "conditions": "旧辅助仍有独特功能且使用条件可满足。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不能推广所有低转蛊都有保留价值。",
+      "evidence": [
+        "E030",
+        "E029"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R031",
+      "title": "月幕补容错",
+      "basis": "session",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "moon-screen",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "session-moon-ray",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "防御为主攻构筑增加犯错空间。",
+      "conditions": "面对蛊力、远程、切割等本局适用场景。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "纯物理重击/冲撞较弱；不能站桩无视所有进攻。",
+      "evidence": [
+        "E031"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R032",
+      "title": "本局三核研究与成蛊过程",
+      "basis": "session",
+      "verification": "attested",
+      "type": "process-record",
+      "participants": [
+        {
+          "node": "session-moon-ray",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "split-nest",
+          "role": "structural-reference",
+          "quantity": null
+        },
+        {
+          "node": "silver-vein",
+          "role": "proposed-auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "cold-sand",
+          "role": "proposed-auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "moon-molt",
+          "role": "inspiration",
+          "quantity": null
+        },
+        {
+          "node": "stone-milk",
+          "role": "proposed-auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "sync-helper",
+          "role": "process-tool",
+          "quantity": null
+        },
+        {
+          "node": "split-moon",
+          "role": "intervention",
+          "quantity": null
+        },
+        {
+          "node": "three-trace-moon",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "研究拆解母体、多核、分流、稳定、成熟和同步；正式末段加入分月独立分支，最终三核成蛊。组件清单记录研究职责，不证明都实际投料。",
+      "conditions": "经过实验；正式末段第二核抢第三核月力，玩家连续选择施压。",
+      "cost": "材料、研究、真元与风险；本次分月蛊永久死亡",
+      "limits": "本局过程记录，不是确定输入配方；虫蜕是启发，材料是研究候选，未具名同步辅蛊是工具。完整正式投料清单、用量与去留缺失，不能按图执行炼制。",
+      "evidence": [
+        "E032",
+        "E033",
+        "E034",
+        "E035"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R033",
+      "title": "分巢借出多核结构",
+      "basis": "session",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "split-nest",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "session-moon-ray",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "three-trace-moon",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "分巢提供一体多核，补主月母体的结构需求。",
+      "conditions": "需分流、稳定、同步成熟和过程干预。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "这一作用片段不能单独等同完整三痕月配方；分巢原著道属未核。",
+      "evidence": [
+        "E032",
+        "E034"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R034",
+      "title": "分流的代价",
+      "basis": "session",
+      "verification": "attested",
+      "type": "tradeoff",
+      "participants": [
+        {
+          "node": "silver-vein",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "split-nest",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "单月力分为多路，同时每路力量降低。",
+      "conditions": "多核炼制的分流结构。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "分路数更多不等于免费增加总输出。",
+      "evidence": [
+        "E032"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R035",
+      "title": "稳定多核分支",
+      "basis": "session",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "cold-sand",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "split-nest",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "寒月砂稳定分支与多核结构。",
+      "conditions": "本局实验体系。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "稳定不等于同时成熟；两个功能分别保留。",
+      "evidence": [
+        "E032"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R036",
+      "title": "廉价成熟暴露不同步",
+      "basis": "session",
+      "verification": "attested",
+      "type": "conflict",
+      "participants": [
+        {
+          "node": "moss-milk",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "split-nest",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "sync-helper",
+          "role": "auxiliary",
+          "quantity": null
+        }
+      ],
+      "mechanism": "月苔乳促成熟但造成核间进度差，催生同步需求。",
+      "conditions": "多核成长的本局试验。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "同步只是缩小差距，末段仍出现资源争夺。",
+      "evidence": [
+        "E032",
+        "E033",
+        "E034"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R037",
+      "title": "成熟材料替代取舍",
+      "basis": "session",
+      "verification": "attested",
+      "type": "tradeoff",
+      "participants": [
+        {
+          "node": "moss-milk",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "stone-milk",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "便宜促成熟与高品质昂贵月性材料之间取舍。",
+      "conditions": "本局供应与竞拍竞争。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "功能标签相近不等于等效替代，不能让市场按缺口自动供应。",
+      "evidence": [
+        "E032"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R038",
+      "title": "临场分月救第三核",
+      "basis": "session",
+      "verification": "attested",
+      "type": "integration",
+      "participants": [
+        {
+          "node": "split-moon",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "split-nest",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "three-trace-moon",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "分月建立独立分支，救回第三核并在继续施压后死亡。",
+      "conditions": "特定末段异常与玩家两次不可逆选择。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "不泛化分月必死，也不泛化所有成蛊都必须牺牲旧蛊。",
+      "evidence": [
+        "E034",
+        "E037"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R039",
+      "title": "成蛊吸收历史结构",
+      "basis": "session",
+      "verification": "attested",
+      "type": "integration",
+      "participants": [
+        {
+          "node": "session-moon-ray",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "split-moon",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "three-trace-moon",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "三痕月吸收部分分月功能，减少原组合的激活步骤。",
+      "conditions": "本局成蛊结果。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "这是结构吸收说明，不是只需两个输入的完整配方。",
+      "evidence": [
+        "E035"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "R040",
+      "title": "三痕月继续带旧辅助",
+      "basis": "session",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "three-trace-moon",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "small-light",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "flow-moon",
+          "role": "auxiliary",
+          "quantity": null
+        }
+      ],
+      "mechanism": "新构筑仍为三痕月＋小光＋流月。",
+      "conditions": "保留已有增幅和推进职能。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "此条本局适配不能升级成原著小光通用性。",
+      "evidence": [
+        "E035"
+      ],
+      "process_complete": false,
+      "sample_weight": "S（高价值二转后期至三转初期样本）"
+    },
+    {
+      "id": "H001",
+      "title": "小光能否辅助月芒",
+      "basis": "design",
+      "verification": "unresolved",
+      "type": "candidate",
+      "participants": [
+        {
+          "node": "small-light",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "moon-glow",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "作为输出增幅功能候选，调查月芒输出是否仍可被小光作用。",
+      "conditions": "须核实目标、转数、同催、上限与副作用。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "共享标签只生成待研究问题；不宣布可用或倍率。",
+      "evidence": [
+        "E002"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "H002",
+      "title": "分巢能否改造原著月痕",
+      "basis": "design",
+      "verification": "unresolved",
+      "type": "candidate",
+      "participants": [
+        {
+          "node": "split-nest",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "moon-ray",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "将本局多核思路尝试迁移到原著射程母体的设计问题。",
+      "conditions": "先确定母体结构可承载，再研究辅材和失败方式。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "本局分巢无原著身份依据；没有成功配方/成蛊保证。",
+      "evidence": [
+        "E001",
+        "E032"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "H003",
+      "title": "流月能否推进血月输出",
+      "basis": "design",
+      "verification": "unresolved",
+      "type": "candidate",
+      "participants": [
+        {
+          "node": "flow-moon",
+          "role": "auxiliary",
+          "quantity": null
+        },
+        {
+          "node": "blood-moon",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "轨迹/推进功能与血月投射表现的潜在接口。",
+      "conditions": "需确认血月是否形成可被流月操纵的目标。",
+      "cost": "原文/记录未给出完整成本，未知项不填数字",
+      "limits": "月系谱系或投射物标签不自动证明兼容。",
+      "evidence": [
+        "E005",
+        "E029"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R044",
+      "title": "真元催生九叶生机草叶片",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "process-record",
+      "participants": [
+        {
+          "node": "vitality-grass",
+          "role": "input",
+          "quantity": null
+        },
+        {
+          "node": "vitality-leaf",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "将真元灌入仍持有的九叶生机草，可使草茎长出新叶；摘下的叶片成为独立生机叶。",
+      "conditions": "催生需要真元投入；摘叶与催生是先后操作。",
+      "cost": "消耗真元；原著方源个案数字不推广为通用比例。",
+      "limits": "这是持续生产过程，不是已知炼蛊配方；原著没有给出普适的真元成本、时间或产量表。",
+      "evidence": [
+        "E039"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "R045",
+      "title": "生机叶一次性疗伤",
+      "basis": "canon",
+      "verification": "attested",
+      "type": "supports",
+      "participants": [
+        {
+          "node": "vitality-leaf",
+          "role": "auxiliary",
+          "quantity": 1
+        },
+        {
+          "node": "injured",
+          "role": "participant",
+          "quantity": null
+        }
+      ],
+      "mechanism": "生机叶用于伤者疗伤；每片只使用一次，使用后消失。",
+      "conditions": "对象为需要疗伤的伤者。",
+      "cost": "生机叶使用后消失。",
+      "limits": "使用一片后一个小时内，其他生机叶没有治疗效果；具体疗效上限与量化值未明。",
+      "evidence": [
+        "E041",
+        "E042"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "H004",
+      "title": "把催生过程映射为网页资源生产",
+      "basis": "design",
+      "verification": "unresolved",
+      "type": "candidate",
+      "participants": [
+        {
+          "node": "vitality-grass",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "vitality-leaf",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "候选映射：以真元投入和生产机会取得叶片，保留本体与消耗品分离。",
+      "conditions": "需玩家实测生产操作是否形成有意义的时间/真元选择。",
+      "cost": "网页实验中的真元费用与叶片产量均为改编参数，不能标成原著数值。",
+      "limits": "原著没有固定每次行动、每节点或普适产量；不照搬单人个案比例。",
+      "evidence": [
+        "E039"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "H005",
+      "title": "把一小时疗伤间隔映射为游戏恢复锁",
+      "basis": "design",
+      "verification": "unresolved",
+      "type": "candidate",
+      "participants": [
+        {
+          "node": "vitality-leaf",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "injured",
+          "role": "state",
+          "quantity": null
+        }
+      ],
+      "mechanism": "候选映射：将一小时内其他叶无效抽象为局内恢复间隔。",
+      "conditions": "需要验证真实运行节奏是否能表达原著时间窗口。",
+      "cost": "具体窗口长度与触发粒度属于改编规则，不由网页节点或战斗轮次冒充原著事实。",
+      "limits": "原著明文是一小时；节点锁/战斗锁只是候选替代，不是等值事实。",
+      "evidence": [
+        "E042"
+      ],
+      "process_complete": false
+    },
+    {
+      "id": "H006",
+      "title": "把生机叶经济链映射为游戏货币选择",
+      "basis": "design",
+      "verification": "unresolved",
+      "type": "candidate",
+      "participants": [
+        {
+          "node": "vitality-grass",
+          "role": "participant",
+          "quantity": null
+        },
+        {
+          "node": "vitality-leaf",
+          "role": "output",
+          "quantity": null
+        }
+      ],
+      "mechanism": "候选映射：将草蛊产出的叶片置于自用疗伤与出售换取游戏货币之间选择。",
+      "conditions": "需通过网页试玩判断该资源分流是否改变构筑或行程决策。",
+      "cost": "售价、供需曲线和生产收益参数都是游戏改编数据；Wiki所录市场个案不等于通用定价。",
+      "limits": "不默认自动售出、固定每日收入或收入足以覆盖全部支出。",
+      "evidence": [
+        "E040",
+        "E043"
+      ],
+      "process_complete": false
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E001",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0107:para_065",
+      "chapter_title": "第一百零六节：半生积累成泡影，唯有本命长久存",
+      "wiki": "lore/wiki/gu/moon-ray-gu.md",
+      "summary": "月光与痕石合炼月痕：射程增加，攻击力不变。",
+      "excerpt": "有一种路线。是用月光蛊和痕石蛊合炼。合炼成的月痕蛊，攻击力不变，但是攻击范围却能增长一倍，达到二十米远。",
+      "paragraph_sha256": "0c9fd190e2f49b294a6dc27a643c52bb888eb5142dcd4590e0a61678516336d5"
+    },
+    {
+      "id": "E002",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0107:para_061",
+      "chapter_title": "第一百零六节：半生积累成泡影，唯有本命长久存",
+      "wiki": "lore/wiki/gu/moon-glow-gu.md",
+      "summary": "月光与两只小光合炼月芒；辅助增幅不能叠加。",
+      "excerpt": "月芒蛊由一只月光蛊，两只小光蛊合炼而成。一只小光蛊能增幅月刃一倍的攻击力，两只小光蛊仍旧是一倍，这种增幅不能叠",
+      "paragraph_sha256": "bf2116866764fce8f1e88e64422db56cb7c78b95fa4780f476fbab52f0562e05"
+    },
+    {
+      "id": "E003",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0107:para_066",
+      "chapter_title": "第一百零六节：半生积累成泡影，唯有本命长久存",
+      "wiki": "lore/wiki/gu/light-atk-1-01-gu.md",
+      "summary": "月光与旋风合炼月旋，弹道由直线变曲线。",
+      "excerpt": "还有一种常见的路线，则是用月光蛊和旋风蛊合炼。炼成月旋蛊。使用出来，月刃由蓝变绿，同时攻击方式由直线变化为曲线",
+      "paragraph_sha256": "2d021aeb3297a77a4b7834182e5b573f87cd2ee613a1679dd2790595b1fbd07f"
+    },
+    {
+      "id": "E004",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0107:para_067",
+      "chapter_title": "第一百零六节：半生积累成泡影，唯有本命长久存",
+      "wiki": "lore/wiki/gu/moonlight-gu.md",
+      "summary": "月光与玉皮合炼月霓裳；五转是路线终点。",
+      "excerpt": "至于古月方正，他用月光蛊和玉皮蛊合炼，炼成月霓裳。这是比较罕见的路线，最高能晋升到五转。成就宝月光王蛊。",
+      "paragraph_sha256": "51a7e89cbad620c989648afb8124c15f39304ad3882b11404b5312ff52cf92dc"
+    },
+    {
+      "id": "E005",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0158:para_004",
+      "chapter_title": "第一百五十七节：血月蛊",
+      "wiki": "lore/wiki/gu/blood-atk-3-03-gu.md",
+      "summary": "月芒与血气合炼三转血月。",
+      "excerpt": "利用二转月芒蛊和血气蛊相互合炼，形成的三转蛊虫。",
+      "paragraph_sha256": "879b0add6bd911b2b91ae14716eb4524805dab614aca8c28c1bb44f30f6e3650"
+    },
+    {
+      "id": "E006",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0066:para_029",
+      "chapter_title": "第六十四节：暗事好做，明事难成",
+      "wiki": "lore/wiki/gu/white-jade-gu.md",
+      "summary": "白豕与玉皮合炼白玉，继而可走天蓬路线。",
+      "excerpt": "而白豕蛊，最佳的晋升路线是和玉皮蛊合练，炼成二转的白玉蛊，再升为三转的天蓬蛊。",
+      "paragraph_sha256": "f04da147aaf842524f60e91ff791a4da47e5b25ece422e8e2c8a5bb93839c2b9"
+    },
+    {
+      "id": "E007",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0106:para_019",
+      "chapter_title": "第一百零五节：我会输得很惨",
+      "wiki": "lore/wiki/gu/white-jade-gu.md",
+      "summary": "白玉合炼后保留防御，失去白豕继续增力的能力。",
+      "excerpt": "合炼后的新蛊虫，常常只能留取一只蛊虫的能力，并加以强化。例如白玉蛊，就是把玉皮蛊的防御能力保留了下来，并强化，",
+      "paragraph_sha256": "d17e0d12033a9684e80bee40b36c85d431858c81501f3aa1d576f2454fe0f742"
+    },
+    {
+      "id": "E008",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0114:para_026",
+      "chapter_title": "第一百一十三节：闷声发财",
+      "wiki": "lore/wiki/gu/white-jade-gu.md",
+      "summary": "幡然逆炼白玉，得到白豕与玉皮。",
+      "excerpt": "举个例子，方源的白玉蛊，若用幡然蛊分解之后，就会重新化为白豕蛊和玉皮蛊。",
+      "paragraph_sha256": "a58c3ab5956f41aea39323d13ad2df98047e5a14f7006aa76d904b2087fc3114"
+    },
+    {
+      "id": "E009",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0293:para_007",
+      "chapter_title": "第九十三节：法则碎片，大道之痕",
+      "wiki": "lore/wiki/gu/force-heal-3-03-gu.md",
+      "summary": "自力更生疗效取决于使用者力量。",
+      "excerpt": "蛊师的力量越强，自力更生蛊的治疗效果便越优秀。反之，力气越小，疗效就越差。",
+      "paragraph_sha256": "6e45281561876701b3d85087d84936e8bab6726b40412ec6327476cc7f15a107"
+    },
+    {
+      "id": "E010",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0293:para_002",
+      "chapter_title": "第九十三节：法则碎片，大道之痕",
+      "wiki": "lore/wiki/gu/force-heal-3-03-gu.md",
+      "summary": "自力更生须灌注真元。",
+      "excerpt": "淡银真元不断地催动，灌注到自力更生蛊上。",
+      "paragraph_sha256": "ae6c920a83e1382e1e80b13edd64a192941f3a3b91bbfd5d1f1e92583f4e66ec"
+    },
+    {
+      "id": "E011",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0319:para_077",
+      "chapter_title": "第一百一十九节：方源vs巨开碑（中）",
+      "wiki": "lore/wiki/gu/force-atk-5-20-gu.md",
+      "summary": "受伤和痛苦影响苦力蛊发挥。",
+      "excerpt": "苦力蛊是四转蛊，是力道蛊师的绝配。蛊师受伤越重，感受到的痛苦越深，发挥出来的力气就越大。",
+      "paragraph_sha256": "808695d00c0586f3dcf522cd9affbf3f57be11da760c959eb089de155c9cf2fe"
+    },
+    {
+      "id": "E012",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0319:para_078",
+      "chapter_title": "第一百一十九节：方源vs巨开碑（中）",
+      "wiki": "lore/wiki/gu/force-atk-5-20-gu.md",
+      "summary": "增幅受个人底蕴限制。",
+      "excerpt": "当然。发挥出来的力气也有上限，要看蛊师个人的具体底蕴。",
+      "paragraph_sha256": "c3383b3bf42f92cb2063122eb79df3a271bac265fa477608f1d37753bc12377d"
+    },
+    {
+      "id": "E013",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0319:para_081",
+      "chapter_title": "第一百一十九节：方源vs巨开碑（中）",
+      "wiki": "lore/wiki/gu/force-atk-5-20-gu.md",
+      "summary": "受伤与苦力配合，全力以赴能增加同时调用的兽影。",
+      "excerpt": "单个用全力以赴蛊，方源只有一个竹管取水，因此只能发挥出一头兽力虚影。但如今，他受到伤势的影响，又用了苦力蛊，仿",
+      "paragraph_sha256": "2070d10b29110050c4362ce2d2ac8be6013077b2d296c90dc662dcfd42e17a65"
+    },
+    {
+      "id": "E014",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0319:para_096",
+      "chapter_title": "第一百一十九节：方源vs巨开碑（中）",
+      "wiki": "lore/wiki/gu/force-atk-5-20-gu.md",
+      "summary": "全力以赴、苦力、自力更生形成紧密搭配。",
+      "excerpt": "全力以赴蛊、苦力蛊、自力更生蛊，三者形成巧妙紧密的搭配，组成牢固坚实的基础。",
+      "paragraph_sha256": "e9b7762396af8d57ac21aef6bfcbcd0b47b8ddebe8d5ddedb834aeb32661a770"
+    },
+    {
+      "id": "E015",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0321:para_074",
+      "chapter_title": "第一百二十一节：一飞冲天",
+      "wiki": "lore/wiki/gu/qi-mov-4-03-gu.md",
+      "summary": "兽力虚影附着力之气，获得离体攻击能力。",
+      "excerpt": "兽力虚影脱离方源的身体。附着在力之气上，就有了直接攻击的能力。",
+      "paragraph_sha256": "850eab251cb580fd066320bd44d0765b9e5b6c6f25cd83f4e2995bc283abb49f"
+    },
+    {
+      "id": "E016",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0321:para_075",
+      "chapter_title": "第一百二十一节：一飞冲天",
+      "wiki": "lore/wiki/gu/qi-mov-4-03-gu.md",
+      "summary": "力气消散后虚影失去载体，回归身体。",
+      "excerpt": "当力气消散，兽力虚影没有了载体，也跟着消散。自动回归到方源的身体当中。",
+      "paragraph_sha256": "bf67ca76d596f0941e2cec7b2bc7678769c01505ab48d64b6dc94cd350713d73"
+    },
+    {
+      "id": "E017",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0321:para_091",
+      "chapter_title": "第一百二十一节：一飞冲天",
+      "wiki": "lore/wiki/gu/qi-mov-4-03-gu.md",
+      "summary": "力气蛊远攻需要大量真元。",
+      "excerpt": "力气蛊消耗真元比较多，需要半成的雪银真元，产生的力之气，才能足够一个兽力虚影负载寄托。",
+      "paragraph_sha256": "cceb5fede93de3badad986e2eb94b9eecc4da15c754693ae95b1735ce7651f46"
+    },
+    {
+      "id": "E018",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0321:para_079",
+      "chapter_title": "第一百二十一节：一飞冲天",
+      "wiki": "lore/wiki/gu/qi-mov-4-03-gu.md",
+      "summary": "风气与力气同属气道，可依炼蛊方法相互转化。",
+      "excerpt": "风气蛊、力气蛊，两者同为气道蛊。本身的法则有微妙的相似之处。因此可以通过炼蛊而相互转化。",
+      "paragraph_sha256": "0441b4a27760ef75be8a5d833aacb48303b7b2ced14c6826b42a3b827ee6b05a"
+    },
+    {
+      "id": "E019",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0321:para_080",
+      "chapter_title": "第一百二十一节：一飞冲天",
+      "wiki": "lore/wiki/gu/qi-mov-4-03-gu.md",
+      "summary": "逆炼要二十多种辅料、三十多步骤。",
+      "excerpt": "这个转化的秘方，十分复杂。动用二十多种不同的辅料，进行逆炼，中间有三十多步骤。火候、时间都要把握清楚，不能有一",
+      "paragraph_sha256": "54689b5255968e3015fc80571d18a04cc9bb8d2afb13cdacc8ac37ab5119832b"
+    },
+    {
+      "id": "E020",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0346:para_003",
+      "chapter_title": "第一百四十六节：横冲直撞蛊",
+      "wiki": "lore/wiki/gu/force-atk-4-26-gu.md",
+      "summary": "横冲与直撞为主体，需真元和辅料合炼。",
+      "excerpt": "以这两只三转蛊为主体，再辅助蛊师本身的真元，一些辅料等，便能合炼出横冲直撞蛊。",
+      "paragraph_sha256": "3e90acefb632ef2827589b7977d33f7d2dffb3e6c3e00b9a93f3fb70df2f52bd"
+    },
+    {
+      "id": "E021",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0293:para_026",
+      "chapter_title": "第九十三节：法则碎片，大道之痕",
+      "wiki": "lore/wiki/gu/force-heal-3-03-gu.md",
+      "summary": "钢筋效果会使治疗艰难。",
+      "excerpt": "“用自力更生蛊疗伤。这已经是第五个时辰了。主要还是钢筋蛊效果，导致治疗艰难。”方源心中有分寸。",
+      "paragraph_sha256": "518bdf2cd981b9df15b7d4ae547f36d2c4c90c47c8e9b05281af42874377213f"
+    },
+    {
+      "id": "E022",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0293:para_034",
+      "chapter_title": "第九十三节：法则碎片，大道之痕",
+      "wiki": "lore/wiki/gu/force-heal-3-03-gu.md",
+      "summary": "治疗还须克服筋上附加法则之力。",
+      "excerpt": "自力更生蛊要治疗，不仅是恢复本身的肉筋，更要克服、覆盖这层法则之力。",
+      "paragraph_sha256": "9a5518c81504aa05335a3b5589a9e4f5c2b302b9f8e31a1148c19582e14e7fad"
+    },
+    {
+      "id": "E023",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0380:para_025",
+      "chapter_title": "第一百八十节：一切皆在谋算中",
+      "wiki": null,
+      "summary": "两枚金睛完成双眼改造，才可安全运用金刚怒目。Wiki专门关系待蒸馏。",
+      "excerpt": "寻常的眼瞳，一旦冒然使用，反而会将自己搞瞎。只有先用两枚金睛蛊，将自身的双眼。改造成金睛，才能安全地运用金刚怒",
+      "paragraph_sha256": "28ba41dd7f7532749c4954c65ffb02d97ad3e19b1951464f143ca74206ffc503"
+    },
+    {
+      "id": "E024",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0380:para_021",
+      "chapter_title": "第一百八十节：一切皆在谋算中",
+      "wiki": null,
+      "summary": "金刚怒目是魂魄较量，不是拥有金睛就必胜。",
+      "excerpt": "一旦动用，就是双方蛊师间魂魄的直接较量，胜败立分，是压箱底的杀手锏。",
+      "paragraph_sha256": "53774da7bb45a841f9c6af5e91db9271577098cae07777d72dac4d795a0211d7"
+    },
+    {
+      "id": "E025",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0374:para_015",
+      "chapter_title": "第一百七十四节：五转大战",
+      "wiki": "lore/wiki/gu/gold-atk-4-02-gu.md",
+      "summary": "四爪金龙被旋风治疗后重新参战。",
+      "excerpt": "四爪金龙被这旋风一裹，沉重的伤势瞬间痊愈，昂首咆哮，重新升腾而起。",
+      "paragraph_sha256": "104d1e035f77634fffe0071136071db2ba24b660114edd360a0349008a7c37c1"
+    },
+    {
+      "id": "E026",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0374:para_016",
+      "chapter_title": "第一百七十四节：五转大战",
+      "wiki": "lore/wiki/gu/gold-atk-4-02-gu.md",
+      "summary": "金风送爽四转；效果评价不能改变本体转数。",
+      "excerpt": "“这是四转的金风送爽蛊，治疗效果十分强大，堪比五转的蛊！”观战的李闲双眼一眯。认出了这道金色的旋风。",
+      "paragraph_sha256": "eb2667d0a5e7b849b9130674ef955e3c84bd48ab659c4fa3fdb1db9e15e2ed93"
+    },
+    {
+      "id": "E027",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0017:para_045",
+      "chapter_title": "第十七节：初炼酒虫",
+      "wiki": "lore/wiki/gu/wine-insect-gu.md",
+      "summary": "酒虫提纯真元，不是凭空回元。",
+      "excerpt": "察觉到这丝苍绿色的青铜真元，方源露出满意的笑容：“我现在的修为，只是一转初阶。但是有了酒虫的凝练，真元被提纯后",
+      "paragraph_sha256": "acaa711c23a198df6ee22c918fa2b4791baa5ec843f859a31abee5266e2482e5"
+    },
+    {
+      "id": "E028",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0064:para_068",
+      "chapter_title": "第六十二节：蛊室再选蛊",
+      "wiki": "lore/wiki/gu/white-boar-strength-gu.md",
+      "summary": "白豕蛊使肉身增力；是否已经达到上限须看使用进度。",
+      "excerpt": "黑、白豕蛊增加给蛊师的力量，虽然一点一滴，日积月累，但是只要拥有，就是蛊师自己的东西。哪怕黑、白豕蛊都死亡了，",
+      "paragraph_sha256": "49097a4dc396787b8acc3e4d29d56ca2e84600a09902b31a39b85bfd2ba11b44"
+    },
+    {
+      "id": "E029",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "line_start": 7,
+      "line_end": 37,
+      "summary": "本局六蛊功能与三种时序杀招。",
+      "excerpt": "### 二转成熟期\n核心：\n- 月痕蛊：核心攻击、本命\n- 小光蛊：增幅\n- 分月蛊：分裂/多刃结构\n- 潜月蛊：隐匿/月道波动压制\n- 月影步蛊：换位\n- 流月蛊：高速推进/轨迹控制\n\n能力不是“一只蛊一个技能”，而是组合出来。\n\n### 杀招\n#### 潜行月影\n潜月 conceal\n→ 月影换位\n→ 月痕 + 小",
+      "range_sha256": "714b768261670b5dba974737d980fe4880bfb3010270445085a6f684653de5df"
+    },
+    {
+      "id": "E030",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "line_start": 41,
+      "line_end": 55,
+      "summary": "月弧与二转旧系统功能分工。",
+      "excerpt": "## 2. 三转后旧系统没有作废\n\n玩家获得三转月弧蛊以后：\n- 月弧：稳定宽幅攻击\n- 二转旧系统：精确、多角度、隐匿、机动\n\n结果不是：\n> 二转技能全部淘汰\n\n而是：\n> 三转蛊提升硬上限，二转 Build 保留成熟结构。\n\n这对游戏设计非常关键：\n- 升转不能简单把低转蛊全部变垃圾。\n- 旧蛊只要功能独特，就能",
+      "range_sha256": "3747dddad0f2becabc03082da2c3730f2ff646be3f2304ac9bc304a8b9c87f84"
+    },
+    {
+      "id": "E031",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "line_start": 59,
+      "line_end": 71,
+      "summary": "月幕提供防御与容错，对纯物理重击较弱。",
+      "excerpt": "## 3. 三转防御补全\n\n三转月幕蛊：\n- 擅长蛊力攻击、远程、切割等防御\n- 对纯物理重击/冲撞较弱\n- 对玩家的价值是“犯错空间”，不是站桩坦克\n\n这使 Build 补齐：\n- 攻击\n- 防御\n- 隐匿\n- 移动\n- 轨迹控制",
+      "range_sha256": "7e269b4b43e04f7fb6e4462ee22615be66d459c24ea8df2fc3d30c47cb1d2ba5"
+    },
+    {
+      "id": "E032",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "line_start": 75,
+      "line_end": 122,
+      "summary": "分巢、分流、稳定、成熟与同步是不同功能。",
+      "excerpt": "## 4. 三转本命研究：问题分解\n\n目标不是“月痕+分月=高级月刃蛊”，而是拆成功能。\n\n### 已知组件\n#### 月痕蛊\n角色：\n> 母体 / 主月结构\n\n#### 分巢蛊\n角色：\n> 一体多核的生命结构\n\n#### 银脉石\n角色：\n> 把单一月力分成多路\n\n副作用：\n> 每路力量降低\n\n#### 寒月砂\n角色：",
+      "range_sha256": "e8c8e3ced179cf1f07ce108cec320b79c14a5d18169755ad11504d2748551205"
+    },
+    {
+      "id": "E033",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "line_start": 126,
+      "line_end": 142,
+      "summary": "同步实验缩小成熟差距；数字为跑局抽象。",
+      "excerpt": "## 5. 实验数据（人工跑局）\n\n早期多核成熟：\n> 100 / 70 / 40\n\n引入同步思路后：\n- 88 / 81 / 74\n- 91 / 87 / 83\n- 93 / 90 / 86\n- 95 / 93 / 91\n- 96 / 94 / 93\n- 97 / 96 / 94\n\n注意：\n这些数字是跑局中的抽象表达",
+      "range_sha256": "26f2ff88f4f95298369ad88d488d58cb09207b3b2e6c09de3af4565ad41e51d5"
+    },
+    {
+      "id": "E034",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "line_start": 146,
+      "line_end": 176,
+      "summary": "第三核遭争夺，加入分月建立独立分支，最终牺牲分月成蛊。",
+      "excerpt": "## 6. 正式炼制的临场异常\n\n正式炼制后期：\n> 97 / 96 / 89\n\n出现：\n> 第二子核开始抢第三子核月力。\n\n可选方案：\n1. 强行平均真元\n2. 放弃第三核，退成双核\n3. 临时加入分月蛊，建立独立分支\n\n玩家选择：\n> 3\n\n随后：\n- 第三核回升\n- 分月蛊承受三转成蛊压力\n- 分月蛊裂开\n\n新选",
+      "range_sha256": "f84b09a9cd0a32ebc20edd1e22165fd7b50210eb306aa6ac0c064923a0694e5b"
+    },
+    {
+      "id": "E035",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "line_start": 180,
+      "line_end": 201,
+      "summary": "三痕月吸收部分分月结构，旧辅助仍保留。",
+      "excerpt": "## 7. 三痕月的意义\n\n暂定名：\n> 三转·三痕月蛊\n\n变化不是简单数值加强。\n\n旧 Build：\n> 月痕 + 分月 + 小光 + 流月\n\n新 Build：\n> 三痕月 + 小光 + 流月\n\n分月的部分结构已经“炼进”本命蛊。\n\n因此：\n- 激活步骤更少\n- 失败点减少\n- 真元/时序更紧凑\n- 旧杀招变成更天然",
+      "range_sha256": "b089c23b6e9e28555dd187648be8f801d78cbf1303413bce2f2ee950007b7fe0"
+    },
+    {
+      "id": "E036",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/03_Canon规则与裁定.md",
+      "line_start": 53,
+      "line_end": 68,
+      "summary": "本局本命轴：月光、月痕、三痕月。",
+      "excerpt": "## 2. 本命蛊\n\n### 关键规则\n本命蛊参与炼制时：\n- 只要蛊师本人还活着，本命蛊不会像普通辅蛊那样直接死亡。\n- 失败可能造成严重受伤、长期不可用、蛊师反噬。\n- 辅助蛊和材料可以死亡/毁损。\n\n### 本局本命轴\n月光蛊（一转）\n→ 月痕蛊（二转）\n→ 三痕月蛊（三转）\n→ 后期低权重推演中的更高形态\n\n核",
+      "range_sha256": "796e7e91948fc698b979b612bf93c256b447665589d43911ac5e19e6d43fe147"
+    },
+    {
+      "id": "E037",
+      "basis": "session",
+      "path": "source/gu-relations-session-2026-10-02/02_玩家原始选择与明确反馈.md",
+      "line_start": 62,
+      "line_end": 69,
+      "summary": "玩家在明确代价后接受分月死亡。",
+      "excerpt": "### 6. 正式炼本命蛊\n玩家明确：\n> “开始炼”\n\n关键异常出现后，玩家选择：\n> “C. 临时加入分月蛊”\n\n并接受继续压到分月蛊死亡、三痕月成功这一结果。",
+      "range_sha256": "53e5e6fe802a61e5b4c2ff4b60a7309de70065fb32d89f81c52efb2f3eaad47a"
+    },
+    {
+      "id": "E038",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0107:para_031",
+      "chapter_title": "第一百零六节：半生积累成泡影，唯有本命长久存",
+      "wiki": "lore/wiki/gu/vitality-grass-gu.md",
+      "summary": "九叶生机草为二转草蛊。",
+      "excerpt": "正是二转草蛊——九叶生机草。",
+      "paragraph_sha256": "2552676c4e51094afd66bdf66606d04c598505ba40e1276d190459b1951965fe"
+    },
+    {
+      "id": "E039",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0107:para_036",
+      "chapter_title": "第一百零六节：半生积累成泡影，唯有本命长久存",
+      "wiki": "lore/wiki/gu/vitality-grass-gu.md",
+      "summary": "催生时将二转真元灌注草茎。",
+      "excerpt": "方源继续催动真元，淡红色的二转真元，不断从手掌心上升腾起来，宛若烟雾一般，包裹着翠绿草茎。",
+      "paragraph_sha256": "fd8bb03ea9785ed4ccd7e059e3bbb3b4e70ed424054f47254fe2e9b73834aa36"
+    },
+    {
+      "id": "E040",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0107:para_047",
+      "chapter_title": "第一百零六节：半生积累成泡影，唯有本命长久存",
+      "wiki": "lore/wiki/gu/vitality-grass-gu.md",
+      "summary": "生机叶是一转蛊虫，可出售换取元石。",
+      "excerpt": "一片生机叶，就是一转蛊虫，每一片的市价能卖到五十元石。也就是说，单单这九片叶蛊，就能让方源收获四百五十块元石。",
+      "paragraph_sha256": "8564b506a7573533335521b3c76bcda9b2d2bb497d030d05c0cee75ba1d21a0b"
+    },
+    {
+      "id": "E041",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0103:para_063",
+      "chapter_title": "第一百零二节:冬风吹来春天",
+      "wiki": "lore/wiki/gu/vitality-grass-gu.md",
+      "summary": "生机叶是一转消耗蛊，用一次即消失。",
+      "excerpt": "生机叶也是草蛊的一种，一转级数，属于消耗型，用一次就消逝。",
+      "paragraph_sha256": "d31d50d982eef082d50b4c6879af714fe8c42bf621bcdd12af546937f475c751"
+    },
+    {
+      "id": "E042",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0103:para_063",
+      "chapter_title": "第一百零二节:冬风吹来春天",
+      "wiki": "lore/wiki/gu/vitality-grass-gu.md",
+      "summary": "一片生机叶疗伤后，一小时内其他叶无治疗效果。",
+      "excerpt": "生机叶也是草蛊的一种，一转级数，属于消耗型，用一次就消逝。它还有一个缺陷，那就是运用了一片生机叶疗伤之后，一个小时之内，",
+      "paragraph_sha256": "d31d50d982eef082d50b4c6879af714fe8c42bf621bcdd12af546937f475c751"
+    },
+    {
+      "id": "E043",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0113:para_071",
+      "chapter_title": "第一百一十二节：真是好魄力",
+      "wiki": "lore/wiki/gu/vitality-grass-gu.md",
+      "summary": "出售生机叶所得支撑修行并喂养其他蛊。",
+      "excerpt": "九叶生机草才是遗产中最具有价值的东西，方源需要它的治疗作用，同时出售生机叶赚取元石，能支撑他的修行，还有喂养其他蛊虫。",
+      "paragraph_sha256": "a3300ec9f6bfaf54b1412661c9a6a0dce95a4403716880f9f4c0cded85ad3bcc"
+    },
+    {
+      "id": "E044",
+      "basis": "canon",
+      "path": "source/蛊真人-epub-canon.txt",
+      "locator": "EPUB:chapter_0142:para_036",
+      "chapter_title": "第一百四十一节：古月青书VS白凝冰（中）",
+      "wiki": "lore/wiki/gu/wood-atk-3-01-gu.md",
+      "summary": "树精身份催动木行蛊时，生机叶等获得威力增幅。",
+      "excerpt": "他的身上，月旋蛊没有变化，但是青藤蛊、松针蛊以及生机叶，都传来欣欣向荣之意。当青书以树精的身☆份，再催动这些木行蛊虫时，",
+      "paragraph_sha256": "3e154094002761ed2b6e9a52e4e72c841d45b881d73f367cbe9b1da0c695c16b"
+    }
+  ],
+  "remaining": [
+    "金睛—金刚怒目直接原文依据尚未在Wiki专门关系页蒸馏",
+    "三痕月完整配方、辅蛊去留与替代路径未记录",
+    "原著月道归属与若干分支转数仍须保留未知",
+    "本批只启动关系生态，不将1000只作为本次完成量或首发要求"
+  ]
+}

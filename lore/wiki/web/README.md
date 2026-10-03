@@ -19,20 +19,22 @@ python -m http.server 8877 --bind 127.0.0.1 --directory lore\wiki\web\app\dist
 
 构建依赖：`pyyaml`、`beautifulsoup4`、`markdown-it-py`、`pillow`。构建后执行 `node lore/wiki/web/app/check-app.mjs`，核对分类列表与前端源/产物一致性。
 
+2026-10-02 用户授权接入31张蛊虫研究卡面：[长期图片与生成记录](../../visual/assets/gu/README.md)、[明确路由关联清单](../../visual/wiki-gu-art.json)。构建复用现有图片优化流程，研究卡面优先按明确关联显示，保留原有游戏图；图注明确AI美术诠释与形态边界，不套游戏转数角标。专项检查：`node lore/wiki/web/app/test-gu-art-integration.mjs`。
+
 ## 目录
 
 | 路径 | 作用 |
 |---|---|
 | `app/index.html` `app.js` `app/style.css` | 前端源（改这里） |
 | `app/dist/` | 构建产物（`data.json` + 优化图 + 前端拷贝） |
-| `build_app.py` | 从 `lore/wiki` + `game/assets/wenzhen` + `game/data` 生成 `dist/data.json` |
+| `build_app.py` | 从 `lore/wiki` + `game/assets/wenzhen` + `lore/visual/wiki-gu-art.json`及关联图片 + `game/data` 生成 `dist/data.json` |
 | `gu-relations/蛊虫关系图谱.html` | 既有单页关系图谱（可选窗口） |
 
 ## 能看什么
 
 - **知识库**：分类浏览、全局搜索、页面内章节层（原著 / 推导 / 待核对）
 - **世界图谱**：世界与流派入口
-- **美术馆**：142 张游戏美术（背景 / 敌人 / 蛊卡等）
+- **美术馆**：142 张既有游戏美术与31张蛊虫研究卡面（背景 / 敌人 / 蛊卡等）
 - **审计模式**：按「待核对 / 含推断 / 缺证据」筛选
 
 ## 边界

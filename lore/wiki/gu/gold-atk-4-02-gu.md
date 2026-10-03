@@ -7,7 +7,7 @@ description: 四转金道攻伐蛊，形为四爪金龙，出手方式是催动�
 date: 2026-09-28
 tags: [gu, gold-path, attack, rank4, dragon-form, transported]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

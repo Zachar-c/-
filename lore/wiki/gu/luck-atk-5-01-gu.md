@@ -7,7 +7,7 @@ description: 运道八转仙蛊、一次性消耗蛊：本体无形无质，是�
 date: 2026-09-28
 tags: [gu, luck-path, xian-gu, consumable, dao-mark]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

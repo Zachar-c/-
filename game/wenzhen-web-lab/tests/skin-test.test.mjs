@@ -60,8 +60,8 @@ test('换皮-2 杀招结算与标签无关：全部改名后组件合成结果�
   const named = GuRules.killMoveEffectPlan(MOVE, buildGuById(false), { school: 'light' });
   const anon = GuRules.killMoveEffectPlan(MOVE, buildGuById(true), { school: 'light' });
   assert.equal(j(anon), j(named), '改名改变结算——标签泄漏进语义');
-  // 组件合成 = 月光 strike 3 + 小光 strike 1 = 4；预制 effect(strike 5)/damage(0) 不驱动结算
-  assert.equal(named.damage, 4);
+  // 组件合成 = 月光 strike 3 × 小光定向辅助 2 = 6；预制 effect(strike 5)/damage(0) 不驱动结算
+  assert.equal(named.damage, 6);
   assert.equal(named.components.filter((c) => c.applied).length, 2);
   assert.notEqual(named.damage, MOVE.effect.amount, '预制 effect 竟然驱动了结算');
 });

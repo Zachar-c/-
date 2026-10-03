@@ -42,7 +42,7 @@ function renderAlchemy(root) {
        </span>`).join('<span class="arrow">+</span>');
     const src = (r.source || '').replace(/^蛊真人-clean\.txt\s*/, '原文 ');
     const branch = r.branchLabel
-      ? `<div class="meta" style="color:var(--cinnabar)">${r.branchLabel}${(r.closes || []).length ? ` · 关闭 ${(r.closes || []).map((c) => nameOf(c)).join('/')}` : ''}${(r.delays || []).length ? ` · 推迟 ${(r.delays || []).join('/')}` : ''}</div>`
+      ? `<div class="meta" style="color:var(--cinnabar)">${r.branchLabel} · 消耗所列组件</div>`
       : '';
     return `<div class="recipe ${forkIds.has(r.id) ? 'fork-branch' : ''}">
       <div class="io">${inputs}<span class="arrow">→</span>
@@ -51,6 +51,7 @@ function renderAlchemy(root) {
         </span>
       </div>
       ${branch}
+      ${r.inputs.some(id => guByIdMap[id]?.effect?.kind === 'body_training') ? '<div class="meta">已得肉身力量保留；投入锻体蛊后，失去该蛊继续增力的能力。</div>' : ''}
       <div class="meta">
         ${r.kind === 'advance' ? '升炼' : '合炼'} · 成算 ${r.successRollMax >= 100 ? '必成' : `${r.successRollMax}%`}${r.stoneCost ? ` · 元石 ${r.stoneCost}` : ''}
         <span class="src">${src.slice(0, 96)}</span>
@@ -63,8 +64,8 @@ function renderAlchemy(root) {
   const forkNotes = forks.map((f) => `
     <div class="meta" style="margin:8px 0 16px;padding:8px 10px;border-left:3px solid var(--cinnabar)">
       <b>分支节点</b> · 投入 ${f.inputs.map(nameOf).join(' + ')}
-      → ${f.branches.map((b) => `${b.branchLabel || nameOf(b.output)}（关闭 ${(b.closes || []).map(nameOf).join('/') || '—'}）`).join(' ／ ')}
-      <div style="font-size:12px;opacity:.85">二选一后另一去向关闭或推迟；不是数值高低差。</div>
+      → ${f.branches.map((b) => b.branchLabel || nameOf(b.output)).join(' ／ ')}
+      <div style="font-size:12px;opacity:.85">这些路线争用同一批组件；再次取得组件后，可以尝试另一条路线。</div>
     </div>`).join('');
 
   root.innerHTML = `

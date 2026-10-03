@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "飞剑蛊",
+  "route": "/gu/sword-atk-5-02-gu",
+  "file": "flying-sword-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/sword-atk-5-02-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1001｜第三百四十七节：八转慧剑蛊",
+    "line": 91012,
+    "excerpt": "第四只仙蛊。是飞剑蛊。外形看去。是一副银翅蜻蜓模样。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE DRAGONFLY-shaped living Gu with four SILVER WINGS. Natural dragonfly anatomy: long very slender segmented abdomen, small compact thorax, one head with unexpressive compound eyes, six fine legs tucked naturally close to thorax, four complete slim long wings extending in two pairs. Wings physically thin silver-colored biological membranes with intricate subtle vein network and small directional sheen, not broad butterfly wings, metal sword blades or feather wings. Body muted silver-grey/charcoal design, no jeweled green eyes, no mechanical fittings. Entire subject hovers horizontally-diagonal in oblique top/side view, all wing ends and tail inside border, body elongated enough for distinctive dragonfly silhouette. Background spacious low-contrast muted slate-blue AIR with indistinct warm grey blur lower area, no branch/perch, grey stone floor or elaborate scenery. Side light produces fine restrained metallic glints on silver wing membranes while preserving translucency and real thickness; no gilding, ornate engraving, sword symbol, blade tail, weapon props, halos or spell circles. Graceful sharply defined living silver-wing dragonfly, calm believable fantasy, not cyberpunk.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "银翅蜻蜓，四完整透明银膜翼、细长节腹与六足",
+      "无剑刃神器、金针蜜蜂混淆、人物或法阵"
+    ],
+    "risks": [
+      "银色身体和具体翼脉由设计补充；原著只明确银翅蜻蜓",
+      "背景有云感，但低对比不吞没身体"
+    ]
+  }
+}

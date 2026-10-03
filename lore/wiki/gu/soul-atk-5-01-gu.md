@@ -7,7 +7,7 @@ description: 宗族祠堂“三件套”之一（命牌蛊／魂灯蛊／血绳�
 date: 2026-09-28
 tags: [gu, soul-path, clan-hall, north-plain, wu-clan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

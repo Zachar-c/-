@@ -92,9 +92,11 @@ test('Gate 0 · prefab m.effect never drives kill move settlement', () => {
     damage: 88,
   };
   const plan = rules.killMoveEffectPlan(spoofed, guById, { school: 'light' });
-  // 月光 strike3 + 小光 strike1 = 4；支援闩 2 单独挂 support，不是预制 5/99
-  assert.equal(plan.damage, 4);
-  assert.equal(plan.support?.bonus, 2);
+  // 月光 3 × 小光定向增幅 2；预制 5/99 不参与结算
+  assert.equal(plan.damage, 6);
+  assert.equal(plan.support?.targetGuId, 'moonlight_gu');
+  assert.equal(plan.support?.multiplier, 2);
+  assert.equal(plan.support?.bonus, 0);
   assert.notEqual(plan.damage, 99);
   assert.notEqual(plan.damage, 88);
 });

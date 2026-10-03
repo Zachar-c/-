@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "定仙游蛊",
+  "route": "/gu/fixed-immortal-travel-gu",
+  "file": "fixed-immortal-travel-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/fixed-immortal-travel-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0597｜第一百九十一节：早有准备，墨瑶惊疑",
+    "line": 54970,
+    "excerpt": "绿光莹莹，翩翩飞舞，形如翠玉蝴蝶。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Generate a BRAND NEW 《问真》 Gu collectible portrait card, exact 5:7. Supplied reference ONLY locks fine silver double-line rounded rectangular frame with restrained curled corners, no text, and physically credible fantasy realism. DO NOT COPY reference creature, papery white body, stone floor, background or composition. One distinct subject, fully within card, occupying about 55-65% width; whole four-sided frame visible. Real textures, physical soft sidelight, spatial depth; subdued dreamlike presence. No titles, lettering, numbers, rank badges, watermark, people, hands, UI, excessive glitter, magic circles or gratuitous jewellery. Subject: ONE delicate JADE-GREEN BUTTERFLY Gu, freely hovering, not trapped in a glass ball. Wings and body resemble living nephrite/celadon jade, delicate thin wings with subtle naturally integrated veins, four complete butterfly wings, narrow segmented body and two understated fine antennae; real butterfly structure without expressive doll eyes. Rich emerald jade-green, softly translucent thinner edges, gently waxy mineral-organic material not faceted jewels or mechanical glass. Wings slightly open at a natural oblique frontal angle so all four can be read, lighter green lower wings and deeper green upper wings, no gold ornaments or blue symbols. Very restrained green glow softens adjacent air but does not replace body edges with glare. Creature hovers in quiet softly layered blue-grey EMPTY air, long vague atmospheric gradation behind, almost no landscape, dark muted lower background fades into brighter lateral air. No floors, branches, moss, people, giant portals, science fiction space fractures, mirror duplicates, fairy tails, stars or wide green aura. A lightweight living jade butterfly made real by fine wing thickness, physically coherent illumination and graceful singular silhouette.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "单只翠玉蝶，四完整蝶翼、两触角，玉纹与薄翼边缘透光",
+      "蓝灰空中独立飞翔，无传送门、器具或金饰"
+    ],
+    "risks": [
+      "翼脉略偏金黄，不是原文色彩硬锚",
+      "绿光微粒不突出，优先身体可读性"
+    ]
+  }
+}

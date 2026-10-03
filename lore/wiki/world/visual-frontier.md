@@ -3,7 +3,7 @@ type: world
 kind: reference
 name: 视觉素材·北原西漠东海（采集批 D）
 aliases: [视觉素材 D]
-sources: ["source:source/蛊真人-clean.txt"]
+sources: ["source:source/蛊真人-epub-canon.txt"]
 ---
 
 

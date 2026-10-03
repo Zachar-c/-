@@ -101,7 +101,7 @@ const COMBAT_GU_ICON = {
   moon_ray_gu: 'gu_moon', bear_strength_gu: 'gu_force',
   white_boar_strength_gu: 'gu_force', jade_skin_gu: 'gu_water', stone_shell_gu: 'gu_earth',
   white_jade_gu: 'gu_water', blood_farewell_gu: 'gu_blood', blood_droplet_gu: 'gu_blood',
-  vitality_grass_gu: 'gu_qi', sword_atk_1_06_gu: 'gu_sword', sword_atk_1_05_gu: 'gu_sword',
+  vitality_grass_gu: 'gu_qi', vitality_leaf_gu: 'gu_qi', sword_atk_1_06_gu: 'gu_sword', sword_atk_1_05_gu: 'gu_sword',
   // P5 谱系批：剑道杀招组件入白名单——解锁 10 条 origin=canon 杀招（剑痕索命/五指拳心剑/万剑劫）
   // 与剑晋升炼蛊线（古剑/断剑/匕蛊）进 lab；全部为存量显式 effect 蛊，无新数值。
   sword_atk_2_12_gu: 'gu_sword', sword_atk_2_13_gu: 'gu_sword', sword_atk_2_19_gu: 'gu_sword',
@@ -175,7 +175,7 @@ const defaultBattleEffect = (definition, role, rank) => {
 // 曲线投影解析（真源 balance.effect_budget，经 PROJ-LAB-ROLE-CURVE-001）。存量手填 amount
 // （P4 冻结切片）原样保留。kind 无曲线映射且缺 amount 一律 fail-fast（No Silent Fallback）。
 const KIND_TO_CURVE_ROLE = { strike: 'attack', shield: 'defense', heal: 'healing', shift: 'movement' };
-const AMOUNT_FREE_KINDS = new Set(['inspect']); // 计划里是布尔位，不消费 amount
+const AMOUNT_FREE_KINDS = new Set(['inspect', 'support']); // 计划里是布尔位，不消费 amount
 const resolveEffectAmount = (id, effect, rank) => {
   const out = JSON.parse(JSON.stringify(effect));
   if (out.amount != null) return out;
@@ -196,7 +196,8 @@ const guView = (e) => {
   const rank = battle.rank ?? e.rank ?? 1;
   const effect = battle.v1_effect || e.v1_effect;
   const support = SUPPORT_GU_IDS.has(e.id);
-  const battleEffect = support
+  const training = ['body_training', 'production'].includes(effect?.kind);
+  const battleEffect = support || training
     ? null
     : effect
       ? resolveEffectAmount(e.id, effect, rank)
@@ -214,7 +215,8 @@ const guView = (e) => {
         ? resolveEffectAmount(e.id, effect, rank)
         : defaultBattleEffect(e, role, rank),
     icon: GU_ICON[e.id] || ICON_BY_SCHOOL[e.school] || 'gu_qi',
-    combat: support ? '' : (battle.combat || ''),
+    combat: support || training ? '' : (battle.combat || ''),
+    feedingCost: Number(e.feeding_cost || 0),
     battleEffect,
     trueQiCost: Number(battle.true_qi_cost ?? battle.essence_cost ?? e.true_qi_cost ?? e.essence_cost ?? 0),
     thoughtCost: Number(battle.thought_cost ?? v1.thought_cost_default ?? 1),
@@ -302,7 +304,17 @@ const isDominated = (r, all) => all.some((o) => {
 });
 const picked = rawPicked.filter((r) => !isDominated(r, rawPicked));
 
-const killMoves = (v1.kill_moves || []).filter((k) => (k.recipe || []).every((i) => baseGuIds.includes(i)));
+const killMoves = (v1.kill_moves || [])
+  .filter(k => (k.recipe || []).every(id => baseGuIds.includes(id)))
+  .map(move => {
+    const playable = move.id === 'km_light_converge';
+    if (!playable) return { ...move, playable: false };
+    const components = move.recipe.map(id => gu.find(entry => entry.id === id));
+    return { ...move, playable: true, experimental: true,
+      true_qi_cost: components.reduce((sum, item) => sum + Number(item.trueQiCost || 0), 0),
+      thought_cost: components.reduce((sum, item) => sum + Number(item.thoughtCost || 0), 0),
+    };
+  });
 
 // 敌人中文名来自 data/names.json（真实数据表），不自己起名。
 // names.json 是嵌套结构：{ nodes, types, actions, gu, inheritances, enemies: {id: 名} }。
@@ -455,7 +467,7 @@ const events = read('data/events.json').events || [];
 // 只列已实现且能指到源头的机制；未覆盖项要写清为什么没做，避免页面看起来比实际完整。
 const mechanisms = {
   covered: [
-    { name: '真实蛊实体', detail: '77 只可在当前原型出现的蛊定义（基础白名单 + 战利品池 + V1 特殊效果样本 + 舍利/资质蛊）；舍利与资质蛊不进入战斗列表', source: 'data/gu.json（802 实体）+ 本轮 L0 要求的 lab-only 资质蛊' },
+    { name: '真实蛊实体', detail: `${gu.length} 只当前主游戏投影蛊定义；生产、锻体、舍利与资质蛊不进入战斗列表。数量不代表原著语义已逐只核验`, source: `data/gu.json（${guEntities.length} 实体）与当前投影白名单` },
     { name: '固定节点图与统一整备', detail: '开局按难度生成固定五段分支图；每段准备深度为简单 15 / 普通 10 / 困难 5，只展示当前可走的 2–3 个后继；每场战斗胜利后进入同一整备页', source: '本轮设计：docs/superpowers/specs/2026-09-20-wenzhen-web-run-flow-convergence-design.md' },
     { name: '异闻节点与即时抉择', detail: '每层非战斗模板池含 2 个异闻模板；seed 决定遇见的事件。只开放 6 条能由 Web 完整结算的事件，并按确定性牌序轮完后再重复；卡片展示气血代价/元石所得，可承受时收下、否则离开；同 seed 同难度仍生成相同节点图', source: 'data/nodes.json → echo_cave / gu_rot_pact；data/events.json → huajiu_cache / tithing_cache / duel_wager / sealed_silk_reliquary / unclaimed_waystone / ropewalk_wager；social_command_rules.gd 事件接受结算' },
     { name: '跨局旧录与种子复走', detail: '大厅单独保存最近 24 局结局、路线、摘要与种子；按原难度与种子开新局，同一内容版本下会生成相同地图。旧录与进行中存档分开；不还原当局结束前角色状态', source: 'js/lab_save.js → ARCHIVE_KEY / appendArchive；js/main.js → archiveRun / startRun(seedOverride)；js/journey.js → archiveRunCard' },
@@ -543,26 +555,28 @@ const allCommonEnemies = byTier('common');
 const allEliteEnemies = byTier('elite');
 const allBossEnemies = byTier('boss');
 const FIXED_BOSS_BY_SEGMENT = {
-  1: 'crag_serpent_matriarch',
-  2: 'marrow_gu_adept',
-  3: 'thunder_crown_sovereign',
-  4: 'blood_vein_bishop',
-  5: 'miasma_vein_lord',
+  1: 'miasma_vein_lord',
+  2: 'crag_serpent_matriarch',
+  3: 'marrow_gu_adept',
+  4: 'thunder_crown_sovereign',
+  5: 'blood_vein_bishop',
 };
 const flowPoolsBySegment = {};
 for (let segment = 1; segment <= 5; segment += 1) {
   const rankCap = Math.min(5, segment + 1);
-  const withinRank = (enemy) => Number(enemy.rank || 1) <= rankCap;
-  const fixedBoss = FIXED_BOSS_BY_SEGMENT[segment];
+  const rankFloor = segment === 1 ? 1 : Math.min(3, segment);
+  const withinRank = (enemy) => Number(enemy.rank || 1) >= rankFloor && Number(enemy.rank || 1) <= rankCap;
+  // 后段单敌节点复用已登记的更强敌手，不增加HP或复制敌人定义。
+  const battles = (segment === 1 ? allCommonEnemies : [...allCommonEnemies, ...allEliteEnemies]).filter(withinRank);
+  const elites = allEliteEnemies.filter(withinRank);
+  const fixedBoss = allBossEnemies.find(enemy => enemy.id === FIXED_BOSS_BY_SEGMENT[segment]);
+  if (!battles.length || elites.length < 2 || !fixedBoss) {
+    throw new Error(`build_data: segment ${segment} encounter content missing; do not fall back to lower ranks`);
+  }
   flowPoolsBySegment[String(segment)] = {
-    battle: (allCommonEnemies.filter(withinRank).length ? allCommonEnemies.filter(withinRank) : allCommonEnemies)
-      .map((enemy) => enemy.id),
-    elite: (allEliteEnemies.filter(withinRank).length ? allEliteEnemies.filter(withinRank) : allEliteEnemies)
-      .map((enemy) => enemy.id),
-    boss: allBossEnemies.some((enemy) => enemy.id === fixedBoss)
-      ? [fixedBoss]
-      : (allBossEnemies.filter(withinRank).length ? allBossEnemies.filter(withinRank) : allBossEnemies)
-        .map((enemy) => enemy.id),
+    battle: battles.map(enemy => enemy.id),
+    elite: elites.map(enemy => enemy.id),
+    boss: [fixedBoss.id],
   };
 }
 const supportGuBySegment = {};
@@ -663,10 +677,10 @@ const out = {
     ),
     pity: lootPity,
     pacingLayers,
-    schoolPools: { [labSchool]: schoolPools[labSchool] || [] },
+    schoolPools: Object.fromEntries(Object.entries(schoolPools).map(([school, ids]) => [school, ids.filter(id => gu.some(entry => entry.id === id))]).filter(([, ids]) => ids.length)),
     school: labSchool,
   },
-  gu, recipes: picked, killMoves, enemies: pickedEnemies,
+  gu, recipes: picked, killMoves, killMovesEnabled: true, enemies: pickedEnemies,
   nodes, route, shopOffers, npcs, events,
   canon,
   /* Rank 主链：WORLD 真源快照（Integration 刀1）。Lab 投影只准读这里。 */

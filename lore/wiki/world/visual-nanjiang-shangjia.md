@@ -3,7 +3,7 @@ type: world
 kind: reference
 name: 视觉素材·商家城与南疆（采集批 B）
 aliases: [视觉素材 B]
-sources: ["source:source/蛊真人-clean.txt"]
+sources: ["source:source/蛊真人-epub-canon.txt"]
 ---
 
 

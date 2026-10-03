@@ -7,7 +7,7 @@ description: 尊者的资格条件、寿命口径、万劫道痕统计口径、�
 date: 2026-09-25
 tags: [rules, venerables, heaven-dao, cultivation]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

@@ -7,7 +7,7 @@ description: 五转、养用合一的虫群型蛊虫，血海老祖的最后成�
 date: 2026-09-28
 tags: [gu, blood-path, swarm-gu, self-feeding, sacrificial-cost, no-master-essence]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

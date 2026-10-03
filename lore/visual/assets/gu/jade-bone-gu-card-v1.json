@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "玉骨蛊",
+  "route": "/gu/bone-def-3-05-gu",
+  "file": "jade-bone-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/bone-def-3-05-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0226｜第二十六节：玉骨铁骨",
+    "line": 19832,
+    "excerpt": "这根骨头，两端圆润，中间修长，通体泛绿好似碧光玉石。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE elongated BONE-shaped Gu, both ends ROUND and middle slender, entire body green like luminous jade. A single organic long-bone form with two softly bulbous rounded terminal ends and narrower gently tapering shaft, no sharpened tip (that belongs to bone-spear Gu), no pointed spearhead, ribs, skeleton pile, normal insect legs or eyes. Living nephrite-green density with slight translucent edge depth, subtly milky jade inclusions and waxy satin texture, not faceted emerald crystal or gold inlay. Whole Gu diagonally rests on plain dark muted brown smooth wood plane, complete two ends visible with space around card border, side light defines bulbous tips and long narrow middle. Cool subdued grey-green light, credible contact shadows, softly unfocused empty rear area. No carved spirals, characters, hand, jade statue, altar, medical skeleton, forest, grass or ornamental jewel fittings. Plain peculiar green bone is entire identity, physical thickness and material clarity make it precious.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "绿玉长骨单体，两头圆润中间细长，完整两端",
+      "没有尖枪头、正常虫形、骨堆或首饰；玉体透光和木面接触影清楚"
+    ],
+    "risks": [
+      "两端结构如长骨骺，具体形制与玉裂纹设计未被原文锁定",
+      "局部高光偏亮，但未失去绿色实体厚度"
+    ]
+  }
+}

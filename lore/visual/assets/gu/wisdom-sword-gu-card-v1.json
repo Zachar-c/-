@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-02",
+  "name": "慧剑蛊",
+  "route": "/gu/wisdom-atk-5-05-gu",
+  "file": "wisdom-sword-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、画幅及可信物质表现",
+  "source_paths": [
+    "lore/wiki/gu/wisdom-atk-5-05-gu.md",
+    "lore/visual/dossiers/gu/wisdom_sword_gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1001｜第三百四十七节：八转慧剑蛊",
+    "line": 91052,
+    "excerpt": "就像是一个气泡。飘飘荡荡，其貌不扬。"
+  },
+  "design_boundary": "具体尺寸、地面、色彩和薄膜干涉为美术表达；不锁原文未给的大小、气泡成分或剑形。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu creature collectible card for 慧剑蛊, portrait exact 5:7. Reference image ONLY supplies thin silver double-line rounded-corner frame, delicate curled corners and physically credible lighting, NOT its creature, floor, white color or composition. Subject hard canon: exactly ONE ordinary-looking floating AIR BUBBLE, inconspicuous and simple; no sword at all. Show a single clear delicate spherical bubble hanging in still air, center/lower-middle, approximately 50% card width, no other bubbles. A very thin transparent film with restrained soft highlights, faint naturally occurring interference at a few rim portions, nearly colorless interior showing optically distorted distant backdrop. Fragile, weightless, unassuming; no solid glass ball thickness, crystal gemstone, metal or liquid orb with enclosed objects. Physical fantasy realism: calm shaded neutral environment, a softly defocused plane of grey-brown earth recedes below and away, spacious low contrast background with muted lateral environmental light; no identical stone floor copied from reference. No rays or neon. Background remains visible through bubble, gently refracted and softened, one faint soft shadow below helps spatial depth. Full complete silver card frame like reference, no words, letters, numbers, badges, watermark. No blade, sword symbol, golden engraving, magic circle, filament cutting demonstrations, internal stars, cosmos or massive aura. Extraordinary power is hidden behind ordinary appearance. A quiet, clear, singular bubble portrait with beautiful credible optics rather than ornamental fantasy.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用：单一薄膜气泡、悬浮、无剑或符文，5:7细银框",
+    "visible_facts": [
+      "圆形薄膜气泡，背景可透视，周缘自然彩色干涉与环境反射",
+      "气泡与地面分离，地面接触/投影关系清楚",
+      "完整细银双框，无文字或第二只蛊"
+    ],
+    "risks": [
+      "周缘干涉较明显，纯普通气泡的低调程度略减",
+      "地面仍使用岩质颗粒，后续对象需要独立背景以防全套趋同"
+    ]
+  }
+}

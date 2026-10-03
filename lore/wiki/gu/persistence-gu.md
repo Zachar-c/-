@@ -8,7 +8,7 @@ date: 2026-09-26
 tags: [gu, persistence, reverse-flow-river, human-path]
 schema: 2
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/F2b-240001-256650-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"

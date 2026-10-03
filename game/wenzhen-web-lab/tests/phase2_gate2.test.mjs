@@ -23,13 +23,13 @@ const axes = ['info', 'armor', 'evasion'];
 
 test('Gate 2 · live gu carry build roles from the seven-role vocabulary', () => {
   const required = {
-    small_light_gu: 'Information',
-    moon_glow_gu: 'Support',
+    small_light_gu: 'Support',
+    moon_glow_gu: 'Core',
     white_boar_strength_gu: 'Transform',
     blood_farewell_gu: 'Finisher',
     moonlight_gu: 'Core',
     blood_droplet_gu: 'Core',
-    vitality_grass_gu: 'Resource',
+    vitality_leaf_gu: 'Resource',
     stone_shell_gu: 'Defense',
   };
   for (const [id, role] of Object.entries(required)) {
@@ -44,12 +44,12 @@ test('Gate 2 · three minimum kits are complete and map to three problem axes', 
   const covered = new Set();
   for (const id of kits) {
     const kit = rules.kitById(id);
-    assert.ok(kit.members.length >= 2, `${id} needs real members`);
+    assert.ok(kit.members.length >= 1, `${id} needs a real member`);
     covered.add(kit.axis);
     // 组合必须改变解法，不能只是数字
     const verbs = kit.members.flatMap((mid) => rules.buildTagsOf(mid, guById));
     assert.ok(
-      verbs.some((t) => ['inspect', 'suppress', 'armorBreak', 'ignoreEvasion', 'stable_hit', 'chip', 'sustain'].includes(t)),
+      verbs.some((t) => ['inspect', 'suppress', 'armorBreak', 'ignoreEvasion', 'stable_hit', 'chip', 'sustain', 'body_investment', 'burst'].includes(t)),
       `${id} must carry solution verbs`,
     );
   }
@@ -64,16 +64,23 @@ test('Gate 2 · kit membership is reachable from live owned pool pieces', () => 
       assert.ok(guById[mid], `${id} member missing: ${mid}`);
     }
   }
-  // 开局已含两套半：破甲爆发 / 稳定持续 / 信息侧的 inspect
+  // 开局没有月芒；取得月芒后兼容构筑的观察/爆发/回元路线才齐备。
   const start = {
-    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
+    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_leaf_gu: 1,
     jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
   };
   assert.equal(rules.kitCoverage('kit_pierce_burst', start, guById).ok, true);
   assert.equal(rules.kitCoverage('kit_stable_sustain', start, guById).ok, true);
-  const info = rules.kitCoverage('kit_info_suppress', start, guById);
-  assert.equal(info.ok, false);
-  assert.equal([...info.missing].join(','), 'moon_glow_gu');
+  assert.equal(rules.kitCoverage('kit_info_suppress', start, guById).ok, false);
+  const moon = guById.moon_glow_gu;
+  assert.equal(moon.role, 'attack');
+  assert.equal(moon.battleEffect.kind, 'strike');
+  assert.equal(moon.battleEffect.amount, 9);
+  assert.equal(moon.battleEffect.ignoreEvasion, true);
+  assert.equal(moon.battleEffect.suppress, undefined);
+  assert.equal(moon.battleEffect.suppressWhenRevealed, undefined);
+  assert.equal(moon.trueQiCost, 4);
+  assert.equal(rules.kitCoverage('kit_info_suppress', { ...start, moon_glow_gu: 1 }, guById).ok, true);
 });
 
 test('Gate 2 · Build A/B/C vs the same enemy yield ≥2 distinct action structures', () => {
@@ -101,4 +108,19 @@ test('Gate 2 · numeric-only pile is not a kit member set', () => {
   assert.ok(!verbs.includes('suppress'));
   assert.ok(!verbs.includes('armorBreak'));
   assert.ok(!verbs.includes('ignoreEvasion'));
+});
+
+test('Gate 2 · legacy moon kit name carries burst, not information suppression', () => {
+  const kit = rules.kitById('kit_info_suppress');
+  assert.equal(kit.label, '月芒高耗爆发');
+  assert.deepEqual([...kit.members], ['moon_glow_gu']);
+  assert.deepEqual([...kit.optional].sort(), ['jade_skin_gu', 'vitality_leaf_gu'].sort());
+  assert.deepEqual([...kit.structure], ['inspect', 'burst', 'recover']);
+  for (const [axis, steps] of Object.entries({
+    info: ['inspect', 'burst', 'recover'],
+    armor: ['burst', 'recover'],
+    evasion: ['stable_hit', 'burst', 'recover'],
+  })) {
+    assert.deepEqual([...rules.actionStructureFor(kit.id, { problemAxis: axis }).steps], steps);
+  }
 });

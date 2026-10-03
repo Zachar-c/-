@@ -7,7 +7,7 @@ description: 一转力道蛊：可增长蛊师一斤之力，蛊店标价每只�
 date: 2026-09-28
 tags: [gu, strength-path, north-plain, commerce, force-path]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

@@ -7,7 +7,7 @@ description: 《蛊真人》主角：重生回十五岁的古月族丙等蛊师�
 date: 2026-10-01
 tags: [character, protagonist, qing-mao-mountain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
   - "memory:lore/research/分支：六卷精编版/记忆库/06-角色台账.md"

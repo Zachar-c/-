@@ -7,7 +7,7 @@ description: 白豕蛊＋玉皮蛊合炼出的二转防御蛊：只保留并强�
 date: 2026-09-28
 tags: [gu, defense, refinement, strength-path, qing-mao-mountain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

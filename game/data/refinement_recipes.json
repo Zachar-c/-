@@ -12,7 +12,7 @@
    "output_gu_id": "moon_glow_gu",
    "source": "蛊真人-clean.txt 17024-17155：月芒蛊=月光蛊x1+小光蛊x2（合炼失败代价示例：小光蛊消亡）",
    "retired": true,
-   "retire_reason": "L0 2026-09-25 Phase 4：被 moonlight_glow 严格支配（同产出、多投入）",
+   "retire_reason": "与当前moonlight_glow同为月光1+小光2的重复登记，保留来源历史，不进主可玩配方。",
    "inputs": [
     {
      "school": "light",
@@ -44,10 +44,20 @@
    "branch_axis": "burst",
    "material_role": "recipe_key",
    "farm_hint": "缺兽骨 → 打重甲/防御敌（铁皮山猪）",
-   "preferred_enemy_ids": ["iron_hide_boar", "ridge_elite_scout"],
-   "closes": ["kit_info_suppress", "moon_glow_gu"],
-   "delays": ["kit_info_suppress"],
-   "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）；L0 Phase 5 兽骨=爆发支配方钥匙"
+   "preferred_enemy_ids": [
+    "iron_hide_boar",
+    "ridge_elite_scout"
+   ],
+   "closes": [
+    "kit_info_suppress",
+    "moon_glow_gu"
+   ],
+   "delays": [
+    "kit_info_suppress"
+   ],
+   "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）；L0 Phase 5 兽骨=爆发支配方钥匙",
+   "retired": true,
+   "retire_reason": "原著月痕需月光+痕石（Wiki E:V1-017156），此旧小光配方无依据；射程玩法和正确投入尚未接入。"
   },
   {
    "id": "advance_small_light_gu",
@@ -134,23 +144,16 @@
    "id": "moonlight_glow",
    "kind": "fixed",
    "default_unlocked": true,
+   "stone_cost": 10,
    "input_gu_ids": [
     "moonlight_gu",
+    "small_light_gu",
     "small_light_gu"
    ],
    "output_gu_id": "moon_glow_gu",
-   "materials": {
-    "moon_dew": 1
-   },
-   "fork_id": "fork_moonlight_small",
-   "branch_label": "炼向月芒·信息压制",
-   "branch_axis": "info",
-   "material_role": "recipe_key",
-   "farm_hint": "缺月露 → 打信息/反制敌（石甲散修）",
-   "preferred_enemy_ids": ["neutral_stone_wanderer", "marrow_gu_adept"],
-   "closes": ["moon_ray_gu", "kit_pierce_burst"],
-   "delays": ["kit_pierce_burst"],
-   "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）；L0 Phase 5 月露=信息支配方钥匙"
+   "branch_label": "月芒 · 高伤月刃",
+   "branch_axis": "burst",
+   "source": "Wiki moon-glow-gu.md E:V1-015710/017148/017150：月光1+小光2→二转月芒，主攻三倍、射程不增。过程与绝对数值为网页试玩适配。"
   },
   {
    "id": "white_jade_basic",

@@ -7,7 +7,7 @@ description: 弧六事件页：方源碎第二空窍升仙、真阳楼崩塌、�
 date: 2026-09-25
 tags: [event, true-yang-collapse, immortal-corpse, dual-demons]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/C-90001-135000.md"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
 schema: 2

@@ -7,7 +7,7 @@ description: 六转水道移动仙蛊，仙蛊屋近水楼台的三大核心之�
 date: 2026-09-28
 tags: [gu, water-path, xian-gu, movement, gu-house-core, fang-yuan, yuan-lian-zhai]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

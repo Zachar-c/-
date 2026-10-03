@@ -84,13 +84,13 @@ function main() {
 code{background:#f4f1ea;padding:2px 6px;border-radius:4px}</style></head>
 <body>
 <h1>问真</h1>
-<p>双击打开 <code>game/wenzhen-web-lab/lab.html</code> 即可开始。无需 Node、Godot 或联网。</p>
+<p><a href="game/wenzhen-web-lab/lab.html">开始游戏</a> · 无需安装或联网。</p>
 <h2>操作</h2>
 <ul>
   <li>大厅选择难度 →「开始新局」</li>
   <li>五段路线选择后继 → 战斗 / 休整 / 市集 / 野蛊 / 险地 / 异闻</li>
-  <li>战斗：观察、拳脚、蛊虫、杀招、结束回合；注意敌方意图与反击预警</li>
-  <li>整备：坊市买卖、炼化、开炉、杀招组装、修为突破</li>
+  <li>战斗：观察、拳脚、蛊虫、结束回合；注意敌方意图与反击预警</li>
+  <li>整备：坊市买卖、炼化、开炉、修为突破</li>
   <li>本局自动保存（浏览器 localStorage）。刷新后从大厅「继续当前局」。</li>
   <li>大厅保留最近 24 局修行旧录，可查看路线并以原种子复走。</li>
   <li>换浏览器或移动目录不会自动迁移存档。</li>

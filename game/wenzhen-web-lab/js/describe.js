@@ -9,12 +9,17 @@ function effectText(e) {
           : '';
         return `击伤 ${x.amount}${consume}`;
       }
+      case 'production': return '整备耗真元催生生机叶 · 每节点一次 · 本体保留 · 试玩时间适配';
+      case 'body_training': return '整备时逐步锻体 · 已得力量永久保留 · 同型不能重复叠加';
+      case 'maintained': if ((x.modifiers || []).some(m => m.attribute === 'attackDelay')) return `石臂防御 ${x.amount} · 成形后不付维持或承击费 · 拳脚+1，晚1回合结算 · 可主动停止 · 试玩参数`; return `持续防御 ${x.amount ?? (x.modifiers || []).filter(m => m.attribute === 'defense').reduce((n, m) => n + m.amount, 0)} · 每回合真元 ${x.upkeep_qi || 0} · 每次承击真元 ${x.hit_qi || 0} · 跨回合占操控 ${x.focus_cost || 0} · 可主动停止 · 试玩参数`;
       case 'shield': return `护体 ${x.amount}`;
       case 'grant_block': return `格挡 ${x.amount}`;
-      case 'heal': return `回气 ${x.amount}`;
-      case 'heal_and_strike': return `回气 ${x.heal} · 击伤 ${x.amount}`;
+      case 'heal': return `恢复气血 ${x.amount}${x.consumable ? ' · 用后消失 · 每节点一次有效疗伤 · 试玩时间适配' : ''}`;
+      case 'heal_and_strike': return `恢复气血 ${x.heal} · 击伤 ${x.amount}`;
       case 'add_temp_stat': return `${statName(x.stat)} +${x.amount}`;
-      case 'support': return `助${x.support_school} +${x.support_bonus}`;
+      case 'support': return x.target_gu_id
+        ? `本回合下一次${GU_BY_ID[x.target_gu_id]?.name || x.target_gu_id} ×${x.multiplier}${x.nonStacking ? ' · 同类不叠加' : ''} · 同催准备，不占行动`
+        : `助${x.support_school} +${x.support_bonus}`;
       case 'status': return `标记 ${x.amount}`;
       case 'shift': return `位移 ${x.amount}`;
       case 'sword_intent': return `剑意 +${x.amount}`;
@@ -42,13 +47,23 @@ function statusLabel(s) {
 
 function guReasonLabel(reason) {
   return {
+    production_visit_used: '本次整备已催生',
+    not_preparing: '整备时可催生',
+    gu_unavailable: '未持有该蛊',
+    healing_recovery: '本节点已用生机叶，尚在疗伤间隔',
+    health_full: '气血已满，不消耗叶片',
+    resource_component_unsupported: '产叶或消耗蛊须单独使用',
+    already_active: '正在催动',
+    defense_group_active: '已有皮甲形态，请先停止',
+    insufficient_essence: '真元不足',
+    maintained_component_unsupported: '持续蛊须单独催动',
     unknown_gu: '未找到该蛊',
     gu_consumed: '本场已消耗',
     gu_sealed: '已封印',
     gu_used_this_turn: '本回合已用',
     insufficient_qi_quality: '真元质量不足',
     action_limit_reached: '本回合行动数已尽',
-    insufficient_thought: '念头不足',
+    insufficient_thought: '本回合操控余量不足',
     insufficient_true_qi: '真元不足',
     condition_miss: '条件未满足',
     consume_status_missing: '缺少可消耗的状态层数',
@@ -64,8 +79,9 @@ function killMoveEffectText(move, guById = {}) {
     return effectText(move?.effect);
   }
   const plan = GuRules.killMoveEffectPlan(move, guById, {});
+  if (plan.unavailableReason) return guReasonLabel(plan.unavailableReason);
   const parts = [];
-  if (plan.heal) parts.push(`回气 ${plan.heal}`);
+  if (plan.heal) parts.push(`恢复气血 ${plan.heal}`);
   if (plan.block) parts.push(`护体 ${plan.block}`);
   if (plan.damage) parts.push(`击伤 ${plan.damage}`);
   if (plan.swordIntent) parts.push(`剑意 +${plan.swordIntent}`);

@@ -7,7 +7,7 @@ description: 三转肌肤永久改造蛊：用后练成「冰肌」，常驻防�
 date: 2026-09-28
 tags: [gu, defense, body-modification, permanent, water-path]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

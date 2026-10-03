@@ -7,7 +7,7 @@ description: 三转的攻击类蛊虫；以橘红色火焰或火球飞射伤敌�
 date: 2026-09-28
 tags: [gu, fire-path, attack-gu, projectile, core-gu, mass-battle]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

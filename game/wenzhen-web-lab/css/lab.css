@@ -477,6 +477,8 @@ h2::before {
 .hall-save { margin-top: 12px; font-size: 13px; line-height: 1.6; }
 .hall-save.ok { color: var(--jade); }
 .hall-save.bad { color: var(--cinnabar); }
+.hall-starting-kit { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--hairline); max-width: 660px; }
+.hall-starting-kit p { margin-top: 6px; font-size: 12px; line-height: 1.75; }
 .hall-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .hall-side {
   padding: 20px; border: 1px solid var(--card-border);
@@ -1133,3 +1135,7 @@ button {
   margin-right: 10px;
   filter: drop-shadow(0 0 6px rgba(169, 215, 255, .35));
 }
+
+.choice-insight { margin-top: 10px; font-size: 12px; line-height: 1.65; color: var(--ink-soft); overflow-wrap: anywhere; }
+.choice-insight div + div { margin-top: 4px; }
+.reward-choices .choice-insight { margin-top: 0; }

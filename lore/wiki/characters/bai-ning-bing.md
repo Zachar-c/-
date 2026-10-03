@@ -7,7 +7,7 @@ description: 南疆青茅山白家寨天才、十绝北冥冰魄体；弧二冰�
 date: 2026-09-30
 tags: [character, qing-mao, ten-extreme-body, bai-ning-bing]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "memory:lore/research/分支：六卷精编版/记忆库/02-人物弧光.md"
   - "memory:lore/research/分支：六卷精编版/记忆库/06-角色台账.md"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"

@@ -7,7 +7,7 @@ description: 二转蛊虫第一毒：以一转生息草、寡妇蛛、红针蝎�
 date: 2026-09-28
 tags: [gu, blood-path, poison, two-rank, cost-mechanism]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

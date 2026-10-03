@@ -109,7 +109,7 @@
     "jade_skin_gu": "玉皮蛊",
     "white_boar_strength_gu": "白豕蛊",
     "white_jade_gu": "白玉蛊",
-    "vitality_grass_gu": "生机草蛊",
+    "vitality_grass_gu": "九叶生机草",
     "test_slay_gu": "十转杀蛊",
     "moon_ray_gu": "月痕蛊",
     "blood_atk_4_01_gu": "血颅蛊",
@@ -897,7 +897,8 @@
     "wood_mov_5_35_gu": "木枝蛊",
     "wood_heal_1_36_gu": "木叶蛊",
     "wood_log_2_38_gu": "木草蛊",
-    "wood_atk_3_40_gu": "木果蛊"
+    "wood_atk_3_40_gu": "木果蛊",
+    "vitality_leaf_gu": "生机叶"
   },
   "inheritances": {
     "moonlit_trace": "月下寻迹",

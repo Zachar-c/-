@@ -9,6 +9,7 @@ import vm from 'node:vm';
 
 const readJSON = (p) => JSON.parse(fs.readFileSync(new URL(p, import.meta.url), 'utf8'));
 const BAL = readJSON('../../data/balance.json');
+const ENEMIES = readJSON('../../data/enemies.json');
 const GU = readJSON('../../data/gu.json');
 const guEntities = Array.isArray(GU) ? GU : (GU.entities || GU.gu || []);
 const guById = Object.fromEntries(guEntities.map((e) => [e.id, e]));
@@ -28,9 +29,14 @@ const dataGuById = Object.fromEntries(DATA.gu.map((g) => [g.id, g]));
 const rulesContext = vm.createContext({});
 vm.runInContext(fs.readFileSync(new URL('../js/gu_rules.js', import.meta.url), 'utf8'), rulesContext);
 const GuRules = rulesContext.GuRules;
+vm.runInContext(fs.readFileSync(new URL('../js/run_rules.js', import.meta.url), 'utf8'), dataContext);
+vm.runInContext(fs.readFileSync(new URL('../js/run_flow.js', import.meta.url), 'utf8'), dataContext);
+const RunFlow = dataContext.RunFlow;
 
 const j = (v) => JSON.stringify(v);
 const SLICE = ['moonlight_gu', 'small_light_gu', 'moon_glow_gu'];
+const sourceEnemyById = Object.fromEntries(ENEMIES.map((enemy) => [enemy.id, enemy]));
+const sorted = (values) => [...values].sort();
 
 // ---------- C1 数据生成一致性（月光切片：source → generated 不丢 entity、不改 id、不改关键语义字段） ----------
 
@@ -52,7 +58,7 @@ test('C1-2 全量：凡源数据带显式 v1_effect 且入生成物的蛊，effe
   const labCurve = PROJ.items.find((i) => i.id === 'PROJ-LAB-ROLE-CURVE-001')?.value;
   assert.ok(labCurve, '缺 PROJ-LAB-ROLE-CURVE-001');
   const KIND_TO_CURVE_ROLE = { strike: 'attack', shield: 'defense', heal: 'healing', shift: 'movement' };
-  const AMOUNT_FREE_KINDS = new Set(['inspect']);
+  const AMOUNT_FREE_KINDS = new Set(['inspect', 'support']);
   let checked = 0;
   for (const gu of DATA.gu) {
     const src = guById[gu.id];
@@ -76,6 +82,22 @@ test('C1-3 切片杀招：km_light_converge 的 recipe/effect 与源一致，组
   assert.deepEqual([...out.recipe], [...src.recipe], 'recipe 漂移');
   assert.equal(j(out.effect), j(src.effect), 'effect 漂移');
   for (const gid of out.recipe) assert.ok(dataGuById[gid], `recipe 组件 ${gid} 不在生成蛊表`);
+});
+
+test('C1-4 杀招窄开放：仅凝光可玩，成本与组件相加，效果按组件合成', () => {
+  assert.equal(DATA.killMoves.length, 17, '生成杀招总数漂移');
+  const playable = DATA.killMoves.filter((move) => move.playable === true);
+  assert.deepEqual([...playable].map((move) => move.id), ['km_light_converge'], '可玩杀招白名单漂移');
+  const move = playable[0];
+  const components = move.recipe.map((id) => dataGuById[id]);
+  assert.equal(move.true_qi_cost, components.reduce((sum, gu) => sum + gu.trueQiCost, 0));
+  assert.equal(move.thought_cost, components.reduce((sum, gu) => sum + gu.thoughtCost, 0));
+  assert.ok(DATA.killMoves.filter((entry) => entry.id !== move.id).every((entry) => entry.playable === false),
+    '未开放杀招必须显式保持不可玩');
+
+  const effectPlan = JSON.parse(JSON.stringify(GuRules.killMoveEffectPlan(move, dataGuById)));
+  assert.equal(effectPlan.damage, 6, '月光蛊3点伤害应由小光蛊定向增幅至6点');
+  assert.deepEqual(effectPlan.components, [...move.recipe].map((id) => ({ id, applied: true, gate: '' })));
 });
 
 // ---------- C2 Effect Execution Golden Cases（固定 state + effect → exact resulting state） ----------
@@ -295,6 +317,68 @@ test('C6-2 敌方攻击投影压缩不变量：≤ lab attack 曲线且单调不
   }
 });
 
+test('C6-3 五段敌池：层主顺序固定，后段遭遇 rank 有下限且来源统计可追溯', () => {
+  const pools = DATA.flow.poolsBySegment;
+  const bossOrder = [
+    'miasma_vein_lord', 'crag_serpent_matriarch', 'marrow_gu_adept',
+    'thunder_crown_sovereign', 'blood_vein_bishop',
+  ];
+  for (let segment = 1; segment <= 5; segment += 1) {
+    const pool = pools[String(segment)];
+    assert.ok(pool, `缺少第${segment}段敌池`);
+    assert.equal(j(pool.boss), j([bossOrder[segment - 1]]), `第${segment}段层主顺序错误`);
+    const sourceBoss = sourceEnemyById[pool.boss[0]];
+    const labBoss = DATA.enemies.find((enemy) => enemy.id === pool.boss[0]);
+    assert.ok(sourceBoss && labBoss, `第${segment}段层主 ${pool.boss[0]} 缺源或生成数据`);
+    assert.equal(Number(labBoss.rank), Number(sourceBoss.rank), `${pool.boss[0]} rank 与源数据不一致`);
+    assert.equal(Number(labBoss.hp), Number(sourceBoss.hp), `${pool.boss[0]} hp 与源数据不一致`);
+  }
+
+  const openingCommon = DATA.enemies
+    .filter((enemy) => enemy.tier === 'common' && Number(enemy.rank || 1) <= 2)
+    .map((enemy) => enemy.id);
+  assert.deepEqual(sorted(pools['1'].battle), sorted(openingCommon), '首段普通敌池应保持 rank<=2 的原普通敌池');
+
+  for (let segment = 2; segment <= 5; segment += 1) {
+    const floor = Math.min(3, segment);
+    const cap = Math.min(5, segment + 1);
+    const inRange = (enemy) => Number(enemy.rank || 1) >= floor && Number(enemy.rank || 1) <= cap;
+    const expectedBattle = DATA.enemies
+      .filter((enemy) => ['common', 'elite'].includes(enemy.tier) && inRange(enemy))
+      .map((enemy) => enemy.id);
+    const expectedElite = DATA.enemies
+      .filter((enemy) => enemy.tier === 'elite' && inRange(enemy))
+      .map((enemy) => enemy.id);
+    assert.ok(expectedBattle.length, `第${segment}段 battle 无 rank ${floor}..${cap} 内容`);
+    assert.ok(expectedElite.length, `第${segment}段 elite 无 rank ${floor}..${cap} 内容`);
+    assert.deepEqual(sorted(pools[String(segment)].battle), sorted(expectedBattle), `第${segment}段 battle 池不符合 rank ${floor}..${cap}`);
+    assert.deepEqual(sorted(pools[String(segment)].elite), sorted(expectedElite), `第${segment}段 elite 池不符合 rank ${floor}..${cap}`);
+
+    for (const id of [...pools[String(segment)].battle, ...pools[String(segment)].elite]) {
+      const enemy = DATA.enemies.find((entry) => entry.id === id);
+      const source = sourceEnemyById[id];
+      assert.ok(enemy && source, `${id} 缺生成数据或源数据`);
+      assert.ok(inRange(enemy), `${id} rank ${enemy.rank} 超出第${segment}段 ${floor}..${cap}`);
+      assert.equal(Number(enemy.rank), Number(source.rank), `${id} rank 与源数据不一致`);
+      assert.equal(Number(enemy.hp), Number(source.hp), `${id} hp 与源数据不一致`);
+      assert.equal(enemy.tier, source.tier, `${id} tier 与源数据不一致`);
+      assert.equal(j(enemy.intent), j(source.intent), `${id} 攻击意图与源数据不一致`);
+      assert.equal(j(enemy.phases), j(source.phases || null), `${id} 阶段攻击与源数据不一致`);
+    }
+  }
+
+  const graph = RunFlow.generateGraph({
+    seed: 103,
+    difficulty: 'normal',
+    pools,
+    enemyById: Object.fromEntries(DATA.enemies.map((enemy) => [enemy.id, enemy])),
+  });
+  for (const node of graph.nodes) {
+    if (node.type === 'battle') assert.equal(node.enemyIds.length, 1, `${node.id} 普通战应为单敌`);
+    if (node.type === 'elite') assert.equal(node.enemyIds.length, 2, `${node.id} 精英战应为双敌`);
+  }
+});
+
 // ---------- C7 杀招/炼蛊谱系（P5 谱系批：canon 杀招与晋升线入 lab） ----------
 
 test('C7-1 canon 杀招 provenance：origin=canon 的 kill_moves 全部 canon_driven_v1 且引用可解析', () => {
@@ -321,11 +405,13 @@ test('C7-2 谱系入 lab：canon 杀招 10 条 + 剑晋升配方线随白名单�
   }
   assert.ok(DATA.killMoves.length >= 17, `lab 杀招数量不足：${DATA.killMoves.length}`);
   const recipeIds = DATA.recipes.map((r) => r.id);
-  for (const rid of ['moon_ray_forged', 'white_jade_basic', 'bear_split',
+  for (const rid of ['moonlight_glow', 'white_jade_basic', 'bear_split',
     'ascend_sword_atk_1_05_gu', 'ascend_sword_atk_1_06_gu', 'ascend_sword_rec_1_10_gu']) {
     assert.ok(recipeIds.includes(rid), `配方 ${rid} 未进 lab 生成物`);
   }
-  assert.ok(DATA.recipes.length >= 7, `lab 配方数量不足：${DATA.recipes.length}`);
+  assert.equal(recipeIds.includes('moon_ray_forged'), false, 'retired inaccurate Moon Ray recipe must not re-enter the playable projection');
+  const moon = DATA.recipes.find(r => r.id === 'moonlight_glow');
+  assert.equal(moon.inputs.filter(id => id === 'small_light_gu').length, 2, 'Moon Glow keeps two-small-light canonical inputs');
 });
 
 // ---------- C8 冰道语义（L0 裁决 A'⑥：被动护甲 + 破防；变身/自爆 pending） ----------

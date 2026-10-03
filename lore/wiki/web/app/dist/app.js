@@ -177,6 +177,7 @@ function buildArtIndex() {
 
 function artFor(page) {
   if (page.category !== 'gu') return null;
+  if (page.art && artByPath.has(page.art.path)) return { ...artByPath.get(page.art.path), caption: page.art.caption };
   const tail = page.route.split('/').pop().replace(/-gu$/, '').replace(/-/g, '_');
   const exact = 'art/gu/cards/' + tail + '_gu_card.png.webp';
   if (artByPath.has(exact)) return { ...artByPath.get(exact), caption: '游戏同名卡面' };
@@ -238,11 +239,88 @@ function railHtml(activeKey, activeRoute, toc, activeKind = '') {
     ${groups}
   </nav>`;
   // 详情页目录优先：分类列表可能很长，目录置于其上才始终可见
-  return toc ? `${toc}${nav}` : nav;
+  // 窄屏下整块导航会排在正文之前（实测 390px 时正文标题被推到约 1000px 之后），
+  // 故包一层可折叠壳：宽屏恒展开（CSS 隐藏开关），窄屏默认收起、由开关控制。
+  const body = toc ? `${toc}${nav}` : nav;
+  return `<div class="rail-fold" data-open="false">
+    <button class="rail-toggle" type="button" aria-expanded="false" aria-controls="rail-body">
+      <span class="rail-toggle-mark" aria-hidden="true"></span>
+      <span class="rail-toggle-text">导航与本页目录</span>
+      <span class="rail-toggle-hint">${entries.length} 条目</span>
+    </button>
+    <div class="rail-body" id="rail-body">${body}</div>
+  </div>`;
+}
+
+/* ---------------- EPUB 引用：点击展开原文 ---------------- */
+
+// 页面里的定位有两种写法：迁移后的 `EPUB chapter_0020 para_019`（一段代码），
+// 与存量的 `chapter_0020` `para_019`（各自一段代码）。先扫一遍配对，再统一挂点击。
+function bindEpubCitations(root, page) {
+  const refs = new Map(((page && page.epubRefs) || []).map(r => [`${r.c}:${r.p}`, r]));
+  if (!refs.size) return 0;
+
+  const entries = $$('code', root).map(el => {
+    const text = (el.textContent || '').trim();
+    const both = text.match(/chapter_(\d{4})\s+para_(\d{3})/);
+    if (both) return { el, chapter: +both[1], para: +both[2] };
+    const onlyChapter = text.match(/^chapter_(\d{4})$/);
+    if (onlyChapter) return { el, chapter: +onlyChapter[1], para: null };
+    const onlyPara = text.match(/^para_(\d{3})$/);
+    if (onlyPara) return { el, chapter: null, para: +onlyPara[1] };
+    return null;
+  }).filter(Boolean);
+
+  // 存量写法里 para_ 单独成段，沿用上文最近的 chapter
+  let carried = null;
+  for (const entry of entries) {
+    if (entry.chapter !== null) carried = entry.chapter;
+    else entry.chapter = carried;
+  }
+
+  let bound = 0;
+  for (const entry of entries) {
+    if (entry.chapter === null || entry.para === null) continue;
+    const ref = refs.get(`${entry.chapter}:${entry.para}`);
+    if (!ref) continue;
+    const el = entry.el;
+    el.classList.add('cite');
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-expanded', 'false');
+    el.title = `展开原文：第 ${entry.chapter} 章第 ${entry.para} 段`;
+    const toggle = () => {
+      const open = el.classList.toggle('cite-open');
+      el.setAttribute('aria-expanded', String(open));
+      let panel = el.nextElementSibling;
+      if (panel && panel.classList.contains('cite-excerpt')) {
+        if (!open) { panel.remove(); return; }
+      } else {
+        panel = document.createElement('span');
+        panel.className = 'cite-excerpt';
+        panel.innerHTML = `<b>EPUB chapter_${String(entry.chapter).padStart(4, '0')} para_${String(entry.para).padStart(3, '0')}</b>${esc(ref.t)}`;
+        el.after(panel);
+      }
+    };
+    el.addEventListener('click', toggle);
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+    bound++;
+  }
+  return bound;
 }
 
 function tocHtml() {
   return '<nav class="toc" id="toc" aria-label="本页目录"><div class="toc-title">本页目录</div></nav>';
+}
+
+// 窄屏导航壳的开合。宽屏由 CSS 强制展开（开关 display:none），此处只服务窄屏。
+function setRailFold(fold, open) {
+  if (!fold) return;
+  fold.dataset.open = open ? 'true' : 'false';
+  const btn = fold.querySelector('.rail-toggle');
+  if (btn) btn.setAttribute('aria-expanded', String(open));
 }
 
 /* ---------------- Infobox ---------------- */
@@ -316,7 +394,7 @@ function ibFigure(page) {
   // 卡面属《问真》素材，角标只取游戏仓库转数，不用原著字段补位
   const rev = isCard ? rankInfo(page).game : '';
   if (art) {
-    return `<div class="ib-main"><div class="ib-label">${isCard ? '蛊虫图鉴' : '条目信息'}</div>
+    return `<div class="ib-main"><div class="ib-label">${isCard || page.art ? '蛊虫图鉴' : '条目信息'}</div>
       <figure class="ib-figure${isCard ? ' ib-figure--codex' : ''}">
         <div class="codex-frame">${rev ? `<span class="codex-rank">${esc(rev)}</span>` : ''}<img src="${encodeURI(art.path)}" alt="${esc(page.title)}" ${art.w && art.h ? `width="${art.w}" height="${art.h}" ` : ''}decoding="async"></div>
         <figcaption>${esc(art.caption)}</figcaption>
@@ -744,10 +822,12 @@ function viewArticle(page) {
   $('#main').innerHTML = `<div class="wiki-grid">
     <aside class="col-rail">${railHtml(page.category === 'home' ? '' : page.category, page.route, isHub ? '' : tocHtml(), page.kind || '')}</aside>
     <div class="col-body">
-      <nav class="crumbs">
+      <nav class="crumbs" aria-label="面包屑">
         <a href="#/">首页</a><span class="sep">/</span>
-        ${page.category === 'home' ? '<span>Wiki 原入口</span>' : classificationLink(page)}
+        ${page.category === 'home' ? '<span aria-current="page">Wiki 原入口</span>' : `${classificationLink(page)}<span class="sep">/</span><span aria-current="page">${esc(page.title)}</span>`}
       </nav>
+      ${page.category === 'home' ? '' : `<div class="back-row"><a class="back-link" href="#/${Object.hasOwn(db.kinds || {}, page.kind) ? `kind/${esc(page.kind)}` : `category/${esc(page.category)}`}">
+        <span aria-hidden="true">←</span> 返回${esc(Object.hasOwn(db.kinds || {}, page.kind) ? kindLabel(page.kind) : catLabel(page.category))}列表</a></div>`}
       <h1 class="page-title">${esc(page.title)}</h1>
       ${page.description ? `<p class="lede" id="page-lede">${esc(page.description)}</p>` : ''}
       <div class="meta-row">
@@ -774,6 +854,7 @@ function viewArticle(page) {
 
   if (page.doc) enhanceDoc(page);
   else enhanceArticle(page, isHub);
+  bindEpubCitations($('#main'), page);
 }
 
 // 分层切换按钮：doc 页型与旧 article 页型共用同一套控件，只有应用函数不同
@@ -969,11 +1050,21 @@ function enhanceArticle(page, skipToc = false) {
   }
 }
 
-/* 证据行号展开 + 审计标记跳转：全局委托，新旧页型通用 */
+/* 证据行号展开 + 审计标记跳转 + 窄屏导航壳：全局委托，新旧页型通用 */
 document.addEventListener('click', (e) => {
+  // 窄屏导航壳开合
+  const foldBtn = e.target.closest('.rail-toggle');
+  if (foldBtn) {
+    const foldEl = foldBtn.closest('.rail-fold');
+    setRailFold(foldEl, foldEl.dataset.open !== 'true');
+    return;
+  }
   // 页内导航只滚动，保留当前文章路由，后续切换审计模式仍停留在本页。
   const link = e.target.closest('a[href^="#"]');
   const href = link?.getAttribute('href');
+  // 点目录里的链接时，若导航壳处于收起状态先展开，否则滚动到的章节被藏起来。
+  const fold = e.target.closest('.rail-fold');
+  if (fold && fold.dataset.open === 'false') setRailFold(fold, true);
   if (href && !href.startsWith('#/')) {
     const target = document.getElementById(decodeURIComponent(href.slice(1)));
     if (target) {
@@ -1146,12 +1237,35 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// 滚动位置记忆：按 URL（含查询串）记住离开时的位置，返回时恢复。
+// 此前 hashchange 一律 scrollTo(0,0)，实测文章页滚到 2889px 后经列表页返回会归零。
+// scrollRestoration 必须置 manual：否则浏览器自带的同文档滚动恢复会在 render 之后
+// 覆盖我们恢复的位置（实测新列表页被顶到 702px 而非 0）。
+if (typeof history !== 'undefined' && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
+const scrollMemory = new Map();
+const scrollKey = () => location.hash || '#/';
+// 必须记「正在离开的那个」URL：hashchange 触发时 location.hash 已经是新值了。
+// 直接用 scrollKey() 会把上一页的位置存到新页面的键上（实测 4000 存进 #/kind/character，
+// 恢复时被钳到该页最大可滚动高度 702）。
+let leavingKey = scrollKey();
+function rememberScroll() {
+  if (!scrollMemory.has(leavingKey)) scrollMemory.set(leavingKey, Math.round(window.scrollY));
+  leavingKey = scrollKey();
+}
+function restoreScroll() {
+  const y = scrollMemory.get(scrollKey());
+  // 用 instant 而非默认行为：恢复位置不该从顶部缓缓滑下来（html 是 scroll-behavior:smooth）。
+  // reduced-motion 下同样立即到位。
+  window.scrollTo({ top: y === undefined ? 0 : y, left: 0, behavior: 'instant' });
+}
+
 // 页内锚点（#sec-3、#game-projection）不是路由：详情页目录全靠它，不能重绘成「未找到」
 window.addEventListener('hashchange', () => {
   if (!location.hash.startsWith('#/')) return;
+  rememberScroll();
   if (currentRoute() === '/search') searchQuery = new URLSearchParams(location.hash.split('?')[1] || '').get('q') || '';
   render();
-  window.scrollTo(0, 0);
+  restoreScroll();
 });
 
 fetch('data.json')

@@ -7,7 +7,7 @@ description: 青茅山弧（卷一前段）枢纽事件页：开窍入堂—遗�
 date: 2026-10-01
 tags: [event, qing-mao-mountain, ancient-moon-clan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"

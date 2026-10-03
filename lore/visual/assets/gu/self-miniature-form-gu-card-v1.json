@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-02",
+  "name": "自己蛊",
+  "route": "/gu/human-atk-1-01-gu",
+  "file": "self-miniature-form-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/human-atk-1-01-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0647｜第二百四十一节：人生路",
+    "line": 60038,
+    "excerpt": "这只蛊虫，栩栩如生。和他一模一样。只是缩小了千万倍，只有蚂蚁般大小。"
+  },
+  "design_boundary": "人祖所见蚂蚁大小微缩自身为原著硬锚；只用微小背影表达，不锁未核人祖五官、发式、衣物或唯一人族美术。不是重启人物立绘。",
+  "prompt": "Use case: stylized-concept. One NEW 《问真》 Gu collectible card exact 5:7. Reference ONLY for thin silver rounded double-line card frame and real light. Subject is SELF GU as seen by Ren Zu: an ANT-SIZED incredibly tiny LIFELIKE HUMAN REPLICA, NOT an ant insect, beetle, fairy or ordinary character portrait. Show one tiny standing adult HUMAN-LIKE BACK silhouette amid enormous macro grains of neutral grey sand, each grain comparable to his foot/hand or larger, so miniature Gu scale dominates perception. Gu occupies only 15-20% card height at lower-middle, sole subject with real skin-like volume and a coherent subtle shadow. Back turned in slight shadow, no facial identity visible; simple dark neutral soft wrap covers waist, body not ornamental statue, puppet or robot. Body proportions adult and natural, no wings, antennae, magic tail, huge head, child figure, facial expression or heroic pose. No second figure, human observer, palm or hand. No naked genitals or sexual framing. Exact clothes, skin tone/hair are deliberately obscured/subordinate, not canon claims. Real granular sand, shallow physical macro light and natural side shadow make impossible miniature living form tangible. Background falls softly into empty charcoal-grey, no forest, mountain, cartoon glitter, magical glyphs or dramatic landscape. Keep miniature scale: small figure versus macro grains; do NOT enlarge into full card character illustration. Whole frame complete, no text, titles, rank, watermark, labels or symbols. This is a micro-object Gu card, not a new Ren Zu character design.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用作微缩人形尺度卡面；不作人祖人物身份主参考",
+    "visible_facts": [
+      "一只成年微小背影立于放大的沙粒间，体型比多数沙粒小",
+      "人物五官不可见、无同场第二个人，实体侧光与微影形成尺度反差"
+    ],
+    "risks": [
+      "发式、肤色、腰布和肌肉细节为模糊设计，不是人祖已核外貌",
+      "原文发生于孤独之心内；沙粒为宏微尺度的展示布置而非栖地事实",
+      "原生源图1059×1485，与精确5:7差约0.16%；可作竖卡交付，精确规格化留在接入流程。内置格式修订v2比例偏差反而增大，未选择。"
+    ]
+  },
+  "dimensions": {
+    "width": 1059,
+    "height": 1485,
+    "aspect_ratio": "近5:7",
+    "relative_ratio_error": 0.001616
+  }
+}

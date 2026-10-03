@@ -8,24 +8,12 @@ import sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gu_tools import PsArgs, repo_abs, repo_path, read_source_lines, chinese_number, write_json, write_csv_utf8_bom, print_console
+from gu_tools import PsArgs, repo_abs, repo_path, read_source_lines, chinese_number, noise_flags, write_json, write_csv_utf8_bom, print_console
 
 HEADING_PATTERN = re.compile(
     r'^\s*(?:\u6B63\u6587\s*)?\u7B2C([\u96F6\u3007\u4E00\u4E8C\u4E24\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341\u767E\u5343\u4E07\d]+)\u8282[\uFF1A:]\s*(.+?)\s*$')
 
 RE_AUTHOR_PS = re.compile(r'[\uFF08(]\s*(?:ps|PS)\s*[:\uFF1A]|\u4F5C\u8005|\u672A\u5B8C\u5F85\u7EED')
-
-
-def noise_flags(line, title):
-    text = u'{0} {1}'.format(line, title)
-    flags = []
-    if re.search(u'\u76EE\u5F55|\u7AE0\u8282\u76EE\u5F55', text):
-        flags.append('directory')
-    if re.search(u'\u4F5C\u8005|\u4F5C\u5BB6|\u5377\u672B\u611F\u8A00|\u5B8C\u672C\u611F\u8A00|\u65B0\u4E66|\u66F4\u65B0|\u8BA2\u9605|\u6708\u7968|\u63A8\u8350\u7968|\u672A\u5B8C\u5F85\u7EED|\uFF08?\\s*(?:ps|PS)\\s*[:\uFF1A]', text):
-        flags.append('author_or_site')
-    if re.search(u'www\\.|http://|https://|\u624B\u673A\u7528\u6237|\u8BF7\u6536\u85CF|\u7CBE\u5F69\u9605\u8BFB|</?\\w+[^>]*>', text):
-        flags.append('site_markup')
-    return ';'.join(flags)
 
 
 def main():
@@ -72,8 +60,6 @@ def main():
         content_characters = 0
         contains_author_ps = False
         for line_index in range(start, next_line):
-            if line_index > len(lines):
-                break
             content_characters += len(lines[line_index - 1])
             if RE_AUTHOR_PS.search(lines[line_index - 1]):
                 contains_author_ps = True

@@ -7,7 +7,7 @@ description: 弧四事件页：仙鹤门方正线、白狐蛊仙传承 hunt、�
 date: 2026-09-25
 tags: [event, three-kings, xianhe-gate, black-white-shuangsha]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/B2-45001-66138-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
 schema: 2

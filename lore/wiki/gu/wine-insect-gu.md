@@ -7,7 +7,7 @@ description: 提纯已有真元一个小境界的修炼辅助蛊；分一/二/�
 date: 2026-09-28
 tags: [gu, cultivation, support, primeval-essence, refinement, economy]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-WINE-001"
 schema: 2
 ---

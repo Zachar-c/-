@@ -7,7 +7,7 @@ description: 血道蛊虫；明文功能为补充蛊师血气、抬高战场生�
 date: 2026-09-28
 tags: [gu, blood-path, support, material, naming-collision]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

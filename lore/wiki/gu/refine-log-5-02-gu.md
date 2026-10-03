@@ -7,7 +7,7 @@ description: 炼道仙蛊「升炼蛊」的九转形态，方源的第二只九�
 date: 2026-09-28
 tags: [gu, refine-path, xian-gu, nine-turn, fang-yuan, gu-house-core]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

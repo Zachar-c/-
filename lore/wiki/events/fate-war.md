@@ -7,7 +7,7 @@ description: 围绕宿命蛊修复的两轮多方大战；Run 1 全链（270001�
 date: 2026-09-30
 tags: [event, fate-war, heavenly-court]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"

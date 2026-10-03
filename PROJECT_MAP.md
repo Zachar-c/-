@@ -39,6 +39,14 @@
 
 Wiki 网站窗口见 [lore/wiki/web/README.md](lore/wiki/web/README.md)。2026-10-01 用户要求将 `lore/wiki/web/app/dist/` 静态快照纳入 Git，包含页面、Wiki 数据与优化图片；可拉取后直接启动本地预览，正文变更后重建快照。此生成物入库例外不改变 Wiki 正文权威。
 
+### `lore/visual/`（2026-10-01 用户知识包导入）
+
+- 用途：ChatGPT 调研交付的《蛊真人》Visual KB V2，供人物、蛊虫、仙蛊屋和场景美术使用，保留调查细节及证据边界。
+- 首读：[长期任务记忆](lore/visual/MEMORY.md)、[执行约定](lore/visual/AGENTS.md)、[原包说明](lore/visual/README.md)、[Doctrine](lore/visual/doctrine.md)、[对象索引](lore/visual/INDEX.md)。
+- 来源：用户 Windows 目录 `C:\Users\90877\work_space\gu-zhenren\lore\visual` 的全部 61 个文件，逐文件 SHA-256 核对一致，原目录保留；原压缩包也完整复制。
+- 2026-10-02 用户授权31张蛊虫卡面接入Wiki：[长期图片与生成记录](lore/visual/assets/gu/README.md)及[明确路由关联](lore/visual/wiki-gu-art.json)供网站构建读取；原生图不修改，既有图片不覆盖，游戏未接入。
+- 当前执行（2026-10-02）：停止人物生图，先补 Wiki 已有但缺专属图片的蛊虫；先区分已有源图未关联与真正缺图，外观证据充分者优先，场景为后续方向。具体状态和恢复入口见长期任务记忆。候选图不自动接入游戏或改写 Wiki。
+
 ### `lore/runtime/`（2026-09-25 新增）
 
 - 用途：Canon Runtime Projection——`lore/wiki` 与 `canon-index` 经 `lore/wiki/tools/compile_runtime.py` 编译出的机器可查询投影（entities/rules/relations/packs），供《问真》引用原著口径与 Agent Context Pack 使用。
@@ -101,6 +109,8 @@ Wiki 网站窗口见 [lore/wiki/web/README.md](lore/wiki/web/README.md)。2026-1
   《问真》PRD 见 `docs/PRODUCT_REQUIREMENTS_v1.0.md`。该文件属镜像上游内容，**不得改名**（改名会破坏镜像映射）。
 
 ### `docs/`
+
+- 新关系研究：[蛊虫关系图谱](docs/design/gu-relations/README.md)（2026-10-02）：原著/本局/设计候选分层的首批数据与新增审查流程；附件原件本地只读保存于 `source/gu-relations-session-2026-10-02/`，逐文件 SHA-256 和 Library 标识见[来源清单](docs/design/gu-relations/sources.json)。不改变 Wiki 或游戏真源。
 
 - 新研究入口：[一至九转数值模型](docs/design/rank1-9-model/README.md)（2026-09-27）：仅 Wiki / Canon 事实推导的局内构筑与轮回蛊方模型，含独立计算器与验证报告；不复用或覆盖现有游戏数值，不新增产品权威。
 

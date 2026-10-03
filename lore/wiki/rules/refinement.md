@@ -7,7 +7,7 @@ description: 炼蛊术语分类学（单炼/合炼/逆炼/平炼/升炼/修复�
 date: 2026-09-28
 tags: [rules, refinement, terminology, gu]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

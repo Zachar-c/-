@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "爱情蛊",
+  "route": "/gu/human-atk-5-02-gu",
+  "file": "love-grey-pebble-view-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/human-atk-5-02-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1243｜第二百零九节：爱情.蛊（下）",
+    "line": 114745,
+    "excerpt": "在我看来，它却灰不溜秋，宛若路边石子一枚。"
+  },
+  "design_boundary": "只画灵缘斋太上大长老观察视角的灰石子，不是爱情蛊唯一客观外形；其余观察者可见彩霞、清水或桃花。无事实改写。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE utterly ORDINARY DULL GREY PEBBLE representing LOVE GU specifically as seen by Spirit Affinity House's supreme elder. Canon explicitly changes with observer; do NOT present fixed universal love shape. Plain single slightly irregular rounded road pebble, small unassuming dark-medium-grey stone, naturally granular matte worn surface, faint tiny imperfections, no shiny jewel quality. One quiet oval/irregular grey pebble on barely lighter desaturated coarse sand road-like surface; its subtle outline and true soft shadow are clearly separated enough for card reading, entire pebble about 45% width in macro presentation. Soft cloudy oblique real light, understated tonal differences, modest shallow focus, neutral empty rear space. No pink, red, heart icon, butterfly, rose, peach flower, rainbow aura, human couple, love letters or wedding symbol. Its visual is intentionally almost disappointingly plain rather than glamorized. Sole grey pebble, delicate silver frame like supplied reference; object not papery centipede, no scene of romance. Quiet profound ambiguity without decoration. Observer-specific interpretation belongs in external metadata, absolutely no text in card.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用：仅太上大长老观察视角，不是唯一爱情蛊本体主参考",
+    "visible_facts": [
+      "单一灰不溜秋普通路石，哑光颗粒和接触阴影真实",
+      "无心形、桃花、虫翼或恋人，细银框保持"
+    ],
+    "risks": [
+      "没有独立剧情信息时无法从外观区分爱情蛊与普通石子，这正是该观察者原文形态",
+      "不得以这张替换所有观察者的爱情蛊形象"
+    ]
+  }
+}

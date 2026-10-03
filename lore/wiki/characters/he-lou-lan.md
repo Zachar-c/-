@@ -7,7 +7,7 @@ description: 北原黑家族长、十绝大力真武体；弧五与方源结盟�
 date: 2026-09-30
 tags: [character, north-plain, he-lou-lan, ten-extreme-body]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "memory:lore/research/分支：六卷精编版/记忆库/02-人物弧光.md"
   - "memory:lore/research/分支：六卷精编版/记忆库/06-角色台账.md"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"

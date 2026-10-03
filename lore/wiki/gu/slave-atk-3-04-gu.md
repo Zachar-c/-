@@ -7,7 +7,7 @@ description: 奴道驭兽蛊族的狼种分件：催动后化作轻烟罩落，�
 date: 2026-09-28
 tags: [gu, enslavement-path, beast-control, soul-cost, rank2]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

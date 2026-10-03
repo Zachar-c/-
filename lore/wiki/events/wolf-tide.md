@@ -7,7 +7,7 @@ description: 青茅山小兽潮→大狼潮→狡电狈→鹤灾→覆灭与再�
 date: 2026-09-30
 tags: [event, wolf-tide, qing-mao-mountain, fang-yuan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
   - "canon-index:CAN-BEAST-TIDE-001"

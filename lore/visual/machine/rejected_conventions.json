@@ -1,0 +1,552 @@
+[
+  {
+    "object_id": "moonlight_gu",
+    "object": "月光蛊",
+    "rejected": "飞蛾/蝴蝶化"
+  },
+  {
+    "object_id": "moonlight_gu",
+    "object": "月光蛊",
+    "rejected": "金纹珠宝化"
+  },
+  {
+    "object_id": "moonlight_gu",
+    "object": "月光蛊",
+    "rejected": "复杂法阵喧宾夺主"
+  },
+  {
+    "object_id": "moonlight_gu",
+    "object": "月光蛊",
+    "rejected": "把家族文明强塞进单体卡图"
+  },
+  {
+    "object_id": "spring_autumn_cicada",
+    "object": "春秋蝉",
+    "rejected": "整只做成翡翠绿水晶蝉"
+  },
+  {
+    "object_id": "spring_autumn_cicada",
+    "object": "春秋蝉",
+    "rejected": "加钟表/齿轮代替本体设计"
+  },
+  {
+    "object_id": "fixed_immortal_travel",
+    "object": "定仙游",
+    "rejected": "大型传送门"
+  },
+  {
+    "object_id": "fixed_immortal_travel",
+    "object": "定仙游",
+    "rejected": "蓝紫科幻空间裂缝"
+  },
+  {
+    "object_id": "fixed_immortal_travel",
+    "object": "定仙游",
+    "rejected": "过度复杂机械结构"
+  },
+  {
+    "object_id": "fate_gu",
+    "object": "宿命蛊",
+    "rejected": "巨型恐怖Boss蜘蛛"
+  },
+  {
+    "object_id": "fate_gu",
+    "object": "宿命蛊",
+    "rejected": "把蜘蛛画成装甲神器"
+  },
+  {
+    "object_id": "fate_gu",
+    "object": "宿命蛊",
+    "rejected": "只画白光而丢掉关系网络"
+  },
+  {
+    "object_id": "attitude_gu",
+    "object": "态度蛊",
+    "rejected": "固定鬼脸"
+  },
+  {
+    "object_id": "attitude_gu",
+    "object": "态度蛊",
+    "rejected": "妖邪笑面作为唯一Canon"
+  },
+  {
+    "object_id": "attitude_gu",
+    "object": "态度蛊",
+    "rejected": "把它画成昆虫+面具纹"
+  },
+  {
+    "object_id": "love_gu",
+    "object": "爱情蛊",
+    "rejected": "粉红爱心作为唯一Canon"
+  },
+  {
+    "object_id": "love_gu",
+    "object": "爱情蛊",
+    "rejected": "单一标准模型"
+  },
+  {
+    "object_id": "perseverance_gu",
+    "object": "坚持蛊",
+    "rejected": "发光小甲虫"
+  },
+  {
+    "object_id": "perseverance_gu",
+    "object": "坚持蛊",
+    "rejected": "普通黑色石头无尺度参照"
+  },
+  {
+    "object_id": "perseverance_gu",
+    "object": "坚持蛊",
+    "rejected": "碑面写“坚持”"
+  },
+  {
+    "object_id": "wisdom_sword_gu",
+    "object": "慧剑蛊",
+    "rejected": "剑形神器"
+  },
+  {
+    "object_id": "wisdom_sword_gu",
+    "object": "慧剑蛊",
+    "rejected": "金色剑纹"
+  },
+  {
+    "object_id": "wisdom_sword_gu",
+    "object": "慧剑蛊",
+    "rejected": "符箓光轮"
+  },
+  {
+    "object_id": "wisdom_sword_gu",
+    "object": "慧剑蛊",
+    "rejected": "为了八转而堆装饰"
+  },
+  {
+    "object_id": "second_aperture_gu",
+    "object": "第二空窍蛊",
+    "rejected": "普通双头虫"
+  },
+  {
+    "object_id": "second_aperture_gu",
+    "object": "第二空窍蛊",
+    "rejected": "把眼睛改成纹章"
+  },
+  {
+    "object_id": "second_aperture_gu",
+    "object": "第二空窍蛊",
+    "rejected": "机械义眼"
+  },
+  {
+    "object_id": "blood_skull_gu",
+    "object": "血颅蛊",
+    "rejected": "骷髅冒火"
+  },
+  {
+    "object_id": "blood_skull_gu",
+    "object": "血颅蛊",
+    "rejected": "魔王头骨"
+  },
+  {
+    "object_id": "blood_skull_gu",
+    "object": "血颅蛊",
+    "rejected": "红黑烟雾盖住透明材质"
+  },
+  {
+    "object_id": "landscape_as_before",
+    "object": "江山如故",
+    "rejected": "普通瓢虫+地图贴纸"
+  },
+  {
+    "object_id": "landscape_as_before",
+    "object": "江山如故",
+    "rejected": "过度山水卷轴特效"
+  },
+  {
+    "object_id": "man_as_before",
+    "object": "人如故",
+    "rejected": "钟表"
+  },
+  {
+    "object_id": "man_as_before",
+    "object": "人如故",
+    "rejected": "沙漏"
+  },
+  {
+    "object_id": "man_as_before",
+    "object": "人如故",
+    "rejected": "普通治疗光"
+  },
+  {
+    "object_id": "lifespan_gu",
+    "object": "寿蛊",
+    "rejected": "仙桃"
+  },
+  {
+    "object_id": "lifespan_gu",
+    "object": "寿蛊",
+    "rejected": "翡翠灵根"
+  },
+  {
+    "object_id": "lifespan_gu",
+    "object": "寿蛊",
+    "rejected": "金绿生命圣光"
+  },
+  {
+    "object_id": "heavenly_essence_treasure_imperial_lotus",
+    "object": "天元宝皇莲",
+    "rejected": "仅“发光仙莲”"
+  },
+  {
+    "object_id": "heavenly_essence_treasure_imperial_lotus",
+    "object": "天元宝皇莲",
+    "rejected": "把生产机制藏掉"
+  },
+  {
+    "object_id": "liquor_worm",
+    "object": "酒虫",
+    "rejected": "硬甲虫"
+  },
+  {
+    "object_id": "liquor_worm",
+    "object": "酒虫",
+    "rejected": "酒壶造型"
+  },
+  {
+    "object_id": "liquor_worm",
+    "object": "酒虫",
+    "rejected": "把可爱感去掉"
+  },
+  {
+    "object_id": "rules_gu",
+    "object": "规蛊",
+    "rejected": "机械圆环"
+  },
+  {
+    "object_id": "rules_gu",
+    "object": "规蛊",
+    "rejected": "太极盘"
+  },
+  {
+    "object_id": "rules_gu",
+    "object": "规蛊",
+    "rejected": "符文星盘"
+  },
+  {
+    "object_id": "regulation_gu",
+    "object": "矩蛊",
+    "rejected": "机械方块"
+  },
+  {
+    "object_id": "regulation_gu",
+    "object": "矩蛊",
+    "rejected": "金色符文立方体"
+  },
+  {
+    "object_id": "hope_gu",
+    "object": "希望蛊",
+    "rejected": "金色天使"
+  },
+  {
+    "object_id": "hope_gu",
+    "object": "希望蛊",
+    "rejected": "圣洁大光球"
+  },
+  {
+    "object_id": "hope_gu",
+    "object": "希望蛊",
+    "rejected": "神圣翅膀"
+  },
+  {
+    "object_id": "regret_gu",
+    "object": "悔蛊",
+    "rejected": "拟人少女作为本体"
+  },
+  {
+    "object_id": "regret_gu",
+    "object": "悔蛊",
+    "rejected": "补回正常蜈蚣足"
+  },
+  {
+    "object_id": "regret_gu",
+    "object": "悔蛊",
+    "rejected": "红莲红色污染本体配色"
+  },
+  {
+    "object_id": "freedom_gu",
+    "object": "自由蛊",
+    "rejected": "羽毛/翅膀作为本体"
+  },
+  {
+    "object_id": "freedom_gu",
+    "object": "自由蛊",
+    "rejected": "断锁链图标化"
+  },
+  {
+    "object_id": "wisdom_gu",
+    "object": "智慧蛊",
+    "rejected": "巨大脑"
+  },
+  {
+    "object_id": "wisdom_gu",
+    "object": "智慧蛊",
+    "rejected": "金眼神虫"
+  },
+  {
+    "object_id": "wisdom_gu",
+    "object": "智慧蛊",
+    "rejected": "皇冠式“聪明”图标"
+  },
+  {
+    "object_id": "self_gu",
+    "object": "自己蛊",
+    "rejected": "擅自固定黑甲虫/小人/水晶球"
+  },
+  {
+    "object_id": "bai_ning_bing",
+    "object": "白凝冰",
+    "rejected": "甜美冰雪仙女"
+  },
+  {
+    "object_id": "bai_ning_bing",
+    "object": "白凝冰",
+    "rejected": "常态暖色"
+  },
+  {
+    "object_id": "bai_ning_bing",
+    "object": "白凝冰",
+    "rejected": "所有阶段都带龙角"
+  },
+  {
+    "object_id": "feng_jiu_ge",
+    "object": "凤九歌",
+    "rejected": "固定“白衣笛仙”"
+  },
+  {
+    "object_id": "feng_jiu_ge",
+    "object": "凤九歌",
+    "rejected": "乐器喧宾夺主"
+  },
+  {
+    "object_id": "red_lotus",
+    "object": "红莲魔尊",
+    "rejected": "只剩红衣帅哥"
+  },
+  {
+    "object_id": "red_lotus",
+    "object": "红莲魔尊",
+    "rejected": "用老人皱纹直接替代精神磨损"
+  },
+  {
+    "object_id": "spectral_soul",
+    "object": "幽魂魔尊",
+    "rejected": "把终极形态画成黑发俊美男"
+  },
+  {
+    "object_id": "spectral_soul",
+    "object": "幽魂魔尊",
+    "rejected": "完整全身塞进1:1角色卡"
+  },
+  {
+    "object_id": "wu_yong",
+    "object": "武庸",
+    "rejected": "帝王冠"
+  },
+  {
+    "object_id": "wu_yong",
+    "object": "武庸",
+    "rejected": "金甲"
+  },
+  {
+    "object_id": "wu_yong",
+    "object": "武庸",
+    "rejected": "巨大肩甲"
+  },
+  {
+    "object_id": "wu_yong",
+    "object": "武庸",
+    "rejected": "狂暴王者表情"
+  },
+  {
+    "object_id": "star_constellation",
+    "object": "星宿仙尊",
+    "rejected": "只画普通星空女仙"
+  },
+  {
+    "object_id": "star_constellation",
+    "object": "星宿仙尊",
+    "rejected": "把星星当贴花"
+  },
+  {
+    "object_id": "purple_mountain",
+    "object": "紫山真君",
+    "rejected": "紫衣仙风老爷爷"
+  },
+  {
+    "object_id": "purple_mountain",
+    "object": "紫山真君",
+    "rejected": "把真身信息完全删掉"
+  },
+  {
+    "object_id": "wu_shuai",
+    "object": "吴帅",
+    "rejected": "黑龙默认"
+  },
+  {
+    "object_id": "wu_shuai",
+    "object": "吴帅",
+    "rejected": "普通美型男只加两只角"
+  },
+  {
+    "object_id": "giant_sun",
+    "object": "巨阳仙尊",
+    "rejected": "只画金甲太阳皇帝"
+  },
+  {
+    "object_id": "giant_sun",
+    "object": "巨阳仙尊",
+    "rejected": "把好运做成无成本圣光"
+  },
+  {
+    "object_id": "zi_wei",
+    "object": "紫薇仙子",
+    "rejected": "紫衣+星星模板"
+  },
+  {
+    "object_id": "zi_wei",
+    "object": "紫薇仙子",
+    "rejected": "强势邪魅替代忧思"
+  },
+  {
+    "object_id": "limitless",
+    "object": "无极魔尊",
+    "rejected": "黑白太极仙人"
+  },
+  {
+    "object_id": "limitless",
+    "object": "无极魔尊",
+    "rejected": "公式符文覆盖全身"
+  },
+  {
+    "object_id": "duke_long",
+    "object": "龙公",
+    "rejected": "紫发年轻帅哥"
+  },
+  {
+    "object_id": "duke_long",
+    "object": "龙公",
+    "rejected": "把恢复理解为返老还童"
+  },
+  {
+    "object_id": "fang_yuan",
+    "object": "方源",
+    "rejected": "血眼魔纹"
+  },
+  {
+    "object_id": "fang_yuan",
+    "object": "方源",
+    "rejected": "满身邪气"
+  },
+  {
+    "object_id": "fang_yuan",
+    "object": "方源",
+    "rejected": "把“魔尊”画成表面邪恶符号"
+  },
+  {
+    "object_id": "hei_lou_lan",
+    "object": "黑楼兰",
+    "rejected": "单一红衣美女"
+  },
+  {
+    "object_id": "hei_lou_lan",
+    "object": "黑楼兰",
+    "rejected": "真身纤弱"
+  },
+  {
+    "object_id": "hei_lou_lan",
+    "object": "黑楼兰",
+    "rejected": "伪装仅靠面具"
+  },
+  {
+    "object_id": "heaven_overseeing_tower",
+    "object": "监天塔",
+    "rejected": "完美无瑕商城白塔"
+  },
+  {
+    "object_id": "heaven_overseeing_tower",
+    "object": "监天塔",
+    "rejected": "雕梁画栋细节压过“光”"
+  },
+  {
+    "object_id": "heaven_overseeing_tower",
+    "object": "监天塔",
+    "rejected": "暖黄灯火主导"
+  },
+  {
+    "object_id": "eighty_eight_true_yang_building",
+    "object": "八十八角真阳楼",
+    "rejected": "普通黄金古塔"
+  },
+  {
+    "object_id": "eighty_eight_true_yang_building",
+    "object": "八十八角真阳楼",
+    "rejected": "只靠金色说明巨阳"
+  },
+  {
+    "object_id": "dragon_palace",
+    "object": "龙宫",
+    "rejected": "默认海蓝水晶龙宫"
+  },
+  {
+    "object_id": "dragon_palace",
+    "object": "龙宫",
+    "rejected": "纯霸气战舰"
+  },
+  {
+    "object_id": "dragon_palace",
+    "object": "龙宫",
+    "rejected": "只做皇权不做梦境捕获"
+  },
+  {
+    "object_id": "luck_suppression_heavenly_palace",
+    "object": "镇运天宫",
+    "rejected": "把社区红橙科幻圆环锁成Canon"
+  },
+  {
+    "object_id": "fate_war",
+    "object": "宿命大战",
+    "rejected": "圣光正派vs黑魔王俗套"
+  },
+  {
+    "object_id": "fate_war",
+    "object": "宿命大战",
+    "rejected": "只画群战爆炸"
+  },
+  {
+    "object_id": "reverse_flow_river",
+    "object": "逆流河",
+    "rejected": "干净摆Pose"
+  },
+  {
+    "object_id": "reverse_flow_river",
+    "object": "逆流河",
+    "rejected": "只靠巨浪和发光眼"
+  },
+  {
+    "object_id": "san_cha_refinement",
+    "object": "三王山炼定仙游",
+    "rejected": "把蝴蝶放大成主角而丢场景关系"
+  },
+  {
+    "object_id": "san_cha_refinement",
+    "object": "三王山炼定仙游",
+    "rejected": "所有元素同亮度"
+  },
+  {
+    "object_id": "crazed_demon_cave",
+    "object": "疯魔窟",
+    "rejected": "紫色晶洞+骷髅+魔气"
+  },
+  {
+    "object_id": "crazed_demon_cave",
+    "object": "疯魔窟",
+    "rejected": "普通秘境"
+  }
+]

@@ -7,7 +7,7 @@ description: 流派境界的定义（对大道的理解）、五级阶梯与准�
 date: 2026-09-25
 tags: [rules, path-realms, attainment, zhenyi]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

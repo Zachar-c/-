@@ -7,7 +7,7 @@ description: 奴道驭兽一脉的通名兼具体件：四转者可控制万兽�
 date: 2026-09-28
 tags: [gu, enslavement-path, rank4, beast-control, soul-cost, identity-boundary]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

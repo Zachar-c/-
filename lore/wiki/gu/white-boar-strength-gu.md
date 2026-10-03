@@ -7,7 +7,7 @@ description: 一转珍稀豕蛊：催用时耗真元并逐日改造肉身，所�
 date: 2026-09-28
 tags: [gu, strength, body, permanent-gain, rank1]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-STRENGTH-001"
 schema: 2
 ---

@@ -7,7 +7,7 @@ description: 弧九事件页：南疆义天山赌斗与正魔大战、影宗十�
 date: 2026-09-26
 tags: [event, yitian-mountain, heavenly-court]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/D2-157501-180000.md"
   - "notes:game/分支：六卷精编版/读书笔记/E-180001-225000.md"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"

@@ -7,7 +7,7 @@ description: 力道／移动类四转蛊，原文明文可确认载体为巨开�
 date: 2026-09-28
 tags: [gu, 风道, 移动蛊, 力道, 冲撞, 与成语同形]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

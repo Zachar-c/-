@@ -7,7 +7,7 @@ description: 《蛊真人》的哲学命题系统：自由与宿命、思想自�
 date: 2026-09-25
 tags: [theme, philosophy, freedom, fate, ren-zu-zhuan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"
   - "notes:game/分支：六卷精编版/读书笔记/H2-337501-360000.md"

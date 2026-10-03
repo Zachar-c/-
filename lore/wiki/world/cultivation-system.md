@@ -7,7 +7,7 @@ description: 转数-小境界-真元颜色-身份层次四轴与仙窍飞轮（�
 date: 2026-10-01
 tags: [world, cultivation, ranks, tribulation]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-CULTIVATION-001"
   - "canon-index:CAN-CULTIVATION-002"
   - "canon-index:CAN-CULTIVATION-003"

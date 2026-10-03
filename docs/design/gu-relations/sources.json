@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-02",
+  "kind": "用户跑局资料，只读原件；不是原著Canon",
+  "files": [
+    {
+      "name": "00_索引_README.md",
+      "path": "source/gu-relations-session-2026-10-02/00_索引_README.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/20f24099-f9f4-438a-91a5-f601bfacb00c/00_索引_README.md",
+      "sha256": "23062b51cd72ce83ce6941e2cc45cc1750f5ae5191d4e80a9858e2dc652aa443",
+      "bytes": 2275,
+      "library_file_id": "libfile_addbb79825248191ad2ce06f5c59db23"
+    },
+    {
+      "name": "01_高价值时间线_二转到三转.md",
+      "path": "source/gu-relations-session-2026-10-02/01_高价值时间线_二转到三转.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/f811fde5-613b-4d87-8b25-a425bf2be0b7/01_高价值时间线_二转到三转.md",
+      "sha256": "04b129ef2ac8ccbbf0556cdd02b8a066eb107e64eb8170e8c8f6bbc79e0e8b1a",
+      "bytes": 8510,
+      "library_file_id": "libfile_594c957bdaa08191a2e1bcc8f2280806"
+    },
+    {
+      "name": "02_玩家原始选择与明确反馈.md",
+      "path": "source/gu-relations-session-2026-10-02/02_玩家原始选择与明确反馈.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/d0f87ea4-a489-4367-a1cf-a40fe2556da2/02_玩家原始选择与明确反馈.md",
+      "sha256": "0086e1489a52d24a855dbbc335544339823d4334430988cc79ce11f65cd5a64e",
+      "bytes": 3508,
+      "library_file_id": "libfile_8df815212b0c8191a02955bdb4185a9d"
+    },
+    {
+      "name": "03_Canon规则与裁定.md",
+      "path": "source/gu-relations-session-2026-10-02/03_Canon规则与裁定.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/7e0790d5-81f4-4093-a3b5-7e8bbbe410c3/03_Canon规则与裁定.md",
+      "sha256": "8f709952c68cf7e46cf21834f8a3641b8ef5cdf4c58aa9e2b6207a4ceea295d1",
+      "bytes": 4049,
+      "library_file_id": "libfile_94349146fd148191bfaf127b2f9d4ff3"
+    },
+    {
+      "name": "04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "path": "source/gu-relations-session-2026-10-02/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/59e5d1fb-7581-4169-b0cb-f1f16c38ff7c/04_蛊组构筑_本命蛊_杀招_炼蛊数据.md",
+      "sha256": "1a8fd7ec6a79836481c4861c1a98e55dbd317aae22e711cce20939b254f97108",
+      "bytes": 4020,
+      "library_file_id": "libfile_7a4e69a627208191b3d46276ac45d4aa"
+    },
+    {
+      "name": "05_市场_经济_资本_交易数据.md",
+      "path": "source/gu-relations-session-2026-10-02/05_市场_经济_资本_交易数据.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/e21da05f-d620-410c-a9b4-3ed83897d5ae/05_市场_经济_资本_交易数据.md",
+      "sha256": "62120781bd8a557c73850283134b2f22b95d833b7f3af58b841af739fc130eaa",
+      "bytes": 3443,
+      "library_file_id": "libfile_c2f7867ec7488191b18b6110453507f6"
+    },
+    {
+      "name": "06_队伍_人物_成长与关系数据.md",
+      "path": "source/gu-relations-session-2026-10-02/06_队伍_人物_成长与关系数据.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/ec4d7d38-6215-4422-ba88-f4302c55db30/06_队伍_人物_成长与关系数据.md",
+      "sha256": "99bd2b78cb64c1819d27d5a2107b0bbc372d33dbfdf7b58e01a2ed80407ed878",
+      "bytes": 3383,
+      "library_file_id": "libfile_28f4c91814308191b8eb81d04da59962"
+    },
+    {
+      "name": "07_战斗_任务_决策证据.md",
+      "path": "source/gu-relations-session-2026-10-02/07_战斗_任务_决策证据.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/3cddcd17-bda9-4617-b52a-970e61be3f22/07_战斗_任务_决策证据.md",
+      "sha256": "6e23cf717cc339e08f037c47210fa153474b760ff852c1aeaee6014f36c38e2f",
+      "bytes": 2654,
+      "library_file_id": "libfile_fa4de993a1bc8191858614efd03fd5c4"
+    },
+    {
+      "name": "08_节奏_失败模式_负反馈.md",
+      "path": "source/gu-relations-session-2026-10-02/08_节奏_失败模式_负反馈.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/b4a88d14-7e08-484d-b67b-2aa4cc9f7f65/08_节奏_失败模式_负反馈.md",
+      "sha256": "d0d5339b62144691b657c7ddff69632f4fa28323846e19d310b06b8081b57d74",
+      "bytes": 2874,
+      "library_file_id": "libfile_5e706fc76a108191bcfc947b69052df9"
+    },
+    {
+      "name": "09_低权重后期推演_仅供长线参考.md",
+      "path": "source/gu-relations-session-2026-10-02/09_低权重后期推演_仅供长线参考.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/87a6eb54-9888-4e3c-b3b7-9748af087a53/09_低权重后期推演_仅供长线参考.md",
+      "sha256": "b10a047c9d72cd054746cb3678fddb3e359effa8dc51c2061549b3e545b9f69d",
+      "bytes": 1627,
+      "library_file_id": "libfile_9c3fe1f2b8dc8191816b05f9519d3af7"
+    },
+    {
+      "name": "10_未决问题_冲突_待验证项.md",
+      "path": "source/gu-relations-session-2026-10-02/10_未决问题_冲突_待验证项.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/6b893d63-1b6c-4596-8c7f-454461cc8e03/10_未决问题_冲突_待验证项.md",
+      "sha256": "8679a1f98fb0b14177f23bb5e13b0d7f6d5c442fb75974c52bb7d5f85dffe782",
+      "bytes": 2497,
+      "library_file_id": "libfile_8d0e80ce108c8191aa9ba898f4625b95"
+    },
+    {
+      "name": "11_高价值样本表_v0.1.md",
+      "path": "source/gu-relations-session-2026-10-02/11_高价值样本表_v0.1.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/de865e19-f3d5-488d-864d-0dd3d7a46a07/11_高价值样本表_v0.1.md",
+      "sha256": "f33c4b0f7bdb829667df96eb96d73b8370b37ee1e9e89f10ea7590e7d21487e4",
+      "bytes": 2002,
+      "library_file_id": "libfile_8f04118c96dc81918733945318256341"
+    },
+    {
+      "name": "问真_二转到三转_高价值玩法数据_v0.1.md",
+      "path": "source/gu-relations-session-2026-10-02/问真_二转到三转_高价值玩法数据_v0.1.md",
+      "attachment_path": "/home/usrs/.codex-desktop-ssh/attachments/d0f0b114-7bb0-4891-9f01-856f71cb52f4/问真_二转到三转_高价值玩法数据_v0.1.md",
+      "sha256": "49abafbffcc647b91db0643f95c61f728c3df642c7ca4047d197ed7f940ae3ba",
+      "bytes": 9861,
+      "library_file_id": "libfile_a915cf65e2588191a1f8ad598ab76560"
+    }
+  ],
+  "bundle_sha256": "a2d539b0d40d22a589f855af9e59b4af121b8968f92bdd05a8308106af5b9cb8",
+  "conversation": {
+    "id": "6abe3685-3ab0-83ee-b553-6024fe3af181",
+    "path": "source/gu-relations-session-2026-10-02/conversation.json",
+    "turns": 5,
+    "sha256": "7daf358dec6c7e368a4aa9a6b94a29cd36626abe0512fc264af84a354c78b1c0",
+    "note": "五条近况会话与用户原话只作设计输入，助手推演不作为原著事实"
+  },
+  "novel": {
+    "path": "source/蛊真人-epub-canon.txt",
+    "sha256": "9f6952f85b566c3e707915542a2dda8a5d454d03be994b4039d5aa98dd421a22"
+  },
+  "bundle_hash_method": "SHA-256 of UTF-8 JSON(files, ensure_ascii=False, sort_keys=True)"
+}

@@ -1,0 +1,429 @@
+{
+  "S001": {
+    "title": "Moonlight Gu | Saga of Gu",
+    "url": "https://sagaofgu.com/gu/moonlight-gu/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "moonlight_gu"
+    ]
+  },
+  "S002": {
+    "title": "Reverend Insanity ch.10 - refining Moonlight Gu",
+    "url": "https://www.webnovel.com/book/reverend-insanity_7996858406002505/a-storm-may-arise-from-a-clear-sky-refining-gu-is-full-of-hardships_21545169354548857",
+    "type": "novel mirror",
+    "supports": [
+      "moonlight_gu",
+      "refinement"
+    ]
+  },
+  "S003": {
+    "title": "Spring Autumn Cicada | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Spring_Autumn_Cicada",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "spring_autumn_cicada"
+    ]
+  },
+  "S004": {
+    "title": "Reverend Insanity ch.19 - Spring Autumn Cicada",
+    "url": "https://www.webnovel.com/book/reverend-insanity_7996858406002505/rank-six-vital-gu-the-spring-autumn-cicada%21_21567889714767824",
+    "type": "novel mirror",
+    "supports": [
+      "spring_autumn_cicada"
+    ]
+  },
+  "S005": {
+    "title": "Fixed Immortal Travel | Saga of Gu",
+    "url": "https://sagaofgu.com/gu/fixed-immortal-travel/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "fixed_immortal_travel",
+      "san_cha_refinement"
+    ]
+  },
+  "S006": {
+    "title": "Fate Gu | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Fate_Gu",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "fate_gu",
+      "fate_war"
+    ]
+  },
+  "S007": {
+    "title": "Reverend Insanity ch.780 - Fate Immortal Gu",
+    "url": "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78734",
+    "type": "novel mirror",
+    "supports": [
+      "fate_gu",
+      "heaven_overseeing_tower"
+    ]
+  },
+  "S008": {
+    "title": "Attitude Gu | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Attitude_Gu",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "attitude_gu"
+    ]
+  },
+  "S009": {
+    "title": "Reverend Insanity ch.948 - Attitude Gu",
+    "url": "https://jordan11.org/novel11/reverend-insanity-2/chapter-948",
+    "type": "novel mirror",
+    "supports": [
+      "attitude_gu"
+    ]
+  },
+  "S010": {
+    "title": "Reverend Insanity ch.1230 - Love Gu",
+    "url": "https://good88888.org/goodnovel/reverend-insanity-2/chapter-1230",
+    "type": "novel mirror",
+    "supports": [
+      "love_gu"
+    ]
+  },
+  "S011": {
+    "title": "Perseverance Gu | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Perseverance_Gu",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "perseverance_gu",
+      "reverse_flow_river"
+    ]
+  },
+  "S012": {
+    "title": "Wisdom Sword Gu | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Wisdom_Sword_Gu",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "wisdom_sword_gu"
+    ]
+  },
+  "S013": {
+    "title": "Second Aperture Gu | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Second_Aperture_Gu",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "second_aperture_gu"
+    ]
+  },
+  "S014": {
+    "title": "Reverend Insanity ch.487 - Second Aperture Gu",
+    "url": "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78441",
+    "type": "novel mirror",
+    "supports": [
+      "second_aperture_gu"
+    ]
+  },
+  "S015": {
+    "title": "Blood Skull Gu | Saga of Gu",
+    "url": "https://sagaofgu.com/gu/demonic-blood-skull-gu/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "blood_skull_gu"
+    ]
+  },
+  "S016": {
+    "title": "Landscape As Before ch.611",
+    "url": "https://jordan11.org/novel11/reverend-insanity-2/chapter-611",
+    "type": "novel mirror",
+    "supports": [
+      "landscape_as_before",
+      "man_as_before"
+    ]
+  },
+  "S017": {
+    "title": "Three-hundred-year Lifespan Gu | Saga of Gu",
+    "url": "https://sagaofgu.com/gu/three-hundred-year-lifespan-gu/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "lifespan_gu"
+    ]
+  },
+  "S018": {
+    "title": "Heavenly Essence Treasure Lotus | Saga of Gu",
+    "url": "https://sagaofgu.com/gu/heavenly-essence-treasure-lotus/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "heavenly_essence_treasure_imperial_lotus"
+    ]
+  },
+  "S019": {
+    "title": "Liquor Worm ch.14",
+    "url": "https://novelmulti.com/novel/reverend-insanity/chapter/14",
+    "type": "novel mirror",
+    "supports": [
+      "liquor_worm"
+    ]
+  },
+  "S020": {
+    "title": "Rules & Regulations | Saga of Gu",
+    "url": "https://sagaofgu.com/legends/rules-and-regulations/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "rules_gu",
+      "regulation_gu"
+    ]
+  },
+  "S021": {
+    "title": "Rules and Regulations ch.58",
+    "url": "https://good88888.org/goodnovel/reverend-insanity-2/chapter-58",
+    "type": "novel mirror",
+    "supports": [
+      "rules_gu",
+      "regulation_gu"
+    ]
+  },
+  "S022": {
+    "title": "Feng Jiu Ge | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Feng_Jiu_Ge",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "feng_jiu_ge"
+    ]
+  },
+  "S023": {
+    "title": "Reverend Insanity ch.1388 - This is Feng Jiu Ge",
+    "url": "https://jordan11.org/novel11/reverend-insanity-2/chapter-1388",
+    "type": "novel mirror",
+    "supports": [
+      "feng_jiu_ge"
+    ]
+  },
+  "S024": {
+    "title": "Wu Yong | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Wu_Yong",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "wu_yong"
+    ]
+  },
+  "S025": {
+    "title": "Reverend Insanity ch.1706 - Wu Yong",
+    "url": "https://wuxiaworld.eu/chapter/reverend-insanity-1709",
+    "type": "novel mirror",
+    "supports": [
+      "wu_yong"
+    ]
+  },
+  "S026": {
+    "title": "Spectral Soul | Saga of Gu",
+    "url": "https://sagaofgu.com/characters/spectral-soul-demon-venerable/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "spectral_soul"
+    ]
+  },
+  "S027": {
+    "title": "Star Constellation | Saga of Gu",
+    "url": "https://sagaofgu.com/characters/star-constellation-immortal-venerable/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "star_constellation"
+    ]
+  },
+  "S028": {
+    "title": "Bai Ning Bing | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Bai_Ning_Bing",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "bai_ning_bing"
+    ]
+  },
+  "S029": {
+    "title": "Red Lotus | Saga of Gu",
+    "url": "https://sagaofgu.com/characters/red-lotus-demon-venerable/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "red_lotus"
+    ]
+  },
+  "S030": {
+    "title": "Purple Mountain True Monarch | Saga of Gu",
+    "url": "https://sagaofgu.com/characters/purple-mountain-true-monarch/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "purple_mountain"
+    ]
+  },
+  "S031": {
+    "title": "Wu Shuai | Saga of Gu",
+    "url": "https://sagaofgu.com/characters/wu-shuai/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "wu_shuai"
+    ]
+  },
+  "S032": {
+    "title": "Truthful Floating Ice | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Truthful_Floating_Ice",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "limitless",
+      "crazed_demon_cave"
+    ]
+  },
+  "S033": {
+    "title": "Giant Sun | Saga of Gu",
+    "url": "https://sagaofgu.com/characters/giant-sun-immortal-venerable/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "giant_sun"
+    ]
+  },
+  "S034": {
+    "title": "Zi Wei ch.1052",
+    "url": "https://roliascan.com/read/reverend-insanity/ch1052-98512/",
+    "type": "novel mirror",
+    "supports": [
+      "zi_wei"
+    ]
+  },
+  "S035": {
+    "title": "Heaven Overseeing Tower | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Heaven_Overseeing_Tower",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "heaven_overseeing_tower",
+      "fate_war"
+    ]
+  },
+  "S036": {
+    "title": "Dragon Palace | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Dragon_Palace",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "dragon_palace"
+    ]
+  },
+  "S037": {
+    "title": "Crazed Demon Cave | Saga of Gu",
+    "url": "https://sagaofgu.com/locations/crazed-demon-cave/",
+    "type": "chapter-indexed secondary",
+    "supports": [
+      "crazed_demon_cave"
+    ]
+  },
+  "S038": {
+    "title": "Reverend Insanity ch.1176 - Crazed Demon Cave purpose",
+    "url": "https://freewebnovel.com/novel/reverend-insanity/chapter-1176",
+    "type": "novel mirror",
+    "supports": [
+      "crazed_demon_cave"
+    ]
+  },
+  "S039": {
+    "title": "Reverend Insanity ch.554 - Eighty-Eight True Yang Building",
+    "url": "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78508",
+    "type": "novel mirror",
+    "supports": [
+      "eighty_eight_true_yang_building"
+    ]
+  },
+  "S040": {
+    "title": "Luck Suppression Heavenly Palace explainer",
+    "url": "https://basicutils.com/learn/gu-house/luck-suppression-heavenly-palace-reverend-insanity",
+    "type": "secondary explainer; low trust",
+    "supports": [
+      "luck_suppression_heavenly_palace"
+    ]
+  },
+  "S041": {
+    "title": "Duke Long | Fandom",
+    "url": "https://reverend-insanity.fandom.com/wiki/Duke_Long",
+    "type": "chapter-referenced secondary",
+    "supports": [
+      "duke_long"
+    ]
+  },
+  "S042": {
+    "title": "Limitless Demon Venerable | NovelWiki",
+    "url": "https://novelwiki.net/reverend-insanity/characters/limitless-demon-venerable/",
+    "type": "secondary; verify against chapters",
+    "supports": [
+      "limitless"
+    ]
+  },
+  "S043": {
+    "title": "《蛊真人》第五节：希望蛊（小说镜像/译本）",
+    "url": "https://ncode.syosetu.com/n3149kg/5/",
+    "type": "novel mirror / translation; textual appearance evidence",
+    "supports": [
+      "hope_gu"
+    ]
+  },
+  "S044": {
+    "title": "《蛊真人》第二百二十二节：自由蛊",
+    "url": "https://www.sobqg.com/read/guzhenren/18153840.html",
+    "type": "novel mirror; direct Ren Zu tale text",
+    "supports": [
+      "freedom_gu"
+    ]
+  },
+  "S045": {
+    "title": "《蛊真人》第六百六十节：我后悔了",
+    "url": "https://www.sobqg.com/read/guzhenren/18154649.html",
+    "type": "novel mirror; direct appearance/refinement scene",
+    "supports": [
+      "regret_gu"
+    ]
+  },
+  "S046": {
+    "title": "《蛊真人》第一百六十八章：推算利器属星念",
+    "url": "https://www.hetushu.com/book/7640/5346055.html",
+    "type": "novel mirror; behavior/body-field evidence",
+    "supports": [
+      "wisdom_gu"
+    ]
+  },
+  "S047": {
+    "title": "《蛊真人》第三节：再见智慧蛊",
+    "url": "https://www.sobqg.com/read/guzhenren/18153622.html",
+    "type": "novel mirror; five-color radiance / spherical halo evidence",
+    "supports": [
+      "wisdom_gu"
+    ]
+  },
+  "S048": {
+    "title": "《人祖传》37：发现自己蛊（原文摘录）",
+    "url": "https://www.bilibili.com/read/cv14221637/",
+    "type": "secondary transcription of Ren Zu tale; size-only evidence",
+    "supports": [
+      "self_gu"
+    ]
+  },
+  "S049": {
+    "title": "《蛊真人》第五卷第二百六十四章：方源的坚持！",
+    "url": "https://www.hetushu.com/book/7640/5346523.html",
+    "type": "novel mirror; behavioral visual thesis evidence",
+    "supports": [
+      "fang_yuan",
+      "reverse_flow_river"
+    ]
+  },
+  "S050": {
+    "title": "《蛊真人》第三卷第二百四十四章：双魔",
+    "url": "https://www.hetushu.com/book/7640/5345887.html",
+    "type": "novel mirror; Hei Lou Lan true body evidence",
+    "supports": [
+      "hei_lou_lan"
+    ]
+  },
+  "S051": {
+    "title": "《蛊真人》第一百四十七节：巨阳仙尊",
+    "url": "https://www.sobqg.com/read/guzhenren/18153522.html",
+    "type": "novel mirror; Hei Lou Lan disguise/body evidence",
+    "supports": [
+      "hei_lou_lan"
+    ]
+  },
+  "S052": {
+    "title": "《蛊真人》第二百二十二节：镇运天宫",
+    "url": "https://www.sobqg.com/read/guzhenren/18154212.html",
+    "type": "novel mirror; direct house appearance/reveal evidence",
+    "supports": [
+      "luck_suppression_heavenly_palace"
+    ]
+  }
+}

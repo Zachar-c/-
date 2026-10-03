@@ -94,7 +94,7 @@
 |---|---|---|---|---|
 | [道痕体系](dao-marks.md) | DM-001…025（25 条） | 无（页内 CAN-* 均为通配指称） | CAN-IMMORTAL-*（成功道痕语义近） | 待 canon-index 规则域扩容 |
 | [梦道机制](dream-path.md) | DRM-001…016（16 条） | 无 | —（canon-index 尚无梦道域） | 待扩容 |
-| [杀招连招并招体系](killer-moves.md) | KM-001…020（20 条） | 无 | — | 待扩容；`v1_battle.json` `km_` 前缀撞名见 docs/debt.md |
+| [杀招连招并招体系](killer-moves.md) | KM-001…025（25 条） | 无 | — | 待扩容；`v1_battle.json` `km_` 前缀撞名见 docs/debt.md |
 | [流派境界五级](path-realms.md) | PR-001…016（16 条） | 无 | CAN-RANK-*、CAN-APTITUDE-* | 待扩容 |
 | [炼蛊术语体系](refinement.md) | REF-001…024（24 条） | 无 | CAN-CULTIVATION-*、CAN-GU-CARE-* | 待扩容 |
 | [灾劫体系](tribulation.md) | TRIB-001…024（24 条） | CAN-IMMORTAL-BOUNDARY-001 | CAN-IMMORTAL-* | 唯一已挂链页；余待扩容 |

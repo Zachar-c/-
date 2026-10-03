@@ -7,7 +7,7 @@ description: 古月一族秘法培育的一转镇族蛊虫，发射月刃的基�
 date: 2026-09-28
 tags: [gu, combat, ancient-moon-clan, golden-page, feeding, refine-chain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-SMALL-LIGHT-001"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
 schema: 2

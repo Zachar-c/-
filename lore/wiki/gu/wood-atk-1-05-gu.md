@@ -7,7 +7,7 @@ description: 木行战斗蛊：掌心催出十五米碧绿藤条，当鞭子甩�
 date: 2026-09-28
 tags: [gu, wood, combat, control, rank-unstated]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-WOOD-001"
 schema: 2
 ---

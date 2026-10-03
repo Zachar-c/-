@@ -3,7 +3,7 @@ type: world
 kind: reference
 name: 视觉素材·中洲（采集批 C）
 aliases: [视觉素材 C]
-sources: ["source:source/蛊真人-clean.txt"]
+sources: ["source:source/蛊真人-epub-canon.txt"]
 ---
 
 

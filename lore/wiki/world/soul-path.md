@@ -6,7 +6,7 @@ aliases: [魂道流派, 魂修]
 description: 魂道流派：壮魂/炼魂/安魂三要素、底蕴阶梯与幽魂真传的荒魂突破体系及其人性代价
 date: 2026-09-25
 tags: [world, soul-path, hun, you-hun]
-sources: ["source:source/蛊真人-clean.txt"]
+sources: ["source:source/蛊真人-epub-canon.txt"]
 schema: 2
 ---
 

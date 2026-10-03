@@ -9,13 +9,70 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { openLab } from './helpers/lab_browser.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const RUN_FLOW_PATH = path.join(ROOT, 'js', 'run_flow.js');
+const MAIN_PATH = path.join(ROOT, 'js', 'main.js');
 const REPORT_DIR = path.join(ROOT, 'docs', 'tmp');
+
+function loadBuildDeathReport() {
+  const source = readFileSync(MAIN_PATH, 'utf8');
+  const start = source.indexOf('function buildDeathReport(b) {');
+  const end = source.indexOf('\nfunction openBattleOutcome()', start);
+  assert.ok(start >= 0 && end > start, 'main.js must expose the buildDeathReport source block');
+  const context = vm.createContext({});
+  vm.runInContext(`${source.slice(start, end)}; globalThis.buildDeathReport = buildDeathReport;`, context);
+  return (battle) => {
+    context.__battle = battle;
+    return vm.runInContext('buildDeathReport(__battle)', context);
+  };
+}
+
+test('RULE_TEST: 魂魄 / 寿元败因使用资源耗尽记录，旧 lastBlow 仅保留为气血历史', () => {
+  const buildDeathReport = loadBuildDeathReport();
+  const soulBlow = { attacker: '噬魂妖', label: '夺魄', damage: 7, turn: 2 };
+  const soulResourceBlow = { attacker: '噬魂妖', label: '魂魄抽取', resource: 'soul', amount: 3, turn: 4 };
+  const soulReport = buildDeathReport({
+    deathCause: 'soul', turn: 4, lastBlow: soulBlow, lastResourceBlow: soulResourceBlow,
+    log: ['魂魄归零'],
+  });
+  assert.equal(soulReport.lastBlow, soulBlow);
+  assert.equal(soulReport.lastResourceBlow, soulResourceBlow);
+  assert.match(soulReport.detail, /魂魄抽取/);
+  assert.doesNotMatch(soulReport.detail, /夺魄（伤 7）/);
+
+  const lifeBlow = { attacker: '腐寿鬼', label: '蚀寿', damage: 11, turn: 1 };
+  const lifeResourceBlow = { attacker: '腐寿鬼', label: '折寿', resource: 'life', amount: 2, turn: 3 };
+  const lifeReport = buildDeathReport({
+    deathCause: 'life_cost', turn: 3, lastBlow: lifeBlow, lastResourceBlow: lifeResourceBlow,
+    log: ['寿元归零'],
+  });
+  assert.equal(lifeReport.lastBlow, lifeBlow);
+  assert.equal(lifeReport.lastResourceBlow, lifeResourceBlow);
+  assert.match(lifeReport.detail, /折寿/);
+  assert.doesNotMatch(lifeReport.detail, /蚀寿（伤 11）/);
+});
+
+test('RULE_TEST: 旧存档资源败局回退到耗尽原因，正常气血败局沿用 lastBlow', () => {
+  const buildDeathReport = loadBuildDeathReport();
+  const oldSoul = buildDeathReport({ deathCause: 'soul', turn: 5, lastBlow: null, log: [] });
+  assert.equal(oldSoul.lastResourceBlow, null);
+  assert.match(oldSoul.detail, /魂魄/);
+  const oldLife = buildDeathReport({ deathCause: 'life_cost', turn: 6, lastBlow: null, log: [] });
+  assert.equal(oldLife.lastResourceBlow, null);
+  assert.match(oldLife.detail, /寿元/);
+
+  const bloodBlow = { attacker: '山魈', label: '重击', damage: 9, turn: 7 };
+  const bloodReport = buildDeathReport({ deathCause: 'blood', turn: 7, lastBlow: bloodBlow, log: ['倒下'] });
+  assert.equal(bloodReport.lastBlow, bloodBlow);
+  assert.match(bloodReport.detail, /山魈 · 重击（伤 9）/);
+  assert.doesNotMatch(bloodReport.detail, /资源耗尽/);
+  assert.doesNotMatch(bloodReport.detail, /最后三回合/);
+});
 
 function loadRunFlow() {
   const code = readFileSync(RUN_FLOW_PATH, 'utf8');
@@ -340,7 +397,7 @@ test('NORMAL_RUN: 首战→奖励→整备→下一节点（空存档 + 可见�
     assert.ok(s1.battle, '首战必须进入战斗遭遇');
     assert.ok(s1.journey.availableNodeIds.length === 0, '进入节点后 available 应清空');
 
-    // 只使用可见控件打完首战（拳脚 / 结束回合），禁止 act.*
+    // 只使用可见控件打完首战：优先使用已持有的月光，再拳脚 / 结束回合；禁止 act.*
     let won = false;
     for (let i = 0; i < 80 && !won; i += 1) {
       const snap = await lab.snapshot();
@@ -350,7 +407,11 @@ test('NORMAL_RUN: 首战→奖励→整备→下一节点（空存档 + 可见�
       if (snap.battle.over === '胜') { won = true; break; }
       if (snap.battle.over === '败') break;
       let acted = false;
-      for (const sel of ['#panel-battle [data-basic-attack]', '[data-basic-attack]']) {
+      for (const sel of [
+        '[data-use-gu="moonlight_gu::1"]',
+        '#panel-battle [data-basic-attack]',
+        '[data-basic-attack]',
+      ]) {
         try {
           await lab.click(sel);
           acted = true;
@@ -517,10 +578,8 @@ test('NORMAL_RUN: 败局→结局→重开清掉上一局资源', async () => {
     assert.equal(freshRun.reward, null);
     assert.equal(freshRun.stones, 3, 'fresh 必须回到开局资源');
     assert.deepEqual(Object.keys(freshRun.owned || {}).sort(), [
-      'blood_atk_5_02_gu', 'blood_droplet_gu', 'blood_farewell_gu', 'fire_atk_2_01_gu',
-      'jade_skin_gu', 'light_rec_1_10_gu', 'moonlight_gu', 'small_light_gu',
-      'stone_shell_gu', 'vitality_grass_gu', 'water_atk_3_05_gu', 'white_boar_strength_gu',
-      'wisdom_atk_3_13_gu', 'wisdom_rec_1_20_gu',
+      'jade_skin_gu', 'moonlight_gu', 'small_light_gu',
+      'stone_shell_gu', 'vitality_leaf_gu', 'white_boar_strength_gu',
     ].sort(), '不得跨局继承库存');
     // 回归锁：终局后走大厅「重新开局」（惯性主路径，也是 dock 镜像的主按钮）
     // 必须直接进入可操作的新局——新契约 + 真点一张道路卡。

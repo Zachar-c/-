@@ -7,7 +7,7 @@ description: 力道系仙蛊：黑楼兰的本命仙蛊、其母苏仙儿炼制�
 date: 2026-09-28
 tags: [gu, strength-path, immortal-gu, killer-move-core, ownership-transfer, multi-vintage-rank, two-name-overlap]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

@@ -7,7 +7,7 @@ description: 七转剑道攻伐仙蛊，形如银翅蜻蜓，剑仙薄青作战�
 date: 2026-09-28
 tags: [gu, combat, sword-path, xian-gu, killer-move-core, fang-yuan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

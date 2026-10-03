@@ -4,7 +4,7 @@ kind: relation
 name: M0 六蛊原著边界
 aliases: [M0 六蛊]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-SMALL-LIGHT-001"
   - "canon-index:CAN-SMALL-LIGHT-002"
 ---

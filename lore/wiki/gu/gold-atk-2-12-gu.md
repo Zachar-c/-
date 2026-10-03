@@ -7,7 +7,7 @@ description: 一转舍利蛊：圆球状凡蛊、拇指大小；可升华窍壁�
 date: 2026-09-28
 tags: [gu, human-path, cultivation, commerce, consumable]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

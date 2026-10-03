@@ -4,7 +4,7 @@ kind: index
 name: 全书故事骨架总览
 aliases: [故事弧总览, 全书粗蒸馏骨架]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/A-1-45000.md"
   - "notes:game/分支：六卷精编版/读书笔记/C-90001-135000.md"
   - "notes:game/分支：六卷精编版/读书笔记/H1-315001-337500.md"

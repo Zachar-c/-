@@ -7,7 +7,7 @@ description: 二转草蛊，本体具治疗作用但原文只一句带过，真�
 date: 2026-09-28
 tags: [gu, healing, vital-grass, consumption, economy, clan-control]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-CARE-001"
   - "canon-index:CAN-ECONOMY-001"
 schema: 2

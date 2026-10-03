@@ -7,7 +7,7 @@ description: 梦道流派的建立、外显梦境规则、跨流派杀招原理�
 date: 2026-09-25
 tags: [rules, dream-path, dreams, cross-path]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

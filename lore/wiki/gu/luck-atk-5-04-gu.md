@@ -7,7 +7,7 @@ description: 运道仙蛊，巨阳仙尊早年本命蛊、己运真传精髓之�
 date: 2026-09-28
 tags: [gu, luck-path, xian-gu, north-plain, langya-blessed-land]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

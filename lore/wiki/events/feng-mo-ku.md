@@ -8,7 +8,7 @@ date: 2026-10-04
 tags: [event, feng-mo-ku, three-venerables]
 sources:
   - "source:source/蛊真人-epub-canon.txt"
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/I2a-360001-382500-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/I2b-382501-405000-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/J2a-405001-421000-补读.md"

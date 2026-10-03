@@ -7,7 +7,7 @@ description: 信道盟誓类仙蛊：立誓须面对一座高山，摧毁对应�
 date: 2026-09-28
 tags: [gu, information-path, oath, xian-gu, social-asset]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

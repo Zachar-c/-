@@ -93,20 +93,38 @@ const DATA = {
           "ridge_elite_scout"
         ],
         "boss": [
-          "crag_serpent_matriarch"
+          "miasma_vein_lord"
         ]
       },
       "2": {
         "battle": [
-          "beast_swarm",
-          "neutral_stone_wanderer",
-          "ridge_hound",
-          "iron_hide_boar"
+          "iron_hide_boar",
+          "faction_guard",
+          "mo_family_huntsman",
+          "ridge_elite_scout",
+          "bone_gun_marauder",
+          "demon_path_adept",
+          "thunder_crown_wolf"
         ],
         "elite": [
           "faction_guard",
           "mo_family_huntsman",
           "ridge_elite_scout",
+          "bone_gun_marauder",
+          "demon_path_adept",
+          "thunder_crown_wolf"
+        ],
+        "boss": [
+          "crag_serpent_matriarch"
+        ]
+      },
+      "3": {
+        "battle": [
+          "bone_gun_marauder",
+          "demon_path_adept",
+          "thunder_crown_wolf"
+        ],
+        "elite": [
           "bone_gun_marauder",
           "demon_path_adept",
           "thunder_crown_wolf"
@@ -115,17 +133,13 @@ const DATA = {
           "marrow_gu_adept"
         ]
       },
-      "3": {
+      "4": {
         "battle": [
-          "beast_swarm",
-          "neutral_stone_wanderer",
-          "ridge_hound",
-          "iron_hide_boar"
+          "bone_gun_marauder",
+          "demon_path_adept",
+          "thunder_crown_wolf"
         ],
         "elite": [
-          "faction_guard",
-          "mo_family_huntsman",
-          "ridge_elite_scout",
           "bone_gun_marauder",
           "demon_path_adept",
           "thunder_crown_wolf"
@@ -134,42 +148,19 @@ const DATA = {
           "thunder_crown_sovereign"
         ]
       },
-      "4": {
+      "5": {
         "battle": [
-          "beast_swarm",
-          "neutral_stone_wanderer",
-          "ridge_hound",
-          "iron_hide_boar"
+          "bone_gun_marauder",
+          "demon_path_adept",
+          "thunder_crown_wolf"
         ],
         "elite": [
-          "faction_guard",
-          "mo_family_huntsman",
-          "ridge_elite_scout",
           "bone_gun_marauder",
           "demon_path_adept",
           "thunder_crown_wolf"
         ],
         "boss": [
           "blood_vein_bishop"
-        ]
-      },
-      "5": {
-        "battle": [
-          "beast_swarm",
-          "neutral_stone_wanderer",
-          "ridge_hound",
-          "iron_hide_boar"
-        ],
-        "elite": [
-          "faction_guard",
-          "mo_family_huntsman",
-          "ridge_elite_scout",
-          "bone_gun_marauder",
-          "demon_path_adept",
-          "thunder_crown_wolf"
-        ],
-        "boss": [
-          "miasma_vein_lord"
         ]
       }
     },
@@ -670,13 +661,47 @@ const DATA = {
       }
     },
     "schoolPools": {
+      "blood": [
+        "blood_farewell_gu",
+        "blood_droplet_gu",
+        "blood_bat_gu",
+        "blood_atk_5_02_gu",
+        "blood_heal_2_23_gu"
+      ],
+      "bone": [
+        "bone_atk_1_08_gu"
+      ],
+      "earth": [
+        "jade_skin_gu",
+        "white_jade_gu",
+        "stone_shell_gu"
+      ],
+      "fire": [
+        "fire_atk_2_01_gu"
+      ],
+      "force": [
+        "force_gu",
+        "bear_strength_gu",
+        "white_boar_strength_gu",
+        "force_atk_4_02_gu"
+      ],
+      "gold": [
+        "gold_atk_2_11_gu",
+        "gold_atk_2_12_gu",
+        "gold_atk_3_13_gu",
+        "gold_atk_4_14_gu",
+        "gold_atk_5_15_gu",
+        "gold_atk_2_16_gu"
+      ],
+      "human": [
+        "human_atk_1_01_gu"
+      ],
       "light": [
         "small_light_gu",
         "moonlight_gu",
         "moon_glow_gu",
         "moon_ray_gu",
         "moon_shadow_gu",
-        "vitality_grass_gu",
         "light_atk_1_01_gu",
         "light_atk_3_02_gu",
         "light_atk_5_03_gu",
@@ -711,6 +736,43 @@ const DATA = {
         "light_rec_2_32_gu",
         "light_log_3_33_gu",
         "light_atk_3_34_gu"
+      ],
+      "qi": [
+        "qi_atk_1_01_gu",
+        "qi_rec_2_14_gu"
+      ],
+      "sword": [
+        "sword_atk_4_01_gu",
+        "sword_atk_5_02_gu",
+        "sword_atk_5_03_gu",
+        "sword_atk_5_04_gu",
+        "sword_atk_1_05_gu",
+        "sword_atk_1_06_gu",
+        "sword_rec_1_10_gu",
+        "sword_atk_2_12_gu",
+        "sword_atk_2_13_gu",
+        "sword_def_3_14_gu",
+        "sword_heal_4_16_gu",
+        "sword_rec_5_17_gu",
+        "sword_atk_2_19_gu",
+        "sword_atk_2_26_gu",
+        "sword_atk_2_27_gu"
+      ],
+      "water": [
+        "water_atk_3_05_gu",
+        "water_atk_1_08_gu"
+      ],
+      "wind": [
+        "wind_atk_1_02_gu"
+      ],
+      "wisdom": [
+        "wisdom_atk_3_13_gu",
+        "wisdom_rec_1_20_gu"
+      ],
+      "wood": [
+        "wood_atk_1_05_gu",
+        "vitality_grass_gu",
+        "vitality_leaf_gu"
       ]
     },
     "school": "light"
@@ -738,6 +800,7 @@ const DATA = {
       },
       "icon": "gu_moon",
       "combat": "moonlight_strike",
+      "feedingCost": 1,
       "battleEffect": {
         "kind": "strike",
         "amount": 3,
@@ -759,30 +822,29 @@ const DATA = {
       "rank": 1,
       "rarity": "common",
       "role": "attack",
-      "buildRole": "Information",
+      "buildRole": "Support",
       "buildTags": [
-        "inspect",
         "support",
-        "info_answer"
+        "moonlight_amplifier",
+        "non_stacking"
       ],
       "school": "light",
       "value": 3,
       "cost": 1,
       "effect": {
-        "kind": "strike",
-        "amount": 1,
-        "support_school": "light",
-        "support_bonus": 2,
-        "inspect": true
+        "kind": "support",
+        "target_gu_id": "moonlight_gu",
+        "multiplier": 2,
+        "nonStacking": true
       },
       "icon": "gu_light",
       "combat": "reveal_hidden_bonus",
+      "feedingCost": 1,
       "battleEffect": {
-        "kind": "strike",
-        "amount": 1,
-        "support_school": "light",
-        "support_bonus": 2,
-        "inspect": true
+        "kind": "support",
+        "target_gu_id": "moonlight_gu",
+        "multiplier": 2,
+        "nonStacking": true
       },
       "trueQiCost": 1,
       "thoughtCost": 1,
@@ -801,36 +863,38 @@ const DATA = {
       "rank": 2,
       "rarity": "rare",
       "role": "attack",
-      "buildRole": "Support",
+      "buildRole": "Core",
       "buildTags": [
-        "suppress",
-        "info_answer"
+        "high_output",
+        "true_qi_investment",
+        "stable_hit"
       ],
       "school": "light",
       "value": 9,
-      "cost": 2,
+      "cost": 4,
       "effect": {
         "kind": "strike",
-        "amount": 4,
-        "suppressWhenRevealed": true,
-        "suppress": true
+        "amount": 9,
+        "ignoreEvasion": true
       },
       "icon": "gu_moon",
       "combat": "moonlight_strike",
+      "feedingCost": 2,
       "battleEffect": {
         "kind": "strike",
-        "amount": 4,
-        "suppressWhenRevealed": true,
-        "suppress": true
+        "amount": 9,
+        "ignoreEvasion": true
       },
-      "trueQiCost": 2,
+      "trueQiCost": 4,
       "thoughtCost": 1,
       "lowRankException": false,
       "lifeCost": 0,
       "labOnly": false,
       "sourceClass": "canon_driven_v1",
       "canonAnchors": [
-        "E:V1-015710"
+        "E:V1-015710",
+        "E:V1-017150",
+        "E:V1-017154"
       ]
     },
     {
@@ -850,6 +914,7 @@ const DATA = {
       },
       "icon": "gu_moon",
       "combat": "moonlight_strike",
+      "feedingCost": 2,
       "battleEffect": {
         "kind": "strike",
         "amount": 4
@@ -879,6 +944,7 @@ const DATA = {
       },
       "icon": "gu_force",
       "combat": "heal_and_bleed",
+      "feedingCost": 2,
       "battleEffect": {
         "kind": "heal",
         "amount": 2
@@ -899,27 +965,25 @@ const DATA = {
       "role": "attack",
       "buildRole": "Transform",
       "buildTags": [
-        "armorBreak",
-        "pierce",
+        "body_investment",
+        "permanent_strength",
         "burst_setup"
       ],
       "school": "force",
       "value": 10,
       "cost": 1,
       "effect": {
-        "kind": "strike",
-        "amount": 2,
-        "armorBreak": 2,
-        "pierce": 2
+        "kind": "body_training",
+        "trigger": "out_of_combat",
+        "attribute": "attack",
+        "amount": 1,
+        "cap": 3,
+        "parameter_basis": "lab_existing_force_power_3"
       },
       "icon": "gu_force",
-      "combat": "white_boar_strength",
-      "battleEffect": {
-        "kind": "strike",
-        "amount": 2,
-        "armorBreak": 2,
-        "pierce": 2
-      },
+      "combat": "",
+      "feedingCost": 1,
+      "battleEffect": null,
       "trueQiCost": 1,
       "thoughtCost": 1,
       "lowRankException": false,
@@ -940,14 +1004,37 @@ const DATA = {
       "value": 8,
       "cost": 1,
       "effect": {
-        "kind": "shield",
-        "amount": 3
+        "kind": "maintained",
+        "amount": 3,
+        "upkeep_qi": 1,
+        "hit_qi": 2,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 3,
+            "effect_id": "jade_protection"
+          }
+        ],
+        "focus_cost": 1
       },
       "icon": "gu_water",
       "combat": "jade_skin_guard",
+      "feedingCost": 1,
       "battleEffect": {
-        "kind": "shield",
-        "amount": 3
+        "kind": "maintained",
+        "amount": 3,
+        "upkeep_qi": 1,
+        "hit_qi": 2,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 3,
+            "effect_id": "jade_protection"
+          }
+        ],
+        "focus_cost": 1
       },
       "trueQiCost": 1,
       "thoughtCost": 1,
@@ -956,7 +1043,8 @@ const DATA = {
       "labOnly": false,
       "sourceClass": "canon_driven_v1",
       "canonAnchors": [
-        "E:V1-009654"
+        "E:V1-009654",
+        "E:V1-016070"
       ]
     },
     {
@@ -971,14 +1059,55 @@ const DATA = {
       "value": 5,
       "cost": 1,
       "effect": {
-        "kind": "shield",
-        "amount": 3
+        "kind": "maintained",
+        "amount": 3,
+        "upkeep_qi": 0,
+        "hit_qi": 0,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 3,
+            "effect_id": "stone_arms_guard"
+          },
+          {
+            "attribute": "attack",
+            "amount": 1,
+            "effect_id": "stone_arms_weight"
+          },
+          {
+            "attribute": "attackDelay",
+            "amount": 1,
+            "effect_id": "stone_arms_slow"
+          }
+        ]
       },
       "icon": "gu_earth",
       "combat": "guard_against_hit",
+      "feedingCost": 2,
       "battleEffect": {
-        "kind": "shield",
-        "amount": 3
+        "kind": "maintained",
+        "amount": 3,
+        "upkeep_qi": 0,
+        "hit_qi": 0,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 3,
+            "effect_id": "stone_arms_guard"
+          },
+          {
+            "attribute": "attack",
+            "amount": 1,
+            "effect_id": "stone_arms_weight"
+          },
+          {
+            "attribute": "attackDelay",
+            "amount": 1,
+            "effect_id": "stone_arms_slow"
+          }
+        ]
       },
       "trueQiCost": 1,
       "thoughtCost": 1,
@@ -986,7 +1115,11 @@ const DATA = {
       "lifeCost": 0,
       "labOnly": false,
       "sourceClass": null,
-      "canonAnchors": []
+      "canonAnchors": [
+        "E:V1-011888",
+        "E:V1-011894",
+        "E:V1-011900"
+      ]
     },
     {
       "id": "white_jade_gu",
@@ -1000,14 +1133,37 @@ const DATA = {
       "value": 30,
       "cost": 2,
       "effect": {
-        "kind": "shield",
-        "amount": 5
+        "kind": "maintained",
+        "amount": 5,
+        "upkeep_qi": 1,
+        "hit_qi": 2,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 5,
+            "effect_id": "jade_protection"
+          }
+        ],
+        "focus_cost": 1
       },
       "icon": "gu_water",
       "combat": "white_jade_form",
+      "feedingCost": 2,
       "battleEffect": {
-        "kind": "shield",
-        "amount": 5
+        "kind": "maintained",
+        "amount": 5,
+        "upkeep_qi": 1,
+        "hit_qi": 2,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 5,
+            "effect_id": "jade_protection"
+          }
+        ],
+        "focus_cost": 1
       },
       "trueQiCost": 2,
       "thoughtCost": 1,
@@ -1016,7 +1172,8 @@ const DATA = {
       "labOnly": false,
       "sourceClass": "canon_driven_v1",
       "canonAnchors": [
-        "E:V1-009986"
+        "E:V1-009986",
+        "E:V1-016070"
       ]
     },
     {
@@ -1044,6 +1201,7 @@ const DATA = {
       },
       "icon": "gu_blood",
       "combat": "poison_and_slow",
+      "feedingCost": 2,
       "battleEffect": {
         "kind": "strike",
         "amount": 4,
@@ -1081,6 +1239,7 @@ const DATA = {
       },
       "icon": "gu_blood",
       "combat": "moonlight_strike",
+      "feedingCost": 2,
       "battleEffect": {
         "kind": "strike",
         "amount": 2
@@ -1095,8 +1254,8 @@ const DATA = {
     },
     {
       "id": "vitality_grass_gu",
-      "name": "生机草蛊",
-      "rank": 1,
+      "name": "九叶生机草",
+      "rank": 2,
       "rarity": "common",
       "role": "logistics",
       "buildRole": "Resource",
@@ -1104,18 +1263,60 @@ const DATA = {
         "sustain",
         "heal"
       ],
-      "school": "light",
+      "school": "wood",
       "value": 3,
+      "cost": 2,
+      "effect": {
+        "kind": "production",
+        "amount": 1,
+        "output_gu_id": "vitality_leaf_gu"
+      },
+      "icon": "gu_qi",
+      "combat": "",
+      "feedingCost": 0,
+      "battleEffect": null,
+      "trueQiCost": 2,
+      "thoughtCost": 1,
+      "lowRankException": false,
+      "lifeCost": 0,
+      "labOnly": false,
+      "sourceClass": "canon_driven_v1",
+      "canonAnchors": [
+        "E:V1-016490",
+        "E:V1-016494",
+        "E:V1-017106",
+        "E:V1-017114"
+      ]
+    },
+    {
+      "id": "vitality_leaf_gu",
+      "name": "生机叶",
+      "rank": 1,
+      "rarity": "common",
+      "role": "logistics",
+      "buildRole": "Resource",
+      "buildTags": [
+        "sustain",
+        "heal",
+        "consumable"
+      ],
+      "school": "wood",
+      "value": 2,
       "cost": 0,
       "effect": {
         "kind": "heal",
-        "amount": 1
+        "amount": 3,
+        "consumable": true,
+        "recovery_per_node": true
       },
       "icon": "gu_qi",
-      "combat": "vitality_grass_remedy",
+      "combat": "vitality_leaf_remedy",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
-        "amount": 1
+        "amount": 3,
+        "consumable": true,
+        "recovery_per_node": true
       },
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1124,7 +1325,9 @@ const DATA = {
       "labOnly": false,
       "sourceClass": "canon_driven_v1",
       "canonAnchors": [
-        "E:V1-017128"
+        "E:V1-016494",
+        "E:V1-016496",
+        "E:V1-016498"
       ]
     },
     {
@@ -1146,6 +1349,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 2,
@@ -1179,6 +1383,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 1,
       "battleEffect": {
         "kind": "strike",
         "amount": 2,
@@ -1210,6 +1415,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -1239,6 +1445,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -1268,6 +1475,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -1297,6 +1505,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -1326,6 +1535,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -1355,6 +1565,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 5
@@ -1384,6 +1595,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 6
@@ -1413,6 +1625,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 6
@@ -1442,6 +1655,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 6
@@ -1471,6 +1685,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "sword_intent",
         "amount": 2
@@ -1500,6 +1715,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "sword_intent",
         "amount": 1
@@ -1529,6 +1745,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "qi_guard_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shield",
         "amount": 1
@@ -1559,6 +1776,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "qi_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "inspect"
       },
@@ -1587,6 +1805,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "wood_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -1618,6 +1837,7 @@ const DATA = {
       },
       "icon": "gu_water",
       "combat": "water_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -1647,6 +1867,7 @@ const DATA = {
       },
       "icon": "gu_moon",
       "combat": "shift_position",
+      "feedingCost": 3,
       "battleEffect": {
         "kind": "shift",
         "amount": 1
@@ -1679,6 +1900,7 @@ const DATA = {
       },
       "icon": "gu_blood",
       "combat": "blood_healing_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 1
@@ -1707,6 +1929,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "",
+      "feedingCost": 0,
       "battleEffect": null,
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1732,6 +1955,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "",
+      "feedingCost": 0,
       "battleEffect": null,
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1757,6 +1981,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "",
+      "feedingCost": 0,
       "battleEffect": null,
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1782,6 +2007,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "",
+      "feedingCost": 0,
       "battleEffect": null,
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1807,6 +2033,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "",
+      "feedingCost": 0,
       "battleEffect": null,
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1832,6 +2059,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "",
+      "feedingCost": 0,
       "battleEffect": null,
       "trueQiCost": 0,
       "thoughtCost": 1,
@@ -1858,6 +2086,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "bone_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -1886,6 +2115,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "human_insight_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "inspect"
       },
@@ -1917,6 +2147,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_defense_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shield",
         "amount": 5
@@ -1946,6 +2177,7 @@ const DATA = {
       },
       "icon": "gu_sword",
       "combat": "sword_healing_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 5
@@ -1975,6 +2207,7 @@ const DATA = {
       },
       "icon": "gu_blood",
       "combat": "blood_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 8
@@ -2007,6 +2240,7 @@ const DATA = {
       },
       "icon": "gu_fire",
       "combat": "fire_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3,
@@ -2043,6 +2277,7 @@ const DATA = {
       },
       "icon": "gu_water",
       "combat": "water_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 2,
@@ -2079,6 +2314,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "wisdom_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2111,6 +2347,7 @@ const DATA = {
       },
       "icon": "gu_qi",
       "combat": "wisdom_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "weaken_intent",
         "amount": 2
@@ -2140,6 +2377,7 @@ const DATA = {
       },
       "icon": "gu_wind",
       "combat": "wind_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -2169,6 +2407,7 @@ const DATA = {
       },
       "icon": "gu_force",
       "combat": "moonlight_strike",
+      "feedingCost": 2,
       "battleEffect": {
         "kind": "strike",
         "amount": 2
@@ -2199,6 +2438,7 @@ const DATA = {
       },
       "icon": "gu_blood",
       "combat": "drain_strike",
+      "feedingCost": 2,
       "battleEffect": {
         "kind": "heal_and_strike",
         "heal": 1,
@@ -2229,6 +2469,7 @@ const DATA = {
       },
       "icon": "gu_force",
       "combat": "force_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -2258,6 +2499,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -2287,6 +2529,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 2
@@ -2316,6 +2559,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 4
@@ -2345,6 +2589,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -2374,6 +2619,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 2
@@ -2403,6 +2649,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -2435,6 +2682,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2470,6 +2718,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2505,6 +2754,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2540,6 +2790,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2575,6 +2826,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2610,6 +2862,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2642,6 +2895,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -2671,6 +2925,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 1
@@ -2700,6 +2955,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_defense_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shield",
         "amount": 1
@@ -2729,6 +2985,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_movement_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shift",
         "amount": 1
@@ -2758,6 +3015,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_healing_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 1
@@ -2790,6 +3048,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -2822,6 +3081,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_logistics_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 1
@@ -2851,6 +3111,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 2
@@ -2880,6 +3141,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -2909,6 +3171,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_defense_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shield",
         "amount": 4
@@ -2938,6 +3201,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_movement_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shift",
         "amount": 1
@@ -2967,6 +3231,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_healing_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 1
@@ -2999,6 +3264,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -3031,6 +3297,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_logistics_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 1
@@ -3060,6 +3327,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 2
@@ -3089,6 +3357,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 3
@@ -3118,6 +3387,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_defense_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shield",
         "amount": 4
@@ -3147,6 +3417,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_movement_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "shift",
         "amount": 1
@@ -3176,6 +3447,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_healing_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 1
@@ -3208,6 +3480,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_recon_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "status",
         "name": "marked",
@@ -3240,6 +3513,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_logistics_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "heal",
         "amount": 1
@@ -3269,6 +3543,7 @@ const DATA = {
       },
       "icon": "gu_light",
       "combat": "light_attack_pattern",
+      "feedingCost": 0,
       "battleEffect": {
         "kind": "strike",
         "amount": 2
@@ -3305,48 +3580,22 @@ const DATA = {
   ],
   "recipes": [
     {
-      "id": "moon_ray_forged",
-      "kind": "fixed",
-      "inputs": [
-        "moonlight_gu",
-        "small_light_gu"
-      ],
-      "output": "moon_ray_gu",
-      "stoneCost": 0,
-      "source": "蛊真人-clean.txt 17140-17155：月光蛊多晋升路线之一（月光蛊+小光蛊；输出月痕蛊，语料名缺，策展补名）；L0 Phase 5 兽骨=爆发支配方钥匙",
-      "successRollMax": 100,
-      "forkId": "fork_moonlight_small",
-      "branchLabel": "炼向月痕·爆发",
-      "branchAxis": "burst",
-      "closes": [
-        "kit_info_suppress",
-        "moon_glow_gu"
-      ],
-      "delays": [
-        "kit_info_suppress"
-      ]
-    },
-    {
       "id": "moonlight_glow",
       "kind": "fixed",
       "inputs": [
         "moonlight_gu",
+        "small_light_gu",
         "small_light_gu"
       ],
       "output": "moon_glow_gu",
-      "stoneCost": 0,
-      "source": "蛊真人-clean.txt 17140-17155：月光蛊晋升路线之一（月光蛊x1+小光蛊x1→月芒蛊）；L0 Phase 5 月露=信息支配方钥匙",
+      "stoneCost": 10,
+      "source": "Wiki moon-glow-gu.md E:V1-015710/017148/017150：月光1+小光2→二转月芒，主攻三倍、射程不增。过程与绝对数值为网页试玩适配。",
       "successRollMax": 100,
-      "forkId": "fork_moonlight_small",
-      "branchLabel": "炼向月芒·信息压制",
-      "branchAxis": "info",
-      "closes": [
-        "moon_ray_gu",
-        "kit_pierce_burst"
-      ],
-      "delays": [
-        "kit_pierce_burst"
-      ]
+      "forkId": null,
+      "branchLabel": "月芒 · 高伤月刃",
+      "branchAxis": "burst",
+      "closes": [],
+      "delays": []
     },
     {
       "id": "white_jade_basic",
@@ -3451,13 +3700,15 @@ const DATA = {
         "small_light_gu"
       ],
       "true_qi_cost": 3,
-      "thought_cost": 1,
+      "thought_cost": 2,
       "life_cost": 0,
       "damage": 0,
       "effect": {
         "kind": "strike",
         "amount": 5
-      }
+      },
+      "playable": true,
+      "experimental": true
     },
     {
       "id": "km_light_bulwark",
@@ -3476,7 +3727,8 @@ const DATA = {
       "effect": {
         "kind": "shield",
         "amount": 6
-      }
+      },
+      "playable": false
     },
     {
       "id": "km_blood_ember",
@@ -3495,7 +3747,8 @@ const DATA = {
         "kind": "heal_and_strike",
         "heal": 2,
         "amount": 3
-      }
+      },
+      "playable": false
     },
     {
       "id": "km_sword_double_edge_1",
@@ -3513,7 +3766,8 @@ const DATA = {
       "effect": {
         "kind": "strike",
         "amount": 4
-      }
+      },
+      "playable": false
     },
     {
       "id": "km_sword_double_edge_2",
@@ -3531,7 +3785,8 @@ const DATA = {
       "effect": {
         "kind": "strike",
         "amount": 6
-      }
+      },
+      "playable": false
     },
     {
       "id": "km_sword_double_edge_4",
@@ -3549,7 +3804,8 @@ const DATA = {
       "effect": {
         "kind": "strike",
         "amount": 8
-      }
+      },
+      "playable": false
     },
     {
       "id": "km_sword_double_edge_5",
@@ -3567,7 +3823,8 @@ const DATA = {
       "effect": {
         "kind": "strike",
         "amount": 12
-      }
+      },
+      "playable": false
     },
     {
       "id": "km_sword_mark_seek_1",
@@ -3595,7 +3852,8 @@ const DATA = {
         "E:V5-194470",
         "E:V5-194498"
       ],
-      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_mark_seek_2",
@@ -3623,7 +3881,8 @@ const DATA = {
         "E:V5-194470",
         "E:V5-194498"
       ],
-      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_mark_seek_4",
@@ -3651,7 +3910,8 @@ const DATA = {
         "E:V5-194470",
         "E:V5-194498"
       ],
-      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_mark_seek_5",
@@ -3679,7 +3939,8 @@ const DATA = {
         "E:V5-194470",
         "E:V5-194498"
       ],
-      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配"
+      "canon_note": "剑痕索命：剑道仙级杀招（原文 194470 起）；机制=永久耗费剑道仙蛊道痕刻印目标、道痕自寻弱点攻击。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_five_fingers_2",
@@ -3706,7 +3967,8 @@ const DATA = {
       "canon_anchors": [
         "E:V4-160166"
       ],
-      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配"
+      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_five_fingers_4",
@@ -3733,7 +3995,8 @@ const DATA = {
       "canon_anchors": [
         "E:V4-160166"
       ],
-      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配"
+      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_five_fingers_5",
@@ -3760,7 +4023,8 @@ const DATA = {
       "canon_anchors": [
         "E:V4-160166"
       ],
-      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配"
+      "canon_note": "五指拳心剑：剑仙薄青的剑道仙级杀招（原文 160166）。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_myriad_tribulation_2",
@@ -3786,7 +4050,8 @@ const DATA = {
       "canon_anchors": [
         "E:V5-192506"
       ],
-      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配"
+      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_myriad_tribulation_4",
@@ -3812,7 +4077,8 @@ const DATA = {
       "canon_anchors": [
         "E:V5-192506"
       ],
-      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配"
+      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配",
+      "playable": false
     },
     {
       "id": "km_sword_myriad_tribulation_5",
@@ -3838,9 +4104,11 @@ const DATA = {
       "canon_anchors": [
         "E:V5-192506"
       ],
-      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配"
+      "canon_note": "万剑劫：薄青所创仙道杀招，以飞剑仙蛊为核心、以一化万成剑雨攻势（原文 192506）。游戏各转版本=品阶压缩适配",
+      "playable": false
     }
   ],
+  "killMovesEnabled": true,
   "enemies": [
     {
       "id": "neutral_stone_wanderer",
@@ -6747,6 +7015,24 @@ const DATA = {
   ],
   "shopOffers": [
     {
+      "id": "purchase_vitality_leaf",
+      "kind": "purchase",
+      "card_key": "purchase.vitality_leaf",
+      "gu_id": "vitality_leaf_gu",
+      "stone_cost": 3,
+      "tier": 1,
+      "gu_name": "生机叶"
+    },
+    {
+      "id": "purchase_vitality_grass",
+      "kind": "purchase",
+      "card_key": "purchase.vitality_grass",
+      "gu_id": "vitality_grass_gu",
+      "stone_cost": 10,
+      "tier": 2,
+      "gu_name": "九叶生机草"
+    },
+    {
       "id": "purchase_stone_shell",
       "kind": "purchase",
       "card_key": "purchase.stone_shell",
@@ -8336,8 +8622,28 @@ const DATA = {
       "rank": 1,
       "school": "earth",
       "v1_effect": {
-        "kind": "shield",
-        "amount": 3
+        "kind": "maintained",
+        "amount": 3,
+        "upkeep_qi": 0,
+        "hit_qi": 0,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 3,
+            "effect_id": "stone_arms_guard"
+          },
+          {
+            "attribute": "attack",
+            "amount": 1,
+            "effect_id": "stone_arms_weight"
+          },
+          {
+            "attribute": "attackDelay",
+            "amount": 1,
+            "effect_id": "stone_arms_slow"
+          }
+        ]
       },
       "passive_effect": null
     },
@@ -8402,8 +8708,19 @@ const DATA = {
       "rank": 1,
       "school": "earth",
       "v1_effect": {
-        "kind": "shield",
-        "amount": 3
+        "kind": "maintained",
+        "amount": 3,
+        "upkeep_qi": 1,
+        "hit_qi": 2,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 3,
+            "effect_id": "jade_protection"
+          }
+        ],
+        "focus_cost": 1
       },
       "passive_effect": null
     },
@@ -8473,8 +8790,19 @@ const DATA = {
       "rank": 2,
       "school": "earth",
       "v1_effect": {
-        "kind": "shield",
-        "amount": 5
+        "kind": "maintained",
+        "amount": 5,
+        "upkeep_qi": 1,
+        "hit_qi": 2,
+        "defense_group": "jade_skin",
+        "modifiers": [
+          {
+            "attribute": "defense",
+            "amount": 5,
+            "effect_id": "jade_protection"
+          }
+        ],
+        "focus_cost": 1
       },
       "passive_effect": null
     },
@@ -8531,10 +8859,12 @@ const DATA = {
       "rank": 1,
       "school": "force",
       "v1_effect": {
-        "kind": "strike",
-        "amount": 2,
-        "armorBreak": 2,
-        "pierce": 2
+        "kind": "body_training",
+        "trigger": "out_of_combat",
+        "attribute": "attack",
+        "amount": 1,
+        "cap": 3,
+        "parameter_basis": "lab_existing_force_power_3"
       },
       "passive_effect": null
     },
@@ -8653,8 +8983,8 @@ const DATA = {
     "covered": [
       {
         "name": "真实蛊实体",
-        "detail": "77 只可在当前原型出现的蛊定义（基础白名单 + 战利品池 + V1 特殊效果样本 + 舍利/资质蛊）；舍利与资质蛊不进入战斗列表",
-        "source": "data/gu.json（802 实体）+ 本轮 L0 要求的 lab-only 资质蛊"
+        "detail": "86 只当前主游戏投影蛊定义；生产、锻体、舍利与资质蛊不进入战斗列表。数量不代表原著语义已逐只核验",
+        "source": "data/gu.json（805 实体）与当前投影白名单"
       },
       {
         "name": "固定节点图与统一整备",
@@ -8888,5 +9218,5 @@ const DATA = {
       }
     ]
   },
-  "contentVersion": "97a44f660b217d1b7f13e8865f81316961687b1f99c6532a8fb7169409afd505"
+  "contentVersion": "e3de60bbfa4c7f92076d487d4676829017d7788f61954413e2f09f6bd00b53df"
 };

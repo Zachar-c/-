@@ -7,7 +7,7 @@ description: 九转仙蛊、灵缘斋镇派仙蛊：功效与耗用均不单一�
 date: 2026-09-28
 tags: [gu, emotion-path, wisdom-path, charm-path, xian-gu, recognition, fate, honglian]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

@@ -7,7 +7,7 @@ description: 二转舍利蛊：只对二转蛊师有效，一次催动即升华�
 date: 2026-09-28
 tags: [gu, human-path, consumable, rank2, commerce, aperture-boost]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

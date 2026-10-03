@@ -7,7 +7,7 @@ description: 三转水道（冰水一系）蛊虫，原文明文可确认持有�
 date: 2026-09-28
 tags: [gu, 水道, 冰水系, 封印, 自动锁敌, 白凝冰]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

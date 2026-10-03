@@ -7,7 +7,7 @@ description: 天道系仙蛊，水晶跳蚤状（大如拳头、团成一团、�
 date: 2026-09-28
 tags: [gu, heaven-path, immortal-gu, dao-gu-insect, emotion-triggered, lifespan-cost, rank-then-upgrade, two-name-overlap]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

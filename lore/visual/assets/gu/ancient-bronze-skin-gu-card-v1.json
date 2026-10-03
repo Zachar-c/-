@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "古铜皮蛊",
+  "route": "/gu/gold-def-3-09-gu",
+  "file": "ancient-bronze-skin-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/gold-def-3-09-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0355｜第一百五十五节：古铜皮蛊",
+    "line": 32823,
+    "excerpt": "它形似臭虫，又扁又宽，头很小，身体呈现椭圆形状。通体都黄橙橙的"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE broad FLAT BEDBUG-shaped living Gu with very SMALL HEAD and OVAL BODY, entire body yellow-orange with copper-like METALLIC lustre. Not a domed ladybird or ornate scarab; ventrally flattened squat disk-like insect abdomen, transverse natural segment bands, six short splayed true bug legs, two fine short antennae, diminutive head with tiny neutral eyes. Copper-colored living cuticle, burnished yellow-orange/pale copper highlights and dull deeper orange shadows, subtle biological microtexture, NOT brown rust, gold statuette, ornate armour, jeweled eyes or emerald body. Oblique slightly elevated close view exposes wide flat oval and tiny head, entire body and limbs inside silver frame. It sits on plain dark neutral-grey fine compacted earth, no moss flowers or copper gears. Soft raking physical light gives modest copper sheen without glossy CGI chrome; realistic small contact shadows establish flattened volume. No shield icon, skin patches, human, grimacing face, extra horns, huge pincers or filigree. Humble little flat metal-lustred bug is whole identity, distinctive through profile and material rather than jewelry.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "黄橙铜光扁宽椭圆臭虫体，小头、节腹、细触角与侧足",
+      "表面金属光与脚下接触影，无盾图标或饰物"
+    ],
+    "risks": [
+      "侧足视觉重叠不利于数足，不能声称精确器官数硬锚",
+      "铜光偏亮，颜色符合原文但过分镜面可后续审美微调"
+    ]
+  }
+}

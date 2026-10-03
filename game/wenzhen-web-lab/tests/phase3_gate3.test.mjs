@@ -25,7 +25,7 @@ const insightOf = (guId, owned) => rules.gainInsight(guId, {
 });
 
 const startOwned = {
-  moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
+  moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_leaf_gu: 1,
   jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
 };
 
@@ -42,24 +42,27 @@ test('Gate 3 · key new gu offers a real decision (not only keep/sell)', () => {
   }
 });
 
-test('Gate 3 · moon_glow completes info kit and changes action pattern', () => {
-  const before = rules.kitCoverage('kit_info_suppress', startOwned, guById);
-  assert.equal(before.ok, false);
-  const afterOwned = { ...startOwned, moon_glow_gu: 1 };
-  const after = rules.kitCoverage('kit_info_suppress', afterOwned, guById);
-  assert.equal(after.ok, true);
+test('Gate 3 · moon_glow opens a high-cost attack decision, not an info-control effect', () => {
+  const owned = { ...startOwned, moon_glow_gu: 1 };
+  const insight = insightOf('moon_glow_gu', owned);
+  const moon = guById.moon_glow_gu;
+  assert.equal(rules.buildRoleOf(moon, guById), 'Core');
+  assert.equal(moon.role, 'attack');
+  assert.equal(moon.battleEffect.kind, 'strike');
+  assert.equal(moon.battleEffect.amount, 9);
+  assert.equal(moon.battleEffect.ignoreEvasion, true);
+  assert.equal(moon.battleEffect.suppress, undefined);
+  assert.equal(moon.battleEffect.suppressWhenRevealed, undefined);
+  assert.equal(moon.trueQiCost, 4);
+  assert.ok(insight.hasRealDecision, 'moon_glow must create a real keep/build choice');
+  assert.ok(insight.decisions.some((d) => ['replace', 'killmove', 'kit'].includes(d.kind)));
 
-  const insight = insightOf('moon_glow_gu', afterOwned);
-  const kitJoin = insight.kitJoins.find((k) => k.kitId === 'kit_info_suppress');
-  assert.ok(kitJoin, 'moon_glow must join info kit');
-  assert.equal(kitJoin.completes, true);
-
-  // 重构后 action pattern 必须改变：从「只能 inspect」到 inspect→suppress
-  const rebuilt = rules.actionStructureFor('kit_info_suppress', { problemAxis: 'info' });
-  assert.ok(rebuilt.steps.includes('suppress'));
-  assert.ok(rebuilt.steps.includes('inspect'));
-  const oldPartial = ['inspect', 'controlled_strike']; // 缺 moon_glow 时无法 suppress
-  assert.notDeepEqual([...rebuilt.steps], oldPartial);
+  const kit = rules.kitById('kit_info_suppress');
+  assert.deepEqual([...kit.members], ['moon_glow_gu']);
+  assert.deepEqual([...kit.optional].sort(), ['jade_skin_gu', 'vitality_leaf_gu'].sort());
+  assert.deepEqual([...rules.actionStructureFor(kit.id, { problemAxis: 'info' }).steps], ['inspect', 'burst', 'recover']);
+  assert.deepEqual([...rules.actionStructureFor(kit.id, { problemAxis: 'armor' }).steps], ['burst', 'recover']);
+  assert.deepEqual([...rules.actionStructureFor(kit.id, { problemAxis: 'evasion' }).steps], ['stable_hit', 'burst', 'recover']);
 });
 
 test('Gate 3 · kill move variants recompute composition (not prefab)', () => {
@@ -76,15 +79,17 @@ test('Gate 3 · kill move variants recompute composition (not prefab)', () => {
   assert.ok(alt.recipe.includes('blood_bat_gu') || alt.recipe.includes('blood_farewell_gu'));
 });
 
-test('Gate 3 · white_boar can replace defense/attack slots and shifts matchup vs armor', () => {
+test('Gate 3 · White Boar remains out-of-combat training and cannot replace combat slots', () => {
   const insight = insightOf('white_boar_strength_gu', startOwned);
-  assert.equal(insight.hasRealDecision, true);
-  assert.ok(insight.substitutes.length > 0, 'can replace something');
-  // 破甲组合使 armor 轴 matchup 改变
-  const withPierce = rules.actionStructureFor('kit_pierce_burst', { problemAxis: 'armor' });
-  const without = rules.actionStructureFor('kit_stable_sustain', { problemAxis: 'armor' });
-  assert.notEqual(withPierce.signature, without.signature);
-  assert.ok(withPierce.steps.includes('pierce'));
+  const whiteBoar = guById.white_boar_strength_gu;
+  assert.equal(whiteBoar.battleEffect, null);
+  assert.equal(whiteBoar.effect.kind, 'body_training');
+  assert.equal(whiteBoar.effect.trigger, 'out_of_combat');
+  assert.equal(whiteBoar.effect.attribute, 'attack');
+  assert.equal(whiteBoar.effect.amount, 1);
+  assert.equal(whiteBoar.effect.cap, 3);
+  assert.equal(insight.substitutes.length, 0, 'training Gu cannot replace an attack or defense component');
+  assert.equal(insight.killMoveForms.some((form) => form.variantRecipe?.includes('white_boar_strength_gu')), false);
 });
 
 test('Gate 3 · gain insight lists keep/sell plus at least one build path for key pieces', () => {
@@ -97,10 +102,10 @@ test('Gate 3 · gain insight lists keep/sell plus at least one build path for ke
 
 test('Gate 3 · resource pattern changes when Resource piece enters sustain kit', () => {
   const withoutHeal = { moonlight_gu: 1, blood_droplet_gu: 1 };
-  const withHeal = { ...withoutHeal, vitality_grass_gu: 1 };
+  const withHeal = { ...withoutHeal, vitality_leaf_gu: 1 };
   assert.equal(rules.kitCoverage('kit_stable_sustain', withoutHeal, guById).ok, false);
   assert.equal(rules.kitCoverage('kit_stable_sustain', withHeal, guById).ok, true);
-  const insight = insightOf('vitality_grass_gu', withHeal);
+  const insight = insightOf('vitality_leaf_gu', withHeal);
   const join = insight.kitJoins.find((k) => k.kitId === 'kit_stable_sustain');
   assert.ok(join && join.completes);
 });

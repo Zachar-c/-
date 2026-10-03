@@ -1,0 +1,1760 @@
+[
+  {
+    "id": "moonlight_gu",
+    "name": "月光蛊",
+    "category": "gu",
+    "visual_thesis": "月光第一次获得可握住的实体。",
+    "canon_appearance": [
+      "掌心尺度",
+      "弯月形",
+      "淡蓝/蓝水晶般半透明",
+      "极轻，近似纸片重量",
+      "炼化后可形成淡蓝弯月印记"
+    ],
+    "asset_roles": {
+      "object_art": "主体60–75%，微距特写；让实体中心有晶体感、边缘趋向月晕，强调“凝固的光”而非首饰。",
+      "icon": "极简淡蓝新月。",
+      "activation": "掌心月华凝聚并形成月刃。",
+      "lore": "古月山寨蛊室：银盘中成排近乎相同的月光蛊，展示规则被家族制度化培育。"
+    },
+    "must_keep": [
+      "必须看成“凝固月光”而非普通宝石",
+      "单体图优先辨识度",
+      "群体培育是 Lore Art 而非主 Object Art"
+    ],
+    "avoid": [
+      "飞蛾/蝴蝶化",
+      "金纹珠宝化",
+      "复杂法阵喧宾夺主",
+      "把家族文明强塞进单体卡图"
+    ],
+    "community_drift": [
+      "网络/AI易把它画成蓝色飞蛾或月亮饰品"
+    ],
+    "sources": [
+      "S001",
+      "S002"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/gu/moonlight-gu/",
+      "https://www.webnovel.com/book/reverend-insanity_7996858406002505/a-storm-may-arise-from-a-clear-sky-refining-gu-is-full-of-hardships_21545169354548857"
+    ]
+  },
+  {
+    "id": "spring_autumn_cicada",
+    "name": "春秋蝉",
+    "category": "gu",
+    "visual_thesis": "时间直接写进同一生命的枯荣状态。",
+    "canon_appearance": [
+      "棕黄色头腹",
+      "木质/掌木般躯体",
+      "表面年轮纹",
+      "两片宽大半透明叶翼",
+      "健康时嫩绿叶翼",
+      "虚弱/重生后枯黄卷损"
+    ],
+    "asset_roles": {
+      "object_art": "标本式清晰特写，突出木纹与叶脉。",
+      "state_art": "至少健康/枯萎两套，不以额外时钟符号表现时间。",
+      "activation": "与光阴长河/逆流时间相关，允许时空环境但不遮本体。"
+    },
+    "must_keep": [
+      "年轮",
+      "叶脉",
+      "枯荣状态变化",
+      "棕木本体而非翡翠虫"
+    ],
+    "avoid": [
+      "整只做成翡翠绿水晶蝉",
+      "加钟表/齿轮代替本体设计"
+    ],
+    "community_drift": [
+      "网络常用强荧光绿，容易把棕木与年轮信息丢掉"
+    ],
+    "sources": [
+      "S003",
+      "S004"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Spring_Autumn_Cicada",
+      "https://www.webnovel.com/book/reverend-insanity_7996858406002505/rank-six-vital-gu-the-spring-autumn-cicada%21_21567889714767824"
+    ]
+  },
+  {
+    "id": "fixed_immortal_travel",
+    "name": "定仙游",
+    "category": "gu",
+    "visual_thesis": "极小、极轻的生命，无视极大的空间距离。",
+    "canon_appearance": [
+      "翠玉蝴蝶",
+      "绿色光点/如花粉般微光",
+      "轻盈"
+    ],
+    "asset_roles": {
+      "object_art": "完美翠玉蝶，清爽、轻盈；空间感只用轻微折射/错位暗示。",
+      "narrative": "三王山炼成时作为毁灭环境中的一个极小绿色焦点。"
+    },
+    "must_keep": [
+      "翠玉蝴蝶",
+      "轻盈",
+      "绿光微粒"
+    ],
+    "avoid": [
+      "大型传送门",
+      "蓝紫科幻空间裂缝",
+      "过度复杂机械结构"
+    ],
+    "community_drift": [
+      "社区视觉共识较成熟，可利用但不必加重空间UI"
+    ],
+    "sources": [
+      "S005"
+    ],
+    "confidence": "high",
+    "maturity": "stable",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/gu/fixed-immortal-travel/"
+    ]
+  },
+  {
+    "id": "fate_gu",
+    "name": "宿命蛊",
+    "category": "gu",
+    "visual_thesis": "极致的小，与无处不在的支配形成反差；世界秩序甚至会在这只小蜘蛛身上留下伤口。",
+    "canon_appearance": [
+      "黑白蜘蛛",
+      "受损时期有几乎将身体切成两半的猩红伤口",
+      "本体尺度小"
+    ],
+    "asset_roles": {
+      "object_art": "不要传统放大英雄化；允许90%留白/苍白空间，蜘蛛仅占5–15%，蛛丝延伸出画框。",
+      "narrative": "宿命大战强调“连接→切断”，不是巨型蜘蛛Boss。",
+      "lore": "塔顶小蜘蛛与巨大的监天塔形成尺度反差。"
+    },
+    "must_keep": [
+      "小",
+      "黑白",
+      "蛛丝关系",
+      "伤口在受损时期",
+      "影响尺度远大于实体尺度"
+    ],
+    "avoid": [
+      "巨型恐怖Boss蜘蛛",
+      "把蜘蛛画成装甲神器",
+      "只画白光而丢掉关系网络"
+    ],
+    "community_drift": [
+      "网络常把宿命概念拟人化或放大神器化；应回到极小本体+无尽关系"
+    ],
+    "sources": [
+      "S006",
+      "S007"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Fate_Gu",
+      "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78734"
+    ]
+  },
+  {
+    "id": "attitude_gu",
+    "name": "态度蛊",
+    "category": "gu",
+    "visual_thesis": "态度是心呈现给外界的面具；面具本身不应替佩戴者固定一种态度。",
+    "canon_appearance": [
+      "面具形"
+    ],
+    "asset_roles": {
+      "object_art": "中性面具特写；可通过角度/光线让表情似乎变化，但不锁死邪笑。",
+      "character_use": "佩戴者的“心”与外界认知变化才是重点。"
+    },
+    "must_keep": [
+      "面具",
+      "中性/可投射性"
+    ],
+    "avoid": [
+      "固定鬼脸",
+      "妖邪笑面作为唯一Canon",
+      "把它画成昆虫+面具纹"
+    ],
+    "community_drift": [
+      "社区喜欢白色邪笑面，辨识高但过度规定了“态度”内容"
+    ],
+    "sources": [
+      "S008",
+      "S009"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Attitude_Gu",
+      "https://jordan11.org/novel11/reverend-insanity-2/chapter-948"
+    ]
+  },
+  {
+    "id": "love_gu",
+    "name": "爱情蛊",
+    "category": "gu",
+    "visual_thesis": "爱情没有客观稳定的统一外形；观察者如何理解爱情，会改变他所看见的爱情蛊。",
+    "canon_appearance": [
+      "外观依观察者而变化：彩霞/灰石/清水/桃花等均有文本实例"
+    ],
+    "asset_roles": {
+      "object_art": "不设唯一标准皮肤；数据库层应支持 observer_dependent skins。",
+      "game_system": "同一对象可因角色/存档/观察者显示不同形态。"
+    },
+    "must_keep": [
+      "观察者依赖",
+      "多合法外形",
+      "不可控性"
+    ],
+    "avoid": [
+      "粉红爱心作为唯一Canon",
+      "单一标准模型"
+    ],
+    "community_drift": [
+      "网络大量爱心、红线、拟人女性；只能算某一视角二创"
+    ],
+    "sources": [
+      "S010"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://good88888.org/goodnovel/reverend-insanity-2/chapter-1230"
+    ]
+  },
+  {
+    "id": "perseverance_gu",
+    "name": "坚持蛊",
+    "category": "gu",
+    "visual_thesis": "不断前进最终凝结成不可推动的重量；过程是前进，结果是绝对不动。",
+    "canon_appearance": [
+      "巨鲸大小",
+      "碑/巨型石碑形",
+      "底宽上窄",
+      "方正",
+      "金属黑/黑铁色",
+      "边线笔直"
+    ],
+    "asset_roles": {
+      "object_art": "必须加人体/地貌尺度尺；本体不写“坚持”大字。",
+      "narrative": "逆流河一步一步前进，脚印/历程逐渐炼成巨碑。"
+    },
+    "must_keep": [
+      "尺度巨大",
+      "黑铁碑",
+      "直",
+      "无文字也能表达“不倒”"
+    ],
+    "avoid": [
+      "发光小甲虫",
+      "普通黑色石头无尺度参照",
+      "碑面写“坚持”"
+    ],
+    "community_drift": [
+      "网络常误画成小虫或光团，是严重偏离"
+    ],
+    "sources": [
+      "S011"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Perseverance_Gu"
+    ]
+  },
+  {
+    "id": "wisdom_sword_gu",
+    "name": "慧剑蛊",
+    "category": "gu",
+    "visual_thesis": "真正被压缩到极致的锋利，不必再长得像剑。",
+    "canon_appearance": [
+      "其貌不扬的普通漂浮气泡"
+    ],
+    "asset_roles": {
+      "object_art": "就画气泡；精细材质，几乎脆弱。异常可藏在“经过它的背景被无声切断”。"
+    },
+    "must_keep": [
+      "气泡",
+      "极简",
+      "看似脆弱"
+    ],
+    "avoid": [
+      "剑形神器",
+      "金色剑纹",
+      "符箓光轮",
+      "为了八转而堆装饰"
+    ],
+    "community_drift": [
+      "AI/同人易本能“升级视觉复杂度”，应明确禁止"
+    ],
+    "sources": [
+      "S012"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Wisdom_Sword_Gu"
+    ]
+  },
+  {
+    "id": "second_aperture_gu",
+    "name": "第二空窍蛊",
+    "category": "gu",
+    "visual_thesis": "第二个修行中心被直接做成一只“背上长眼”的超现实器官生物。",
+    "canon_appearance": [
+      "甲虫形",
+      "两头尖、中段肥",
+      "青玉材质",
+      "拳头大小",
+      "背部一颗金色眼珠",
+      "金瞳如闪电游动"
+    ],
+    "asset_roles": {
+      "object_art": "青玉甲虫与背部金眼为唯一主视觉；材质温润清凉。",
+      "evolution": "可另存炼制前胎/壳阶段，不与完成体混淆。"
+    },
+    "must_keep": [
+      "青玉甲虫",
+      "背上金眼"
+    ],
+    "avoid": [
+      "普通双头虫",
+      "把眼睛改成纹章",
+      "机械义眼"
+    ],
+    "community_drift": [
+      "网络缺稳定共识，原著反而非常明确"
+    ],
+    "sources": [
+      "S013",
+      "S014"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Second_Aperture_Gu",
+      "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78441"
+    ]
+  },
+  {
+    "id": "blood_skull_gu",
+    "name": "血颅蛊",
+    "category": "gu",
+    "visual_thesis": "血脉力量被灌入一个干净、透明、幼小而残酷的容器。",
+    "canon_appearance": [
+      "掌心大小儿童水晶头骨",
+      "半透明",
+      "内部淡红血丝",
+      "血从空眼眶进入",
+      "充满后血丝/整体更鲜红"
+    ],
+    "asset_roles": {
+      "object_art": "微距材质型；做 Empty/Feeding/Full 状态。",
+      "state_art": "让本体自身显示储存状态，而非依赖UI血条。"
+    },
+    "must_keep": [
+      "透明水晶",
+      "儿童头骨",
+      "内部血丝",
+      "状态变化"
+    ],
+    "avoid": [
+      "骷髅冒火",
+      "魔王头骨",
+      "红黑烟雾盖住透明材质"
+    ],
+    "community_drift": [
+      "血道二创易堆血浆；原著更像精致工艺品被血侵染"
+    ],
+    "sources": [
+      "S015"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/gu/demonic-blood-skull-gu/"
+    ]
+  },
+  {
+    "id": "landscape_as_before",
+    "name": "江山如故",
+    "category": "gu",
+    "visual_thesis": "山河本身以生物天然纹理长进甲壳，而非作为贴花装饰。",
+    "canon_appearance": [
+      "拳头大小瓢虫",
+      "玉质身体",
+      "圆背",
+      "背甲一半江河湖海、一半山丘峰峦"
+    ],
+    "asset_roles": {
+      "object_art": "近距离看甲壳天然山水纹，不做“贴在背上的地图”。"
+    },
+    "must_keep": [
+      "玉质瓢虫",
+      "天然山河纹"
+    ],
+    "avoid": [
+      "普通瓢虫+地图贴纸",
+      "过度山水卷轴特效"
+    ],
+    "community_drift": [
+      "网络独立形象较少，文本锚点强"
+    ],
+    "sources": [
+      "S016"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://jordan11.org/novel11/reverend-insanity-2/chapter-611"
+    ]
+  },
+  {
+    "id": "man_as_before",
+    "name": "人如故",
+    "category": "gu",
+    "visual_thesis": "人的复原被具身为蝴蝶与“人身从蝶中生长”的生命形态。",
+    "canon_appearance": [
+      "仙蛊炼成时破茧成彩蝶",
+      "高阶描述中身体中央可呈现白嫩人身元素"
+    ],
+    "asset_roles": {
+      "object_art": "以蝴蝶为主体，避免钟表/沙漏。",
+      "activation": "身体损伤倒流复原，突出“回到过去的肉身”而非绿色治疗。"
+    },
+    "must_keep": [
+      "蝴蝶",
+      "复原/肉身回归"
+    ],
+    "avoid": [
+      "钟表",
+      "沙漏",
+      "普通治疗光"
+    ],
+    "community_drift": [
+      "社区图少，需后续继续核高阶具体外观"
+    ],
+    "sources": [
+      "S016"
+    ],
+    "confidence": "medium",
+    "maturity": "observed",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://jordan11.org/novel11/reverend-insanity-2/chapter-611"
+    ]
+  },
+  {
+    "id": "lifespan_gu",
+    "name": "寿蛊",
+    "category": "gu",
+    "visual_thesis": "所有人争夺的更多生命，偏偏长得最像衰老与枯死。",
+    "canon_appearance": [
+      "人参/老树根状",
+      "粗糙",
+      "沧桑",
+      "可盘曲如蛇"
+    ],
+    "asset_roles": {
+      "object_art": "材质型微距；真的像没人会捡的枯根，珍贵不靠金绿神光。"
+    },
+    "must_keep": [
+      "枯根",
+      "粗糙",
+      "老化质感"
+    ],
+    "avoid": [
+      "仙桃",
+      "翡翠灵根",
+      "金绿生命圣光"
+    ],
+    "community_drift": [
+      "网络常“美化”为生命系神器，违背反差"
+    ],
+    "sources": [
+      "S017"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/gu/three-hundred-year-lifespan-gu/"
+    ]
+  },
+  {
+    "id": "heavenly_essence_treasure_imperial_lotus",
+    "name": "天元宝皇莲",
+    "category": "gu",
+    "visual_thesis": "资源生产过程本身就是美术：天地元气经过完整循环被炼成仙元。",
+    "canon_appearance": [
+      "九转：碧绿釉质荷叶",
+      "中央白玉花苞",
+      "透明露珠沿叶流入花苞",
+      "白→粉→鲜红开花",
+      "翡翠莲蓬",
+      "八十一颗黄杏仙元莲子"
+    ],
+    "asset_roles": {
+      "object_art": "可做静态花苞形态。",
+      "cycle_art": "强烈建议动画/状态序列，完整展示白→粉→红→莲蓬→回白循环。"
+    },
+    "must_keep": [
+      "循环",
+      "釉绿荷叶",
+      "白玉花苞",
+      "81莲子"
+    ],
+    "avoid": [
+      "仅“发光仙莲”",
+      "把生产机制藏掉"
+    ],
+    "community_drift": [
+      "网络常只画漂亮莲花，损失其“自动炼元”机制"
+    ],
+    "sources": [
+      "S018"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/gu/heavenly-essence-treasure-lotus/"
+    ]
+  },
+  {
+    "id": "liquor_worm",
+    "name": "酒虫",
+    "category": "gu",
+    "visual_thesis": "关键资源型蛊可以可爱、柔软、日常，不需要用威严证明价值。",
+    "canon_appearance": [
+      "白色/珍珠白蚕宝宝",
+      "略胖",
+      "可爱",
+      "飞行时可团成球",
+      "带酒香"
+    ],
+    "asset_roles": {
+      "object_art": "干净软体特写，保留珍珠光与胖蚕体型。"
+    },
+    "must_keep": [
+      "珍珠白",
+      "蚕宝宝",
+      "胖",
+      "酒香"
+    ],
+    "avoid": [
+      "硬甲虫",
+      "酒壶造型",
+      "把可爱感去掉"
+    ],
+    "community_drift": [
+      "社区共识与文本较一致"
+    ],
+    "sources": [
+      "S019"
+    ],
+    "confidence": "high",
+    "maturity": "stable",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://novelmulti.com/novel/reverend-insanity/chapter/14"
+    ]
+  },
+  {
+    "id": "rules_gu",
+    "name": "规蛊",
+    "category": "gu",
+    "visual_thesis": "规则不是世界表面的符文，而是决定边界关系的几何本身。",
+    "canon_appearance": [
+      "圆"
+    ],
+    "asset_roles": {
+      "object_art": "圆就是圆，极简。",
+      "activation": "圆扩大到囊括宇宙，并与矩蛊方形共同成网。"
+    },
+    "must_keep": [
+      "纯圆",
+      "极简"
+    ],
+    "avoid": [
+      "机械圆环",
+      "太极盘",
+      "符文星盘"
+    ],
+    "community_drift": [
+      "AI易装饰过度"
+    ],
+    "sources": [
+      "S020",
+      "S021"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/legends/rules-and-regulations/",
+      "https://good88888.org/goodnovel/reverend-insanity-2/chapter-58"
+    ]
+  },
+  {
+    "id": "regulation_gu",
+    "name": "矩蛊",
+    "category": "gu",
+    "visual_thesis": "规制不是装饰，而是给世界划定可执行边界的方。",
+    "canon_appearance": [
+      "方"
+    ],
+    "asset_roles": {
+      "object_art": "方就是方，极简。",
+      "activation": "方扩大覆盖大世界，与规蛊组成巨网。"
+    },
+    "must_keep": [
+      "纯方",
+      "极简"
+    ],
+    "avoid": [
+      "机械方块",
+      "金色符文立方体"
+    ],
+    "community_drift": [
+      "AI易把“方”做成高科技几何神器"
+    ],
+    "sources": [
+      "S020",
+      "S021"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/legends/rules-and-regulations/",
+      "https://good88888.org/goodnovel/reverend-insanity-2/chapter-58"
+    ]
+  },
+  {
+    "id": "hope_gu",
+    "name": "希望蛊",
+    "category": "gu",
+    "visual_thesis": "希望最初不因强大而成立；它可以弱到只剩一点光，却让人继续走。",
+    "canon_appearance": [
+      "极小光点",
+      "身躯在同组概念蛊中最孱弱",
+      "只能发出微弱白光；被交付“心”后可骤然爆发为强光"
+    ],
+    "asset_roles": {
+      "object_art": "低信息背景，小白点本体必须可辨但仍显弱；不靠巨大光轮伪装强度。",
+      "activation": "同一对象从微弱白点跃迁到近乎吞没画面的白光；状态变化比华丽造型更重要。",
+      "lore": "开窍花海中许多希望蛊以光点群形态升起并进入少年体内。"
+    },
+    "must_keep": [
+      "弱小首先成立",
+      "微白光点",
+      "激活前后强度反差"
+    ],
+    "avoid": [
+      "金色天使化",
+      "固定为大型神圣光球",
+      "用翅膀/皇冠替“希望”做图标化说明"
+    ],
+    "community_drift": [
+      "网络通常能抓住“光”，但容易把希望蛊从一开始就画得神圣强大，抹掉其“最弱/最黯淡”的前提。"
+    ],
+    "sources": [
+      "S043"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [
+      "V2补证：单体图的核心不是“希望很亮”，而是“希望起初很弱”。"
+    ],
+    "source_urls": [
+      "https://ncode.syosetu.com/n3149kg/5/"
+    ]
+  },
+  {
+    "id": "regret_gu",
+    "name": "悔蛊",
+    "category": "gu",
+    "visual_thesis": "后悔让行动器官退化成只能触碰过去的感受器官。",
+    "canon_appearance": [
+      "八转仙蛊",
+      "形如蜈蚣",
+      "浑身苍白，近似纸质",
+      "本应为百足的位置被百根半透明、悠悠飘荡的须取代"
+    ],
+    "asset_roles": {
+      "object_art": "主体大特写，纸白节肢身体与半透明百须必须清楚；低饱和背景。",
+      "motion_art": "须毛轻轻撩动，强调“感受/触碰”而非行走。",
+      "narrative": "红莲巨大悔恨与残余天地二气在仙窍中凝成悔蛊；生成过程另做剧情图。"
+    },
+    "must_keep": [
+      "苍白如纸",
+      "蜈蚣节肢",
+      "足被半透明须替代",
+      "须轻飘而非支撑行走"
+    ],
+    "avoid": [
+      "红莲配色强塞给悔蛊",
+      "正常蜈蚣百足",
+      "拟人女性作为默认本体"
+    ],
+    "community_drift": [
+      "网络拟人化明显；会把“悔”的抽象情绪画成人，而丢掉原著对行动器官被感受器官取代的身体设计。"
+    ],
+    "sources": [
+      "S045"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [
+      "V2补证：悔蛊的艺术性来自身体功能置换，不只是“没有脚”。"
+    ],
+    "source_urls": [
+      "https://www.sobqg.com/read/guzhenren/18154649.html"
+    ]
+  },
+  {
+    "id": "freedom_gu",
+    "name": "自由蛊",
+    "category": "gu",
+    "visual_thesis": "真正的自由不仅轻盈，而且不能被稳定占有。",
+    "canon_appearance": [
+      "从死去羽民尸体上飞出的许多小虫",
+      "外观如粒粒微小光点",
+      "闪烁五颜六色",
+      "野生自由蛊无法被人祖用手捕捉"
+    ],
+    "asset_roles": {
+      "object_art": "不要强行居中静置；可让多个五彩微虫接近画框边缘、带轻微逃逸轨迹。",
+      "motion_art": "运动与不可捕捉是识别核心；比给它设计复杂翅膀更重要。",
+      "narrative": "羽民死亡后，自由蛊从尸体上逸出；“生前追逐自由，死后得到自由”由场景承担。"
+    },
+    "must_keep": [
+      "微小",
+      "五彩闪烁",
+      "小虫/光点感",
+      "不可捕捉/逃逸行为"
+    ],
+    "avoid": [
+      "自由之翼图标化",
+      "断锁链直接代替蛊本体",
+      "稳定悬浮在正中央像收藏品"
+    ],
+    "community_drift": [
+      "网络常把“自由”直接画成翅膀、羽毛、断链；原文更独特的是微小五彩虫与“抓不住”的行为。"
+    ],
+    "sources": [
+      "S044"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [
+      "V2补证：自由蛊第一次可稳定生产的视觉不是“翅膀”，而是“逃逸”。"
+    ],
+    "source_urls": [
+      "https://www.sobqg.com/read/guzhenren/18153840.html"
+    ]
+  },
+  {
+    "id": "wisdom_gu",
+    "name": "智慧蛊",
+    "category": "gu",
+    "visual_thesis": "智慧最强的视觉不一定在本体，而在它改变周围思考环境的“场”。",
+    "canon_appearance": [
+      "本体有翅膀并能持续飞舞",
+      "会闪烁五彩华光",
+      "行为灵动，原文类比玩耍的孩童",
+      "可释放球形、五颜六色的智慧光晕；进入光晕后思维显著加速",
+      "本轮证据仍不足以锁定具体昆虫种属"
+    ],
+    "asset_roles": {
+      "object_art": "本体必须清楚可辨为小型有翼活物，但不要擅自指定甲虫/蝶/蜂种属；五彩华光克制。",
+      "field_art": "球形五彩智慧光晕是能力主视觉；人物进入场域后“思考环境发生变化”。",
+      "behavior_art": "围绕灵芝王上下飞舞、撞上弹性芝体后被弹飞的孩童般行为，可作为非战斗动画参考。"
+    },
+    "must_keep": [
+      "有翼小型活物",
+      "五彩华光",
+      "球形智慧光晕",
+      "高灵性/孩童般运动"
+    ],
+    "avoid": [
+      "巨大脑",
+      "金色神眼",
+      "凭空锁死某种昆虫种属",
+      "用符号洪流替代本体与场域关系"
+    ],
+    "community_drift": [
+      "网络常把智慧蛊圣化、人形化或直接画成知识符号爆炸；原文反而保留了小型、顽皮、有翼活物的生命感。"
+    ],
+    "sources": [
+      "S046",
+      "S047"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [
+      "V2补证：本体具体种属仍开放；“开放”是证据边界，不是缺陷。"
+    ],
+    "source_urls": [
+      "https://www.hetushu.com/book/7640/5346055.html",
+      "https://www.sobqg.com/read/guzhenren/18153622.html"
+    ]
+  },
+  {
+    "id": "self_gu",
+    "name": "自己蛊",
+    "category": "gu",
+    "visual_thesis": "对整个天地而言，“自己”极小；认识世界的尺度越大，越发现自身渺小。",
+    "canon_appearance": [
+      "原文明确强调：比年蛊、月蛊、日蛊都更小",
+      "发现自己蛊时，人祖震动于“原来自己如此之小”",
+      "当前证据未给出足以锁死种属、材质、颜色的外形细节"
+    ],
+    "asset_roles": {
+      "object_art": "保持 Shape: OPEN；以极小、难以一眼判断种属的生命轮廓为临时生产策略，并标记为设计推断而非文本Canon。",
+      "narrative": "把年/月/日等更大对象作为尺度阶梯，最后发现极小的自己蛊；该场景比单体外形更有文本依据。"
+    },
+    "must_keep": [
+      "极小",
+      "不伪造种属证据",
+      "尺度关系"
+    ],
+    "avoid": [
+      "未经文本依据固定成黑甲虫/小人/水晶球",
+      "把临时游戏造型回写成原著Canon"
+    ],
+    "community_drift": [
+      "最重要的反漂移规则：目前不知道具体长相，就必须允许知识库诚实地说“不知道”。"
+    ],
+    "sources": [
+      "S048"
+    ],
+    "confidence": "medium",
+    "maturity": "observed",
+    "verification": "verified_text_limited",
+    "notes": [
+      "V2补证仅验证“极小/尺度命题”，不宣称解决具体形态。"
+    ],
+    "source_urls": [
+      "https://www.bilibili.com/read/cv14221637/"
+    ]
+  },
+  {
+    "id": "bai_ning_bing",
+    "name": "白凝冰",
+    "category": "character",
+    "visual_thesis": "最冷的身体里有最强烈的生命欲；死亡逼近使“活着”本身变得浓烈。",
+    "canon_appearance": [
+      "白衣",
+      "银白长发",
+      "深/淡蓝眼",
+      "雪白皮肤",
+      "龙人阶段小型红色龙角与淡蓝龙瞳"
+    ],
+    "asset_roles": {
+      "portrait": "冷色肉身+极有生命感/兴味的眼睛；不必靠冰裂纹。",
+      "dragon_form": "龙人阶段再加入红角。"
+    },
+    "must_keep": [
+      "白+冰蓝",
+      "眼神要活",
+      "龙角只在对应阶段"
+    ],
+    "avoid": [
+      "甜美冰雪仙女",
+      "常态暖色",
+      "所有阶段都带龙角"
+    ],
+    "community_drift": [
+      "社区共识稳定，但容易只剩“冰美人”"
+    ],
+    "sources": [
+      "S028"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Bai_Ning_Bing"
+    ]
+  },
+  {
+    "id": "feng_jiu_ge",
+    "name": "凤九歌",
+    "category": "character",
+    "visual_thesis": "力量不依赖乐器道具；人本身像枪剑一样挺拔，音乐存在于环境与关系中。",
+    "canon_appearance": [
+      "红白长袍",
+      "身姿笔直如枪/剑",
+      "剑眉",
+      "眼有神光",
+      "温和笑意与支配感并存"
+    ],
+    "asset_roles": {
+      "portrait": "不拿乐器也成立；突出挺拔与红白。",
+      "skill_art": "音律让环境自身成为乐器。"
+    },
+    "must_keep": [
+      "红白",
+      "挺拔",
+      "剑眉",
+      "温和+压迫"
+    ],
+    "avoid": [
+      "固定“白衣笛仙”",
+      "乐器喧宾夺主"
+    ],
+    "community_drift": [
+      "横笛是强社区惯例，但不是必须Canon"
+    ],
+    "sources": [
+      "S022",
+      "S023"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Feng_Jiu_Ge",
+      "https://jordan11.org/novel11/reverend-insanity-2/chapter-1388"
+    ]
+  },
+  {
+    "id": "red_lotus",
+    "name": "红莲魔尊",
+    "category": "character",
+    "visual_thesis": "肉身可以回到过去，经历却不能真正被抹掉；年轻身体承载被重复磨老的姿态与眼睛。",
+    "canon_appearance": [
+      "年轻俊美",
+      "黑发及腰",
+      "额头九瓣红莲胎记",
+      "红衣/流动红袍是常见且相容的表层语言",
+      "目光沧桑"
+    ],
+    "asset_roles": {
+      "portrait": "至少半身/3/4身，保留年轻脸与老人般姿态的反差。"
+    },
+    "must_keep": [
+      "九瓣红莲胎记",
+      "年轻身体",
+      "沧桑眼神/姿态"
+    ],
+    "avoid": [
+      "只剩红衣帅哥",
+      "用老人皱纹直接替代精神磨损"
+    ],
+    "community_drift": [
+      "社区抓住红莲与红衣，却常弱化“年轻身体/老去姿态”"
+    ],
+    "sources": [
+      "S029"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/characters/red-lotus-demon-venerable/"
+    ]
+  },
+  {
+    "id": "spectral_soul",
+    "name": "幽魂魔尊",
+    "category": "character",
+    "visual_thesis": "走到极端后，“人”这个尺度与完整肖像已经不足以描述他；本体应被当作地貌。",
+    "canon_appearance": [
+      "三头",
+      "千臂千掌",
+      "正面头：龙角/狮鬃/蛇眼/象牙",
+      "另两头各有异形器官",
+      "数千米尺度",
+      "胸入云层/腿如山峰"
+    ],
+    "asset_roles": {
+      "portrait": "青年/人形阶段可单独人物立绘。",
+      "boss_art": "本体不强塞全身；允许只见脚、腹、云中三头、横跨画面的手臂。"
+    },
+    "must_keep": [
+      "非人尺度",
+      "三头千臂",
+      "局部入画"
+    ],
+    "avoid": [
+      "把终极形态画成黑发俊美男",
+      "完整全身塞进1:1角色卡"
+    ],
+    "community_drift": [
+      "网络“黑发苍白俊男”只能用于人形阶段"
+    ],
+    "sources": [
+      "S026"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/characters/spectral-soul-demon-venerable/"
+    ]
+  },
+  {
+    "id": "wu_yong",
+    "name": "武庸",
+    "category": "character",
+    "visual_thesis": "危险不必长得危险；越不起眼，致命行为越有反差。",
+    "canon_appearance": [
+      "中年",
+      "外貌普通",
+      "强健身体",
+      "锐眉",
+      "暗沉朦胧气质"
+    ],
+    "asset_roles": {
+      "portrait": "主动压低Boss感。",
+      "skill_art": "送友风等技能通过“普通日常动作突然致命”建立恐怖。"
+    },
+    "must_keep": [
+      "普通",
+      "中年",
+      "锐眉",
+      "强健"
+    ],
+    "avoid": [
+      "帝王冠",
+      "金甲",
+      "巨大肩甲",
+      "狂暴王者表情"
+    ],
+    "community_drift": [
+      "社区和AI易把南疆领袖做成“霸主”而丢普通感"
+    ],
+    "sources": [
+      "S024",
+      "S025"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Wu_Yong",
+      "https://wuxiaworld.eu/chapter/reverend-insanity-1709"
+    ]
+  },
+  {
+    "id": "star_constellation",
+    "name": "星宿仙尊",
+    "category": "character",
+    "visual_thesis": "一个人的边界可以消失并进入天道运行；不是“站在星空前”，而是天地暂时长成她的样子。",
+    "canon_appearance": [
+      "深蓝长袍/长裙",
+      "长发可呈银河感或黑发垂腰",
+      "高挑",
+      "浓长眉",
+      "眼含星光/深邃智慧",
+      "有抚琴形象"
+    ],
+    "asset_roles": {
+      "portrait": "蓝衣、星眼、琴可保留。",
+      "narrative": "头发→银河→天幕→星点再组成她，表达以身合道。"
+    },
+    "must_keep": [
+      "蓝",
+      "星眼",
+      "智慧感",
+      "边界消融的叙事层"
+    ],
+    "avoid": [
+      "只画普通星空女仙",
+      "把星星当贴花"
+    ],
+    "community_drift": [
+      "社区易与紫薇撞模板"
+    ],
+    "sources": [
+      "S027"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/characters/star-constellation-immortal-venerable/"
+    ]
+  },
+  {
+    "id": "purple_mountain",
+    "name": "紫山真君",
+    "category": "character",
+    "visual_thesis": "身份反差本身就是视觉：邋遢乞丐老人只是放大的外表，真身是拇指大小的紫翼小人。",
+    "canon_appearance": [
+      "紫红乱发老乞丐",
+      "不整洁",
+      "参差黄牙",
+      "真身成人拇指大小",
+      "两只薄紫翼",
+      "深紫眼"
+    ],
+    "asset_roles": {
+      "portrait": "双形态资产：beggar/enlarged 与 miniman true form。"
+    },
+    "must_keep": [
+      "紫红乱发",
+      "黄牙",
+      "真身极小",
+      "紫翼"
+    ],
+    "avoid": [
+      "紫衣仙风老爷爷",
+      "把真身信息完全删掉"
+    ],
+    "community_drift": [
+      "网络更爱“紫衣智道老祖”，应纠偏"
+    ],
+    "sources": [
+      "S030"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/characters/purple-mountain-true-monarch/"
+    ]
+  },
+  {
+    "id": "wu_shuai",
+    "name": "吴帅",
+    "category": "character",
+    "visual_thesis": "龙人英雄性与帝王事业通过“金龙”身体直接具身。",
+    "canon_appearance": [
+      "强健英俊",
+      "高鼻梁",
+      "坚毅嘴唇",
+      "金色龙鳞",
+      "黄玉/琥珀龙眼",
+      "金色珊瑚状龙角"
+    ],
+    "asset_roles": {
+      "portrait": "明确金龙，不默认黑龙/蓝龙；英雄体型。"
+    },
+    "must_keep": [
+      "金鳞",
+      "黄玉眼",
+      "金珊瑚角"
+    ],
+    "avoid": [
+      "黑龙默认",
+      "普通美型男只加两只角"
+    ],
+    "community_drift": [
+      "社区已形成“长发龙角美男”模板，但颜色常漂移"
+    ],
+    "sources": [
+      "S031"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/characters/wu-shuai/"
+    ]
+  },
+  {
+    "id": "giant_sun",
+    "name": "巨阳仙尊",
+    "category": "character",
+    "visual_thesis": "运不是金色幸运光，而是资源与可能性的重新分配。",
+    "canon_appearance": [
+      "英俊",
+      "口鼻眼眉均粗厚、端正、笔直"
+    ],
+    "asset_roles": {
+      "portrait": "面部硬锚点优先。",
+      "narrative": "无数细小运势光流从世界各处汇聚到一人，同时其他区域变暗。"
+    },
+    "must_keep": [
+      "粗厚笔直五官",
+      "运的“流动/汇聚”关系"
+    ],
+    "avoid": [
+      "只画金甲太阳皇帝",
+      "把好运做成无成本圣光"
+    ],
+    "community_drift": [
+      "金色帝王是社区强惯例，但原著外观硬锚点更少"
+    ],
+    "sources": [
+      "S033"
+    ],
+    "confidence": "medium",
+    "maturity": "observed",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/characters/giant-sun-immortal-venerable/"
+    ]
+  },
+  {
+    "id": "zi_wei",
+    "name": "紫薇仙子",
+    "category": "character",
+    "visual_thesis": "智慧与责任长期运算留下的不是“星星”，而是眉眼里的忧思。",
+    "canon_appearance": [
+      "紫色华袍",
+      "雪白皮肤",
+      "黑长发及腰",
+      "深潭般眼睛",
+      "脸上常带一层忧愁"
+    ],
+    "asset_roles": {
+      "portrait": "紫袍可用；关键是“总在想”的眉眼，不与星宿做同一套星空仙女。"
+    },
+    "must_keep": [
+      "紫",
+      "忧思",
+      "深眼",
+      "黑长发"
+    ],
+    "avoid": [
+      "紫衣+星星模板",
+      "强势邪魅替代忧思"
+    ],
+    "community_drift": [
+      "社区易与星宿撞脸"
+    ],
+    "sources": [
+      "S034"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://roliascan.com/read/reverend-insanity/ch1052-98512/"
+    ]
+  },
+  {
+    "id": "limitless",
+    "name": "无极魔尊",
+    "category": "character",
+    "visual_thesis": "事实、推演结果与肉身之间可以无缝转换；真理不是口号，而能冻成“事实浮冰”。",
+    "canon_appearance": [
+      "后期可由人形事实浮冰转为血肉之躯；外貌硬描写相对少"
+    ],
+    "asset_roles": {
+      "portrait": "不要用八卦/数学符号硬装饰。",
+      "narrative": "人形事实浮冰→血肉；手直接伸入混沌验证；失败后碎回事实浮冰。"
+    },
+    "must_keep": [
+      "事实浮冰",
+      "极简人物",
+      "实验/验证姿态"
+    ],
+    "avoid": [
+      "黑白太极仙人",
+      "公式符文覆盖全身"
+    ],
+    "community_drift": [
+      "社区倾向用规则几何补空白，需与文本证据分层"
+    ],
+    "sources": [
+      "S032",
+      "S042"
+    ],
+    "confidence": "medium",
+    "maturity": "observed",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Truthful_Floating_Ice",
+      "https://novelwiki.net/reverend-insanity/characters/limitless-demon-venerable/"
+    ]
+  },
+  {
+    "id": "duke_long",
+    "name": "龙公",
+    "category": "character",
+    "visual_thesis": "漫长历史中的老朽之物重新启动后仍可拥有恐怖力量；恢复力量不等于恢复青春。",
+    "canon_appearance": [
+      "极高大",
+      "恢复形态有龙角、龙瞳/龙类特征、强健躯体；早期/沉睡形态极衰弱老朽"
+    ],
+    "asset_roles": {
+      "portrait": "至少双状态：Dormant/Restored。Restored保留老者脸+极强龙躯。"
+    },
+    "must_keep": [
+      "老",
+      "龙角",
+      "恢复后强壮但不年轻化"
+    ],
+    "avoid": [
+      "紫发年轻帅哥",
+      "把恢复理解为返老还童"
+    ],
+    "community_drift": [
+      "网络年轻化偏差很大"
+    ],
+    "sources": [
+      "S041"
+    ],
+    "confidence": "medium",
+    "maturity": "observed",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Duke_Long"
+    ]
+  },
+  {
+    "id": "fang_yuan",
+    "name": "方源",
+    "category": "character",
+    "visual_thesis": "世界在动，他的方向不动；角色辨识的根不是“魔气”，而是极少表情与稳定选择。",
+    "canon_appearance": [
+      "不同阶段身体与外貌会变化，不能用单一黑衣长发模型覆盖全书",
+      "逆流河关键段落反复强调面无表情、毫无所动、一步又一步继续前进",
+      "社区黑发黑衣是高频二创语言，不等于所有阶段硬设定"
+    ],
+    "asset_roles": {
+      "portrait": "Minimal Portrait：少表情、稳定目光、轮廓克制；不要用邪气道具替代人格。",
+      "narrative": "环境越乱、越巨大，人物越稳定；逆流河等场景必须表现“已持续很久仍继续”而非单帧摆姿。",
+      "stage_variant": "阶段身体必须独立建模；仙僵、至尊仙体等不可被“统一帅脸”抹平。"
+    },
+    "must_keep": [
+      "克制",
+      "稳定方向感",
+      "少表情",
+      "阶段形态差异"
+    ],
+    "avoid": [
+      "血眼魔纹作为默认",
+      "邪笑/黑气强行证明魔性",
+      "用一张社区标准脸覆盖全部阶段"
+    ],
+    "community_drift": [
+      "社区形成强烈黑发黑衣美型共识，但容易把方源的真正辨识力从“稳定选择”降成“魔道造型”。"
+    ],
+    "sources": [
+      "S049"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [
+      "V2补证重点不是锁脸，而是锁角色的可视行为：别人扭曲/痛苦/哭泣，他仍面无表情前行。"
+    ],
+    "source_urls": [
+      "https://www.hetushu.com/book/7640/5346523.html"
+    ]
+  },
+  {
+    "id": "hei_lou_lan",
+    "name": "黑楼兰",
+    "category": "character",
+    "visual_thesis": "隐藏力量：伪装与真身必须是两套身体，而真身不是“揭下面具变美女”，而是力量更真实。",
+    "canon_appearance": [
+      "伪装阶段：壮硕如熊罴、肥胖/臃肿的男性外形",
+      "真身：绝色女性、身材火爆且具有剑眉英目与凌人霸意",
+      "真身与母亲相貌高度相似，但比母亲少柔美、多霸意"
+    ],
+    "asset_roles": {
+      "portrait_disguise": "必须作为完整独立身体资产，而非戴面具的美女；壮硕、粗野、压迫。",
+      "portrait_true": "美丽与力量同时成立；不要削成纤细柔弱的古风美女。",
+      "reveal_art": "揭露重点是“身份与力量被重新理解”，而不只是美貌反转。"
+    },
+    "must_keep": [
+      "双身体资产",
+      "伪装的壮硕男性感",
+      "真身剑眉英目与霸意",
+      "真身仍有力量感"
+    ],
+    "avoid": [
+      "单一红衣美女",
+      "伪装仅靠面具",
+      "真身纤弱化"
+    ],
+    "community_drift": [
+      "网络强烈美型化，并常用黄金面具表达伪装；这会把“整套身体伪装”缩成时装配件。"
+    ],
+    "sources": [
+      "S050",
+      "S051"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [
+      "V2补证：黑楼兰不是“摘下面具才是美女”，而是两套身体/身份。"
+    ],
+    "source_urls": [
+      "https://www.hetushu.com/book/7640/5345887.html",
+      "https://www.sobqg.com/read/guzhenren/18153522.html"
+    ]
+  },
+  {
+    "id": "heaven_overseeing_tower",
+    "name": "监天塔",
+    "category": "house",
+    "visual_thesis": "秩序不是无瑕神殿，而是几百万年不断修补维持的旧系统；静态是历史，发动时才成为绝对规则。",
+    "canon_appearance": [
+      "古老白塔",
+      "塔身有瑕疵/伤痕",
+      "高耸",
+      "核心为宿命蛊",
+      "发动命败/相关能力时天地可被白光充满"
+    ],
+    "asset_roles": {
+      "object_art": "白塔但保留历史伤痕与修补层。",
+      "activation": "白光吞没建筑细节，塔先成为一束不可直视的规则之光。",
+      "narrative": "与血袍/小人物构成尺度与色彩对撞。"
+    },
+    "must_keep": [
+      "旧白塔",
+      "伤痕",
+      "白光状态",
+      "宿命核心"
+    ],
+    "avoid": [
+      "完美无瑕商城白塔",
+      "雕梁画栋细节压过“光”",
+      "暖黄灯火主导"
+    ],
+    "community_drift": [
+      "社区常把它当普通华丽白塔"
+    ],
+    "sources": [
+      "S007",
+      "S035"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78734",
+      "https://reverend-insanity.fandom.com/wiki/Heaven_Overseeing_Tower"
+    ]
+  },
+  {
+    "id": "eighty_eight_true_yang_building",
+    "name": "八十八角真阳楼",
+    "category": "house",
+    "visual_thesis": "分散在北原的资源、血脉与权限被逐层汇聚并稳定到中心。",
+    "canon_appearance": [
+      "初生时如春笋， tall/slender",
+      "塔体像七彩墨水液体持续晃动",
+      "随小塔沉入地下而逐层稳定"
+    ],
+    "asset_roles": {
+      "object_art": "优先恢复“液体彩墨春笋塔”而非普通金塔。",
+      "process_art": "小塔沉降→彩墨汇流→中央逐层凝固。"
+    },
+    "must_keep": [
+      "春笋轮廓",
+      "七彩墨液态",
+      "逐层稳定"
+    ],
+    "avoid": [
+      "普通黄金古塔",
+      "只靠金色说明巨阳"
+    ],
+    "community_drift": [
+      "网络建筑还原常金塔化，丢失初生态"
+    ],
+    "sources": [
+      "S039"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78508"
+    ]
+  },
+  {
+    "id": "dragon_palace",
+    "name": "龙宫",
+    "category": "house",
+    "visual_thesis": "最诱人的梦境也是最温柔的牢笼；华丽不是装饰，而是捕获机制的一部分。",
+    "canon_appearance": [
+      "雄阔宫殿",
+      "橙金微光",
+      "雕梁画栋",
+      "亭台楼阁",
+      "华丽",
+      "梦境/梦雾关联"
+    ],
+    "asset_roles": {
+      "object_art": "橙金东方宫殿，梦雾围绕。",
+      "narrative": "宫门诱人敞开；空间可重复嵌套，梦中之梦；让观者分不清进入龙宫还是龙宫进入梦。"
+    },
+    "must_keep": [
+      "橙金",
+      "宫殿",
+      "梦雾",
+      "诱惑性牢笼"
+    ],
+    "avoid": [
+      "默认海蓝水晶龙宫",
+      "纯霸气战舰",
+      "只做皇权不做梦境捕获"
+    ],
+    "community_drift": [
+      "网络常按海底龙宫惯性画蓝"
+    ],
+    "sources": [
+      "S036"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Dragon_Palace"
+    ]
+  },
+  {
+    "id": "luck_suppression_heavenly_palace",
+    "name": "镇运天宫",
+    "category": "house",
+    "visual_thesis": "运道中心首先以“隐藏、镇守、聚拢”成立；具体视觉应从暗金宫殿与黑天隐匿出发，而不是从网络红橙科幻圆环反推。",
+    "canon_appearance": [
+      "一座宫殿型仙蛊屋",
+      "暗金色",
+      "殿身雄阔伟岸",
+      "长期隐藏在黑天虚空中，需手段使其从虚空显现",
+      "为巨阳仙尊生前的三座代表仙蛊屋之一"
+    ],
+    "asset_roles": {
+      "object_art": "暗金、雄阔宫殿；背景优先黑天/深黑虚空，让“隐藏后显现”成为气质来源。",
+      "reveal_art": "从空无一物的黑天虚空中逐渐显露暗金殿身；先让观众意识到空间里“原来一直有东西”。",
+      "system_art": "若表现镇运/运势关系，另做能力层；不要把网络同心能量环当成建筑硬结构。"
+    },
+    "must_keep": [
+      "暗金宫殿",
+      "雄阔伟岸",
+      "黑天隐匿/显现关系",
+      "巨阳运道体系"
+    ],
+    "avoid": [
+      "把红橙科幻同心环锁成Canon",
+      "默认蓝色海宫式配色",
+      "只画成普通北原金殿而无“隐藏的运道中枢”关系"
+    ],
+    "community_drift": [
+      "2025动画二创常用大型红橙/蓝色能量环包围宫殿，传播明确但属于二创视觉方案，不能倒推原文。"
+    ],
+    "sources": [
+      "S052"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [
+      "V2已用小说镜像补齐直接外观锚点；原来的低信任说明源降为非核心。"
+    ],
+    "source_urls": [
+      "https://www.sobqg.com/read/guzhenren/18154212.html"
+    ]
+  },
+  {
+    "id": "fate_war",
+    "name": "宿命大战",
+    "category": "scene",
+    "visual_thesis": "人的有限选择与巨大既定秩序发生正面碰撞；最强视觉不是爆炸，而是“连接→切断”。",
+    "canon_appearance": [
+      "监天塔/天庭白光",
+      "宿命关系网络/丝线",
+      "方源/个体作为破坏连接的主体",
+      "黑/白/血红常形成高效对撞，但非固定道德色"
+    ],
+    "asset_roles": {
+      "narrative": "白光秩序场+关系线+手/人去切断节点。"
+    },
+    "must_keep": [
+      "关系网络",
+      "切断",
+      "尺度差",
+      "白光压迫"
+    ],
+    "avoid": [
+      "圣光正派vs黑魔王俗套",
+      "只画群战爆炸"
+    ],
+    "community_drift": [
+      "高传播同人已形成“血袍对白光/命线”的视觉簇"
+    ],
+    "sources": [
+      "S006",
+      "S007",
+      "S035"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Fate_Gu",
+      "https://www.pyg-kit.com/en/books/reverend-insanity/chapters/78734",
+      "https://reverend-insanity.fandom.com/wiki/Heaven_Overseeing_Tower"
+    ]
+  },
+  {
+    "id": "reverse_flow_river",
+    "name": "逆流河",
+    "category": "scene",
+    "visual_thesis": "世界全部朝一个方向流，只有一个人反向；重要的不是一帧“帅”，而是让人看见他已经走了很久还会继续。",
+    "canon_appearance": [
+      "巨大河流/水势",
+      "孤身逆行",
+      "持续性与路程感"
+    ],
+    "asset_roles": {
+      "narrative": "长构图/残影/磨损/足迹/上游无尽；环境大，人小。"
+    },
+    "must_keep": [
+      "逆向关系",
+      "持续时间",
+      "人的尺度小"
+    ],
+    "avoid": [
+      "干净摆Pose",
+      "只靠巨浪和发光眼"
+    ],
+    "community_drift": [
+      "网络青绿巨河+孤人共识强，但常缺“已走很久”的痕迹"
+    ],
+    "sources": [
+      "S011"
+    ],
+    "confidence": "medium",
+    "maturity": "observed",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://reverend-insanity.fandom.com/wiki/Perseverance_Gu"
+    ]
+  },
+  {
+    "id": "san_cha_refinement",
+    "name": "三王山炼定仙游",
+    "category": "scene",
+    "visual_thesis": "毁灭并不阻止创造，危机甚至成为炼制条件；最小的绿色仙蛊成为崩坏世界中的唯一新生焦点。",
+    "canon_appearance": [
+      "崩坏/暗金或压抑大环境",
+      "人物尺度相对小",
+      "定仙游翠绿小焦点",
+      "炼成/破茧"
+    ],
+    "asset_roles": {
+      "narrative": "大片压抑底色+极小纯绿焦点；不要满屏同强度特效。"
+    },
+    "must_keep": [
+      "毁灭中的创造",
+      "小绿焦点",
+      "世界崩坏"
+    ],
+    "avoid": [
+      "把蝴蝶放大成主角而丢场景关系",
+      "所有元素同亮度"
+    ],
+    "community_drift": [
+      "高传播二创已形成成熟构图语法"
+    ],
+    "sources": [
+      "S005"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/gu/fixed-immortal-travel/"
+    ]
+  },
+  {
+    "id": "crazed_demon_cave",
+    "name": "疯魔窟",
+    "category": "scene",
+    "visual_thesis": "不是“地下魔窟”，而是世界规则互相污染、试错、重写的实验器官。",
+    "canon_appearance": [
+      "九层结构",
+      "魔音导致道痕混乱",
+      "地形会随道痕混乱变化",
+      "深层道痕密到近似战场",
+      "核心目标与衍化/新道痕有关"
+    ],
+    "asset_roles": {
+      "environment_art": "不要默认紫晶洞穴；画规则失效：重力方向、物态、影子、声音等在边界处互相改写。"
+    },
+    "must_keep": [
+      "规则冲突",
+      "地形被重写",
+      "新规则生成"
+    ],
+    "avoid": [
+      "紫色晶洞+骷髅+魔气",
+      "普通秘境"
+    ],
+    "community_drift": [
+      "网络若只画“邪洞穴”会丢掉核心"
+    ],
+    "sources": [
+      "S037",
+      "S038"
+    ],
+    "confidence": "high",
+    "maturity": "canon_candidate",
+    "verification": "verified_secondary_or_mirror",
+    "notes": [],
+    "source_urls": [
+      "https://sagaofgu.com/locations/crazed-demon-cave/",
+      "https://freewebnovel.com/novel/reverend-insanity/chapter-1176"
+    ]
+  }
+]

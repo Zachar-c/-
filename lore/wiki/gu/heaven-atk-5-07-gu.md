@@ -7,7 +7,7 @@ description: 泛称类蛊虫：唯一能"从根本上、毫无后遗症地"增�
 date: 2026-09-28
 tags: [gu, lifespan, currency, material, mortal-gu, pan-name]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

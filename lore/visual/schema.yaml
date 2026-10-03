@@ -1,0 +1,16 @@
+# Dossier schema V1
+id: string
+name: string
+category: gu | character | house | scene
+visual_thesis: string
+canon_appearance: [string]
+asset_roles: {role: guidance}
+must_keep: [string]
+avoid: [string]
+community_drift: [string]
+sources: [source_id]
+source_urls: [url]
+confidence: low | medium | high
+maturity: seed | observed | stable | canon_candidate | canon_locked
+verification: verified_secondary_or_mirror | verified_text_limited | prior_research_needs_source_refresh | pending_primary_source | needs_primary_source
+notes: [string]

@@ -8,7 +8,7 @@ date: 2026-09-28
 tags: [gu, time, rebirth, red-lotus, immortal-gu, fate]
 sources:
   - "source:source/蛊真人-epub-canon.txt"
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "memory:game/分支：六卷精编版/记忆库/05-设定集-核心锚点.md"
   - "notes:game/分支：六卷精编版/读书笔记/A2a-00001-15500-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/G-270001-315000.md"

@@ -1,7 +1,7 @@
 // 人类属性来源与蛊虫生命周期。敌我共用；具体蛊效果由数据与 GuRules 提供。
 globalThis.HumanRules = (() => {
-  const ATTRIBUTES = Object.freeze(['hpMax', 'soulMax', 'thoughtMax', 'defense', 'attack', 'essenceMax', 'essenceRegen', 'essenceQuality']);
-  const BASELINE = Object.freeze({ hpMax: 10, soulMax: 1, thoughtMax: 3, defense: 0, attack: 3 });
+  const ATTRIBUTES = Object.freeze(['hpMax', 'soulMax', 'thoughtMax', 'defense', 'attack', 'attackDelay', 'essenceMax', 'essenceRegen', 'essenceQuality']);
+  const BASELINE = Object.freeze({ hpMax: 10, soulMax: 1, thoughtMax: 3, defense: 0, attack: 3, attackDelay: 0 });
   const ESSENCE_BY_RANK = Object.freeze({
     1: Object.freeze({ max: 6, regen: 2, quality: 1 }),
     2: Object.freeze({ max: 8, regen: 2, quality: 2 }),
@@ -56,6 +56,23 @@ globalThis.HumanRules = (() => {
     return Object.fromEntries(ATTRIBUTES.map((name) => [name, attribute(human, name)]));
   }
 
+  function controlCapacity(human) {
+    const held = human.maintainedGu.reduce((sum, item) => {
+      const gu = human.guInstances.find((entry) => entry.instanceId === item.instanceId);
+      return sum + (item.active && gu?.state === 'held' && !gu.sealed ? Number(item.focusCost || 0) : 0);
+    }, 0);
+    return Math.max(0, attribute(human, 'thoughtMax') - held);
+  }
+
+  function refreshControl(human) {
+    human.thought = controlCapacity(human);
+    return human.thought;
+  }
+
+  function basicStrikePlan(human) {
+    return { damage: attribute(human, 'attack'), delayTurns: Math.max(0, Math.ceil(attribute(human, 'attackDelay'))) };
+  }
+
   function addModifier(human, entry) {
     if (!ATTRIBUTES.includes(entry?.attribute) || !Number.isFinite(Number(entry?.amount))) {
       throw new TypeError('invalid human modifier');
@@ -93,20 +110,27 @@ globalThis.HumanRules = (() => {
     }
   }
 
-  function startMaintained(human, instanceId, { startCost, upkeepCost, modifiers, turn = 0 }) {
+  function startMaintained(human, instanceId, { startCost, upkeepCost, hitCost = 0, focusCost = 0, defenseGroup, modifiers, turn = 0 }) {
     const gu = human.guInstances.find((item) => item.instanceId === instanceId);
     if (!gu || gu.state !== 'held' || gu.sealed) return { ok: false, reason: 'gu_unavailable' };
     if (human.maintainedGu.some((item) => item.instanceId === instanceId && item.active)) {
       return { ok: false, reason: 'already_active' };
     }
+    if (defenseGroup && human.maintainedGu.some((item) => item.active && item.defenseGroup === defenseGroup)) {
+      return { ok: false, reason: 'defense_group_active' };
+    }
     const cost = Number(startCost);
     const upkeep = Number(upkeepCost);
-    if (!Number.isInteger(cost) || cost < 0 || !Number.isInteger(upkeep) || upkeep < 0) {
+    const perHit = Number(hitCost);
+    const focus = Number(focusCost);
+    if (!Number.isInteger(cost) || cost < 0 || !Number.isInteger(upkeep) || upkeep < 0
+      || !Number.isInteger(perHit) || perHit < 0 || !Number.isInteger(focus) || focus < 0) {
       throw new TypeError('invalid maintenance cost');
     }
     if (human.essence < cost) return { ok: false, reason: 'insufficient_essence' };
     human.essence -= cost;
-    human.maintainedGu.push({ instanceId, upkeepCost: upkeep, active: true, startedAt: turn, removalReason: null });
+    human.maintainedGu.push({ instanceId, upkeepCost: upkeep, hitCost: perHit, focusCost: focus,
+      defenseGroup: defenseGroup ?? null, active: true, startedAt: turn, removalReason: null });
     for (const modifier of modifiers || []) {
       addModifier(human, {
         ...modifier, sourceGuDefinitionId: gu.definitionId,
@@ -114,6 +138,33 @@ globalThis.HumanRules = (() => {
       });
     }
     return { ok: true, cost };
+  }
+
+  function trainBody(human, instanceId, { attribute: name = 'attack', step, cap, cost, visitId } = {}) {
+    if (!ATTRIBUTES.includes(name) || !Number.isFinite(step) || step <= 0
+      || !Number.isFinite(cap) || cap <= 0 || !Number.isFinite(cost) || cost < 0
+      || typeof visitId !== 'string' || !visitId) throw new TypeError('invalid body training parameters');
+    const gu = human.guInstances.find((item) => item.instanceId === instanceId);
+    const records = human.modifierLedger.filter((record) => record.sourceGuDefinitionId === gu?.definitionId
+      && record.attribute === name && record.persistence === 'session_permanent'
+      && record.sourceEffectId === 'body_training');
+    const repeatedVisit = human.modifierLedger.some((record) => record.sourceGuDefinitionId === gu?.definitionId
+      && record.persistence === 'session_permanent' && record.sourceEffectId === 'body_training'
+      && record.createdAt === visitId);
+    const total = records.reduce((sum, record) => sum + Number(record.amount), 0);
+    const result = (ok, reason = null, gained = 0) => ({ ok, reason, cost, gained, total: total + gained });
+    if (!gu || gu.state !== 'held' || gu.sealed) return result(false, 'gu_unavailable');
+    if (repeatedVisit) return result(false, 'repeated_visit');
+    if (total >= cap) return result(false, 'cap_reached');
+    if (human.essence < cost) return result(false, 'insufficient_essence');
+    const gained = Math.min(step, cap - total);
+    human.essence -= cost;
+    addModifier(human, {
+      attribute: name, amount: gained, sourceGuDefinitionId: gu.definitionId,
+      sourceGuInstanceId: instanceId, sourceEffectId: 'body_training',
+      persistence: 'session_permanent', createdAt: visitId,
+    });
+    return result(true, null, gained);
   }
 
   function upkeep(human) {
@@ -133,6 +184,28 @@ globalThis.HumanRules = (() => {
       }
     }
     return events;
+  }
+
+  function receiveHit(human, damage) {
+    const incoming = Math.max(0, Number(damage) || 0);
+    const events = [];
+    for (const item of human.maintainedGu) {
+      if (!item.active) continue;
+      const gu = human.guInstances.find((entry) => entry.instanceId === item.instanceId);
+      if (!gu || gu.state !== 'held' || gu.sealed) {
+        stopMaintained(human, item.instanceId, 'gu_unavailable');
+        events.push({ instanceId: item.instanceId, ok: false, reason: 'gu_unavailable' });
+      } else if (incoming > 0 && item.hitCost > 0 && human.essence < item.hitCost) {
+        stopMaintained(human, item.instanceId, 'insufficient_essence');
+        events.push({ instanceId: item.instanceId, ok: false, reason: 'insufficient_essence' });
+      } else if (incoming > 0 && item.hitCost > 0) {
+        human.essence -= item.hitCost;
+        events.push({ instanceId: item.instanceId, ok: true, cost: item.hitCost });
+      }
+    }
+    const defense = attribute(human, 'defense');
+    const remaining = Math.max(0, incoming - defense);
+    return { damage: remaining, absorbed: incoming - remaining, events };
   }
 
   function seal(human, instanceId) {
@@ -167,6 +240,6 @@ globalThis.HumanRules = (() => {
   }
 
   return Object.freeze({ BASELINE, ESSENCE_BY_RANK, base, guInstance, actor,
-    attribute, attributes, addModifier, startMaintained, upkeep,
+    attribute, attributes, controlCapacity, refreshControl, basicStrikePlan, addModifier, startMaintained, trainBody, upkeep, receiveHit,
     stopMaintained, seal, dispose, endBattle, adjustedHp });
 })();

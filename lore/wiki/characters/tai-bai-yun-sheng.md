@@ -68,4 +68,4 @@ schema: 2
 - 老乞丐后续行踪与太白云生收到真传后的具体接触过程未穷举；其身份为紫山真君已由 `chapter_1027` `para_057`、`chapter_1350` `para_028`–`para_035` 明确确认。
 - 太白云生各阶段所有仙蛊的持有、借出与归还未逐章穷举，本页只记录对其人物关系与核心转折必要的状态。
 
-关联页面：[方源](fang-yuan.md)、[全书主要人物总表](roster.md)、[长生天](../world/longevity-heaven.md)、[逆流河相关事件](../events/index.md)。
+关联页面：[紫山真君](zi-shan-zhen-jun.md)、[人如故](../gu/man-as-before-gu.md)、[江山如故](../gu/landscape-as-before-gu.md)、[方源](fang-yuan.md)、[全书主要人物总表](roster.md)、[长生天](../world/longevity-heaven.md)、[逆流河相关事件](../events/index.md)。

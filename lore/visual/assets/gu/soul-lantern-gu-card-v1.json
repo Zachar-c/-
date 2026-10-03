@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "魂灯蛊",
+  "route": "/gu/soul-atk-5-01-gu",
+  "file": "soul-lantern-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/soul-atk-5-01-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1358｜第三百二十二节：兄去弟继掌权柄",
+    "line": 125232,
+    "excerpt": "魂灯蛊毁灭后，则是一块碎裂的瓢虫，再也发不出晦暗的淡蓝烛光。"
+  },
+  "design_boundary": "原著破碎描述支持瓢虫形和生前淡蓝烛光；完整态中性壳色、纹理、解剖细节是重建设计，非新增明确事实。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE LADYBIRD-shaped Soul Lantern Gu in reconstructed intact living state, supported by novel's broken ladybird description and faint BLUE CANDLE-LIKE LIGHT that extinguishes when destroyed. Single small domed ladybird with fine center seam, modest neutral dark grey organic cuticle (body color interpretive, not canonical claim), tiny unexpressive head, six small legs and fine antennae. Very faint dim pale BLUE light filters from thin elytral seams/edges and faintly illuminates nearby surface, more like weak sheltered candle glow than neon aura. No actual candle, lantern housing, fire plume, skull, human soul, lantern-shaped insect or gold filigree. Smooth dull grey-black shell has biological slight texture, realistic curved thickness, remains clearly solid alive rather than a hollow glowing orb or glass ladybird. Entire animal rests on plain subdued grey-brown unadorned wood surface, dim neutral shaded background, no temple props, portrait of owner, plaque or flame fountain. Soft environmental sidelight makes silhouette and six leg shadows readable while weak blue emission remains restrained and locally visible. Not cute, decorative, rainbow, crystalline or overwhelming divine light. Calm watchful small glowing life, not generic spell effect. Full exact silver frame as reference, no text.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用作完整态重建候选，来源边界需随图保留",
+    "visible_facts": [
+      "圆背瓢虫壳，壳缝渗出淡蓝光并微照木面，无灯笼实体",
+      "小头足影清楚、单体与完整银框成立"
+    ],
+    "risks": [
+      "灰黑壳色和完整态细纹重建是设计，不是破碎原文的直接外观事实",
+      "蓝色边光略比烛光稳定，不宣称严格亮度还原"
+    ]
+  }
+}

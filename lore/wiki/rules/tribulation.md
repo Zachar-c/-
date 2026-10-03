@@ -7,7 +7,7 @@ description: 蛊仙灾劫的四级阶梯、各转周期、递增约束、天意�
 date: 2026-10-01
 tags: [rules, tribulation, immortal-aperture, cultivation]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-IMMORTAL-BOUNDARY-001"
 schema: 2
 ---

@@ -7,7 +7,7 @@ description: 全书唯一一只**以"合练产物"形态存在**的仙蛊：配�
 date: 2026-09-28
 tags: [gu, heaven-path, fate, compound-refinement, gu-formula-chain, plan-not-instance, two-name-two-things]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

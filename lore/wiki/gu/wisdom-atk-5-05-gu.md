@@ -7,7 +7,7 @@ description: 八转剑道仙蛊，兼通智道；薄青为专对付智道蛊仙�
 date: 2026-09-28
 tags: [gu, sword-path, wisdom-path, xian-gu, emotion-path, killer-move-core, fang-yuan, thin-evidence-note]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

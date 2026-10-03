@@ -37,3 +37,5 @@
 ## 知识缺口调查
 
 [知识完整性调查](completeness-audit.md)记录缺实体、缺条件、检索困难、规则漂移与证据边界；[实体落点候选清单](entity-coverage-inventory.tsv)用于排查既有名录漏项，不是全书实体全集或事实验收证明。
+
+- [数值平衡所需的原著事实](balance-fact-guide.md)：按六个系统查看事实落点、缺口与推理边界。

@@ -7,7 +7,7 @@ description: 一转奴道驭兽蛊：形似拇指大的玉狗头，催动后化�
 date: 2026-09-28
 tags: [gu, enslavement-path, rank1, beast-control, soul-cost]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-CULTIVATOR-002"
   - "canon-index:CAN-GU-DOG-001"
 schema: 2

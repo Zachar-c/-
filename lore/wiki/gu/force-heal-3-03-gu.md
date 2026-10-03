@@ -7,7 +7,7 @@ description: 三转力道治疗蛊：形如蟑螂，依附蛊师自身力量，�
 date: 2026-09-28
 tags: [gu, strength-path, force-path, healing, south-jiang, north-plain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

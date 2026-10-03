@@ -7,7 +7,7 @@ description: 三转防御蛊：由二转白玉蛊与水行防御蛊虫合炼而�
 date: 2026-09-28
 tags: [gu, strength-path, force-path, defense, south-jiang]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

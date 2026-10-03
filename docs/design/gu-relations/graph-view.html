@@ -1,0 +1,195 @@
+<div id="gu-relations-v01">
+  <h2>蛊虫关系 · v0.1</h2>
+  <p class="text-small text-muted" data-counts></p>
+  <div class="viz-controls">
+    <label class="form-label">查看节点
+      <select class="form-select" data-gu aria-label="选择蛊虫、状态或材料"></select>
+    </label>
+  </div>
+  <p data-summary aria-live="polite"></p>
+  <div class="viz-row" data-relations aria-label="此蛊的关系"></div>
+  <figure aria-label="当前关系的参与者、输入、条件和产物">
+    <div data-graph></div>
+    <figcaption class="text-small text-muted">箭头表示已记录的输入或结果；无箭头表示参与。候选关系用虚线。</figcaption>
+  </figure>
+  <p data-mechanism aria-live="polite"></p>
+  <details>
+    <summary>条件、代价与依据</summary>
+    <div data-detail></div>
+  </details>
+  <script type="application/json" id="gu-relations-data">__GRAPH_JSON__</script>
+</div>
+<style>
+  #gu-relations-v01 figure {margin: 16px 0;}
+  #gu-relations-v01 .gu-map {width: 100%; display: block; overflow: visible;}
+  #gu-relations-v01 .gu-map text {fill: var(--foreground); font-weight: 400;}
+  #gu-relations-v01 .gu-map .rel-label {font-weight: 500;}
+  #gu-relations-v01 .evidence-row {margin: 12px 0;}
+  #gu-relations-v01 [data-relations] {justify-content: flex-start;}
+  #gu-relations-v01 [data-relations] button {max-width: 100%;}
+  #gu-relations-v01 .source-excerpt {white-space: pre-wrap; overflow-wrap: anywhere;}
+</style>
+<script>
+(() => {
+  const root = document.getElementById('gu-relations-v01');
+  const data = JSON.parse(document.getElementById('gu-relations-data').textContent);
+  const nodes = new Map(data.nodes.map(n => [n.id, n]));
+  const evidence = new Map(data.evidence.map(e => [e.id, e]));
+  const gu = data.nodes.filter(n => n.kind === 'gu');
+  const basis = {canon: '原著明确', session: '本局记录', design: '待核对 / 设计候选'};
+  const roles = {input: '输入', output: '结果', auxiliary: '辅助', state: '状态条件',
+    participant: '参与', 'structural-reference': '结构参考', 'proposed-auxiliary': '候选辅材',
+    inspiration: '启发', 'process-tool': '过程工具', intervention: '正式干预'};
+  const colors = {canon: 'var(--viz-series-1)', session: 'var(--viz-series-2)', design: 'var(--viz-series-3)'};
+  const select = root.querySelector('[data-gu]');
+  let focus = 'split-nest';
+  let selectedRelation = 'R033';
+  const label = n => n.name + (n.id === 'moon-ray' ? '（原著）' : n.id === 'session-moon-ray' ? '（本局）' : '');
+  const restore = state => {
+    const saved = state?.modelContent?.guRelations;
+    if (saved && nodes.has(saved.guId)) {
+      focus = saved.guId;
+      selectedRelation = saved.relationId;
+    }
+  };
+  restore(window.openai?.widgetState);
+  root.querySelector('[data-counts]').textContent = `${gu.length} 只蛊 · ${data.relations.length} 条关系 · 原著 / 本局 / 候选分别保存`;
+  for (const [name, items] of [
+    ['原著蛊记录', gu.filter(n => n.basis === 'canon')],
+    ['本局蛊记录', gu.filter(n => n.basis === 'session')],
+    ['身体 / 资源状态', data.nodes.filter(n => n.kind === 'state')],
+    ['材料 / 未具名需求', data.nodes.filter(n => ['material','requirement'].includes(n.kind))]
+  ]) {
+    const group = document.createElement('optgroup');
+    group.label = name;
+    items.forEach(n => {
+      const option = document.createElement('option');
+      option.value = n.id; option.textContent = label(n); group.append(option);
+    });
+    select.append(group);
+  }
+  function save() {
+    window.openai?.setWidgetState?.({modelContent: {guRelations: {guId: focus, name: label(nodes.get(focus)), relationId: selectedRelation}}})?.catch(() => {});
+  }
+  function choose(id) {
+    if (!nodes.has(id)) return;
+    focus = id; selectedRelation = null; render(); save();
+  }
+  const ns = 'http://www.w3.org/2000/svg';
+  function svgEl(tag, attrs, parent, text) {
+    const el = document.createElementNS(ns, tag);
+    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+    if (text !== undefined) el.textContent = text;
+    parent.append(el); return el;
+  }
+  function draw(r) {
+    const container = root.querySelector('[data-graph]'); container.replaceChildren();
+    const width = Math.max(280, container.getBoundingClientRect().width);
+    const compact = width < 520;
+    let left = r.participants.filter(p => !['output', 'participant'].includes(p.role));
+    let right = r.participants.filter(p => ['output', 'participant'].includes(p.role));
+    if (!left.length) {
+      const at = Math.ceil(right.length / 2); left = right.slice(0, at); right = right.slice(at);
+    }
+    const count = compact ? left.length + right.length : Math.max(left.length, right.length);
+    const height = compact ? count * 82 + 110 : Math.max(210, count * 82 + 36);
+    const svg = svgEl('svg', {class: 'gu-map', viewBox: `0 0 ${width} ${height}`, height,
+      role: 'group', 'aria-label': `${r.title}：${r.participants.map(p => `${roles[p.role]} ${nodes.get(p.node).name}`).join('；')}`}, container);
+    svgEl('title', {}, svg, r.title);
+    const defs = svgEl('defs', {}, svg);
+    const marker = svgEl('marker', {id: 'gu-arrow-v01', viewBox: '0 0 10 10', refX: 9, refY: 5,
+      markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse'}, defs);
+    svgEl('path', {d: 'M 0 0 L 10 5 L 0 10 z', fill: 'var(--muted-foreground)'}, marker);
+    const lane = compact ? width - 40 : Math.min(210, width * .29);
+    const centerY = compact ? left.length * 82 + 48 : height / 2;
+    const centers = {x: width / 2, y: centerY};
+    function endpoint(p, index, side) {
+      const y = compact ? (side === 'left' ? 16 + index * 82 : centerY + 62 + index * 82) : 18 + index * 82;
+      const x = compact ? 20 : (side === 'left' ? 12 : width - lane - 12);
+      return {p, x, y, w: lane, h: 48, side};
+    }
+    const boxes = [...left.map((p, i) => endpoint(p, i, 'left')), ...right.map((p, i) => endpoint(p, i, 'right'))];
+    boxes.forEach(b => {
+      let path;
+      if (compact) {
+        // Separate neutral lanes avoid connectors through intervening controls.
+        const laneX = b.side === 'left' ? 8 : width - 8;
+        const edgeX = b.side === 'left' ? b.x : b.x + b.w;
+        path = `M ${edgeX} ${b.y+24} H ${laneX} V ${centerY} H ${width/2 + (b.side==='left' ? -44 : 44)}`;
+      } else {
+        const edgeX = b.side === 'left' ? b.x+b.w : b.x;
+        const targetX = width/2 + (b.side==='left' ? -44 : 44);
+        path = `M ${edgeX} ${b.y+24} C ${(edgeX+targetX)/2} ${b.y+24}, ${(edgeX+targetX)/2} ${centerY}, ${targetX} ${centerY}`;
+      }
+      const attrs = {d: path, fill: 'none', stroke: 'var(--muted-foreground)', 'stroke-width': 1.5};
+      if (r.basis === 'design') attrs['stroke-dasharray'] = '5 4';
+      if (b.p.role === 'input') attrs['marker-end'] = 'url(#gu-arrow-v01)';
+      if (b.p.role === 'output') attrs['marker-start'] = 'url(#gu-arrow-v01)';
+      svgEl('path', attrs, svg);
+    });
+    svgEl('polygon', {points: `${centers.x},${centers.y-42} ${centers.x+44},${centers.y} ${centers.x},${centers.y+42} ${centers.x-44},${centers.y}`,
+      fill: colors[r.basis], 'fill-opacity': .12, stroke: 'var(--border)', 'stroke-width': 1}, svg);
+    const titleText = svgEl('text', {x: centers.x, y: centers.y-6, 'text-anchor': 'middle', class: 'rel-label text-small'}, svg);
+    const text = r.title.replace(/^本局/, '');
+    [text.slice(0, 6), text.slice(6, 12), text.slice(12)].filter(Boolean).forEach((part, i) => {
+      svgEl('tspan', {x: centers.x, dy: i ? '1.2em' : 0}, titleText, part);
+    });
+    boxes.forEach(b => {
+      const n = nodes.get(b.p.node);
+      const quantity = b.p.quantity > 1 ? ` ×${b.p.quantity}` : '';
+      const fo = svgEl('foreignObject', {x: b.x, y: b.y, width: b.w, height: 52}, svg);
+      const div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'btn btn-block';
+      button.textContent = label(n) + quantity;
+      button.setAttribute('aria-pressed', String(n.id === focus));
+      button.setAttribute('aria-label', `${label(n)}${quantity}，${roles[b.p.role]}，${basis[n.basis]}`);
+      button.addEventListener('click', () => choose(n.id));
+      div.append(button); fo.append(div);
+      svgEl('text', {x: b.x+b.w/2, y: b.y+66, 'text-anchor': 'middle', class: 'text-small'}, svg, `${roles[b.p.role]} · ${n.basis==='canon'?'原著':n.basis==='session'?'本局':'候选'}`);
+    });
+  }
+  function render() {
+    select.value = focus;
+    const n = nodes.get(focus);
+    root.querySelector('[data-summary]').textContent = `${label(n)} · ${basis[n.basis]}：${n.description}`;
+    const connected = data.relations.filter(r => r.participants.some(p => p.node === focus));
+    if (!connected.some(r => r.id === selectedRelation)) selectedRelation = connected[0]?.id;
+    const list = root.querySelector('[data-relations]'); list.replaceChildren();
+    connected.forEach(r => {
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'btn'; button.textContent = r.title;
+      button.setAttribute('aria-pressed', String(r.id === selectedRelation));
+      button.addEventListener('click', () => {selectedRelation = r.id; render(); save();}); list.append(button);
+    });
+    const r = connected.find(r => r.id === selectedRelation);
+    if (!r) {
+      root.querySelector('[data-graph]').replaceChildren();
+      root.querySelector('[data-mechanism]').textContent = '本批暂无可靠关系；未连边不等于不兼容。';
+      root.querySelector('[data-detail]').replaceChildren(); return;
+    }
+    draw(r);
+    root.querySelector('[data-mechanism]').textContent = `${basis[r.basis]} · ${r.mechanism}`;
+    const detail = root.querySelector('[data-detail]'); detail.replaceChildren();
+    for (const [name, value] of [['条件', r.conditions], ['代价', r.cost], ['限制', r.limits]]) {
+      const p = document.createElement('p'); p.textContent = `${name}：${value}`; detail.append(p);
+    }
+    r.evidence.forEach(id => {
+      const e = evidence.get(id); const row = document.createElement('div'); row.className = 'evidence-row';
+      const p = document.createElement('p'); p.className = 'text-small';
+      p.textContent = e.basis === 'canon' ? `${e.chapter_title} · ${e.locator}` : `${e.path.split('/').at(-1)} · 第${e.line_start}–${e.line_end}行`;
+      const quote = document.createElement('p'); quote.className = 'source-excerpt text-small'; quote.textContent = e.excerpt + '…';
+      row.append(p, quote); detail.append(row);
+    });
+  }
+  select.addEventListener('change', () => choose(select.value));
+  const observer = new ResizeObserver(() => {
+    const r = data.relations.find(r => r.id === selectedRelation); if (r) draw(r);
+  });
+  observer.observe(root.querySelector('[data-graph]'));
+  window.addEventListener('openai:set_globals', event => {
+    if (event.detail?.globals?.widgetState) {restore(event.detail.globals.widgetState); render();}
+  });
+  render();
+})();
+</script>

@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-02",
+  "status": "local_wiki_integrated",
+  "authorization": "用户：接入Wiki",
+  "scope": {
+    "new_mapped_cards": 31,
+    "existing_pictured_routes_preserved": 36,
+    "total_pictured_gu_pages": 67,
+    "total_gu_pages": 92,
+    "deferred_unknown_or_identity": 19,
+    "existing_sources_not_mapped_this_batch": 6,
+    "site_pages": 238,
+    "site_images": 173
+  },
+  "verification": {
+    "integration_test": "PASS 31 mappings, pinned PNG SHA256, actual artFor/ibFigure output and captions, no game rank badge,19 deferred/6existing unmapped,36old mappings preserved",
+    "existing_site_images": "142 SHA256 unchanged",
+    "http": "31 mapped images status200 with RIFF/WEBP signatures; local Python server uses generic application/octet-stream MIME",
+    "frontend_regression": "check-app.mjs PASS",
+    "builder_regression": "test_build_app.py PASS",
+    "docs_lint": "FAIL0 WARN0; pre-existing other orphan pages2",
+    "diff_check": "PASS",
+    "powershell_content_gate": "Not run: pwsh unavailable. No Wiki fact pages changed."
+  },
+  "boundaries": {
+    "game_integration": false,
+    "commit": false,
+    "push": false,
+    "remote_publication": false
+  },
+  "manifest": "wiki-gu-art.json",
+  "sources": "assets/gu/README.md"
+}

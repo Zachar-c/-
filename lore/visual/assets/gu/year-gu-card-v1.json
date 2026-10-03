@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "年蛊",
+  "route": "/gu/year-gu",
+  "file": "year-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/year-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1140｜第一百零八节：黑凡四珍（下）",
+    "line": 104848,
+    "excerpt": "它形如瓢虫，大拇指头般体型，全身都是黑色，但在背甲上却有金色的纹路。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE thumb-sized BLACK LADYBIRD Gu, round domed short beetle, unexpressive small head, six understated short limbs, two fine small antennae, all body black. On black convex back are naturally integrated striking GOLDEN PATTERNS that vaguely form a snarling unknown beast with open mouth and sharp teeth. Draw the pattern as irregular luminous fine gold lines IN the black cuticle, animal hint emerging from abstract lines across curved shell; no literal sculpted beast head, pasted decal, etched emblem with words, mandatory tiger/lion species, ordinary red shell or black dots. Gold pattern glows modestly only on shell so tooth/mouth suggestion is readable, no coins or crowns. Ladybird anatomy fully visible, slightly elevated three-quarter angle displays golden snarling pattern on back, fine central wing seam, no expressive smiling face. Dense deep black living shell with satin non-glass texture and subtle golden line shimmer, dark legs. Subject on plain weathered cool-brown barkless wood plane, grey-brown background softly recedes; not a garden, blooming flowers or epic time river. Soft lateral light, realistic contact shadows. Dreamlike strangeness from ambiguous golden beast pattern in an otherwise plain little black ladybird; no clocks, hourglasses, zodiac, calendar or big magic aura.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "黑色圆背瓢虫，背甲金纹隐约形成张口利齿兽形",
+      "自然甲虫六足关系，无钟表沙漏或虚构历法符号"
+    ],
+    "risks": [
+      "兽纹较清晰略有龙形，不能因此锁定原著野兽种属",
+      "背纹微光表达较弱，更多由金色反光成立"
+    ]
+  }
+}

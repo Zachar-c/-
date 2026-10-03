@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "黄金舍利蛊",
+  "route": "/gu/gold-atk-4-14-gu",
+  "file": "golden-relic-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/gold-atk-4-14-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0359｜第一百五十九节：新底牌",
+    "line": 33186,
+    "excerpt": "它通体金黄，只有拇指大小，在山洞昏暗的光线中，散发着幽幽的金属光辉。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE small thumb-sized ROUND GOLDEN BEAD Gu, entirely golden-yellow and faintly metallic luminous. Perfectly plain solid spherical bead, no grooves, writing, band, engravings, rings, pedestal, crown, jewel patterns, holes, appendages, legs, butterfly or crystal. Dense old soft gold colored body with modest subtle microtexture and few tiny irregularities, smooth but not gaudy mirror chrome or transparent glass, gentle subdued metal lustre. Lies alone slightly lower center on a dim warm-grey fine sand/earth surface, contact point and shadow show weight, subject focal close view with plenty of empty area around bead. Soft subdued natural cave-like lateral light, one broad highlight and very faint warm radiance against charcoal-grey background; no god ray, exploding golden halo, light circles or coins. Quiet, rare plain sphere, not king's ornate treasure. Do not add lotus petals (those belong to Blood Asset Gu), literal reliquary, glitter, spiritual symbols or large epic setting. Exact size displayed as macro only, canonical thumb size documented, not enormous gold ball.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "一只朴素金黄圆珠，细微金属光泽，位于暗色土沙面",
+      "无雕花、虫足、光环、坛台或金饰，卡框完整"
+    ],
+    "risks": [
+      "主体约卡宽四分之一，比批次多数对象留白更大，突出拇指尺度",
+      "表面微痕设计不等同原著受损形态"
+    ]
+  }
+}

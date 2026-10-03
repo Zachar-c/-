@@ -8,7 +8,7 @@ date: 2026-09-26
 tags: [character, yuan-lian, wood-path, heavenly-court]
 schema: 2
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/F2a-225001-240000-补读.md"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"
   - "notes:game/分支：六卷精编版/读书笔记/A2b-15501-31008-补读.md"

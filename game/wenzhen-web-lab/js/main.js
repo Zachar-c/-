@@ -10,11 +10,8 @@ const READY = {
   soul: 1, soulMax: 1,
   aptitude: 'bing', stage: 'one',
   owned: {
-    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_grass_gu: 1,
-    jade_skin_gu: 1, white_boar_strength_gu: 1, blood_farewell_gu: 1, blood_droplet_gu: 1,
-    light_rec_1_10_gu: 1,
-    fire_atk_2_01_gu: 1, water_atk_3_05_gu: 1, wisdom_rec_1_20_gu: 1,
-    wisdom_atk_3_13_gu: 1, blood_atk_5_02_gu: 1,
+    moonlight_gu: 1, small_light_gu: 1, stone_shell_gu: 1, vitality_leaf_gu: 2,
+    jade_skin_gu: 1, white_boar_strength_gu: 1,
   },
   wild: {
     small_light_gu: 2,
@@ -235,7 +232,7 @@ function fresh(difficulty = 'normal', seed) {
   };
   return {
     // seed 必须写在 READY 展开之后：禁止 READY.seed 覆盖已选择种子。
-    ...READY, seed: runSeed, owned: { ...READY.owned }, wild: { ...READY.wild }, equipped: [], battle: null, qiMax, qi: qiMax,
+    ...READY, seed: runSeed, owned: { ...READY.owned }, wild: { ...READY.wild }, equipped: [], customMoveRecipes: [], killmoveDraft: [], battle: null, qiMax, qi: qiMax,
     thought: thoughts, thoughtMax: thoughts, modifierLedger: [],
     journey, prepFor: null, reward: null, ending: null, shopSold: [], restUsed: false, journal: [],
     page: 'hall', lootPity: 0,
@@ -437,13 +434,20 @@ function recordEvent(action, after = {}, reason = '', targets = []) {
 }
 
 const STAGE_BY_RANK = ['', 'one', 'two', 'three', 'four', 'five'];
-const GU_BY_ID = Object.fromEntries(DATA.gu.map((gu) => [gu.id, gu]));
-// P5 冰道语义：合并敌人装载蛊语义索引（含不进白名单的蛊，如冰道双蛊）——结算 fail-fast 依赖全量。
-Object.assign(GU_BY_ID, DATA.guSemanticsById || {});
+// 敌人补充语义只作缺省资料；不能覆盖主蛊的成本、价格和已投影战斗效果。
+const GU_BY_ID = { ...(DATA.guSemanticsById || {}) };
+for (const gu of DATA.gu) GU_BY_ID[gu.id] = { ...GU_BY_ID[gu.id], ...gu };
 
 function recomputeQiMax() {
   state.qiMax = RunRules.essenceMax(state.cultivation, state.aptitude);
   state.qi = Math.min(state.qi, state.qiMax);
+}
+
+// 自定义只存组件；费用与效果每次由同一规则派生，不信任存档中的数值。
+function currentKillMoves() {
+  const custom = (Array.isArray(state.customMoveRecipes) ? state.customMoveRecipes : []).map(recipe => GuRules.composeKillMove(recipe, GU_BY_ID))
+    .filter(result => result.ok).map(result => ({ ...result.move, custom: true }));
+  return [...DATA.killMoves, ...custom];
 }
 
 function currentCombatRoster(usedInstances = {}, sealedInstances = {}) {
@@ -454,6 +458,8 @@ function currentCombatRoster(usedInstances = {}, sealedInstances = {}) {
     actionLimitReached: false,
     usedInstances,
     sealedInstances,
+    healingLocked: state.leafRecoveryNodeId === state.journey?.nodeId,
+    health: state.blood, healthMax: state.bloodMax,
   });
 }
 
@@ -474,6 +480,7 @@ function rollVictoryLoot(battle) {
         schoolPools: DATA.loot.schoolPools,
         guById: GU_BY_ID,
         supportPool,
+        discoveryPool: Object.values(DATA.loot.schoolPools).flat(),
         choiceCount: DATA.flow.rewardGuChoiceCount || 3,
         // P5 掉落派生：被击败敌人的装载蛊进入战利品候选（夺蛊=原著标准战利品语义）；
         // innate 敌人池空 → 流程与原表完全一致。
@@ -486,7 +493,7 @@ function rollVictoryLoot(battle) {
     const newFuture = LootRules.newFutureGuIds({
       owned: state.owned,
       guById: GU_BY_ID,
-      killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+      killMoves: DATA.killMovesEnabled ? currentKillMoves().filter(move => move.playable === true) : [],
       buildKits: GuRules.BUILD_KITS,
     });
     guChoices = LootRules.ensureNewFutureChoice(guChoices, newFuture, {
@@ -518,8 +525,9 @@ function rollVictoryLoot(battle) {
 // HUD 数值变化时让对应数字弹一下（涨玉色 / 跌朱色；Motion 缺席时静默跳过，只读提示不阻塞）。
 const hudPrevNum = {};
 function hudNumFx(id, text) {
-  const el = $(id);
+  const el = $(`#${id}`);
   if (!el) return;
+  el.textContent = text;
   const prev = hudPrevNum[id];
   hudPrevNum[id] = text;
   if (prev === undefined || prev === text) return;
@@ -602,18 +610,90 @@ function heldPlayerGuInstances() {
       HumanRules.guInstance(id, index + 1)));
 }
 
+// 模拟在临时人类对象上，不改局内资源；预览和实际提交共用一个规则。
+function bodyTrainingPreview(gu) {
+  if (gu?.effect?.kind !== 'body_training') return { ok: false, reason: 'not_training_gu' };
+  const human = HumanRules.actor({ id: 'body_training', rank: state.cultivation, guInstances: heldPlayerGuInstances() });
+  human.modifierLedger = (state.modifierLedger || []).map(entry => ({ ...entry }));
+  human.essence = state.qi;
+  const result = HumanRules.trainBody(human, `${gu.id}::1`, {
+    attribute: gu.effect.attribute, step: gu.effect.amount, cap: gu.effect.cap,
+    cost: gu.trueQiCost, visitId: state.prepFor || 'preview',
+  });
+  const current = result.total - (result.ok ? result.gained : 0);
+  const reason = !state.prepFor ? 'not_preparing'
+    : state.stones < gu.feedingCost ? 'insufficient_stone' : result.reason;
+  return { ...result, ok: result.ok && !reason, reason, current, human };
+}
+
+function leafProductionPreview(gu) {
+  return GuRules.produceGu(gu, {
+    owned: state.owned, playerRank: state.cultivation, trueQi: state.qi,
+    visitId: state.prepFor, lastVisitId: state.leafProductionVisit,
+  });
+}
+
+function consumeLeaf(gu) {
+  const result = GuRules.consumeHealingGu(gu, {
+    owned: state.owned, health: state.blood, healthMax: state.bloodMax,
+    healingLocked: state.leafRecoveryNodeId === state.journey.nodeId,
+  });
+  if (!result.ok) return result;
+  state.owned = result.owned;
+  state.blood = result.health;
+  state.leafRecoveryNodeId = state.journey.nodeId;
+  recordEvent('consume_healing_gu', { owned: { ...state.owned }, health: state.blood,
+    recovery_node_id: state.leafRecoveryNodeId }, 'leaf_consumed', [gu.id]);
+  return result;
+}
+
 function startMaintainedGu(human, instanceId, gu, turn) {
   const effect = gu?.battleEffect;
   if (effect?.kind !== 'maintained') return { ok: false, reason: 'not_maintained' };
   return HumanRules.startMaintained(human, instanceId, {
     startCost: gu.trueQiCost,
     upkeepCost: effect.upkeep_qi,
+    hitCost: effect.hit_qi || 0,
+    defenseGroup: effect.defense_group,
+    focusCost: effect.focus_cost || 0,
     turn,
     modifiers: (effect.modifiers || []).map((entry) => ({
       attribute: entry.attribute, amount: entry.amount,
       sourceEffectId: entry.effect_id,
     })),
   });
+}
+
+function refreshHumanControl(human) {
+  for (const item of human.maintainedGu) {
+    const effect = GU_BY_ID[item.instanceId.split('::')[0]]?.battleEffect;
+    if (item.active && effect?.kind === 'maintained') item.focusCost = Number(effect.focus_cost || 0);
+  }
+  return HumanRules.refreshControl(human);
+}
+
+function receiveHumanHit(b, human, damage, owner) {
+  // 续档的费用缓存跟随现行蛊定义，避免保留旧的收支相抵参数。
+  for (const item of human.maintainedGu) {
+    const effect = GU_BY_ID[item.instanceId.split('::')[0]]?.battleEffect;
+    if (item.active && effect?.kind === 'maintained') item.hitCost = Number(effect.hit_qi || 0);
+  }
+  const result = HumanRules.receiveHit(human, damage);
+  for (const event of result.events) {
+    const gu = GU_BY_ID[event.instanceId.split('::')[0]];
+    b.log.push(event.ok
+      ? `${owner}以 <b>${gu?.name || event.instanceId}</b> 承击 · 真元 -${event.cost}`
+      : `${owner}无法以 <b>${gu?.name || event.instanceId}</b> 承击 · 防护解除`);
+  }
+  return result;
+}
+
+function receivePlayerHit(b, damage) {
+  if (!b.playerHuman) return { damage, absorbed: 0 };
+  b.playerHuman.essence = state.qi;
+  const result = receiveHumanHit(b, b.playerHuman, damage, '你');
+  state.qi = b.playerHuman.essence;
+  return result;
 }
 
 function pluginHumanPlan(b, enemy) {
@@ -645,17 +725,28 @@ function resolvePluginHumanTurn(b, enemy) {
       const result = startMaintainedGu(human, plan.guInstanceId, gu, b.turn);
       if (result.ok) {
         human.thought -= gu.thoughtCost;
-        b.log.push(`<b>${enemy.name}</b> 催动 <b>${gu.name}</b> · 真元 -${result.cost} · 念头 -${gu.thoughtCost}；防御 ${HumanRules.attribute(human, 'defense')}`);
+        b.log.push(`<b>${enemy.name}</b> 催动 <b>${gu.name}</b> · 真元 -${result.cost} · 操控 -${gu.thoughtCost}；防御 ${HumanRules.attribute(human, 'defense')}`);
         return;
       }
     }
     b.log.push(`<b>${enemy.name}</b> 原定催蛊失效，转为拳脚攻击`);
   }
-  const playerDefense = b.playerHuman ? HumanRules.attribute(b.playerHuman, 'defense') : 0;
-  const damage = Math.max(1, HumanRules.attribute(human, 'attack') - playerDefense);
-  const absorbed = Math.min(b.block, damage);
-  b.block -= absorbed;
-  const taken = damage - absorbed;
+  const strike = HumanRules.basicStrikePlan(human);
+  const pending = enemy.pendingBasicAttack;
+  if (strike.delayTurns > 0) {
+    enemy.pendingBasicAttack = { damage: strike.damage, dueTurn: b.turn + strike.delayTurns };
+    b.log.push(`<b>${enemy.name}</b> 石臂沉重 · 拳脚将在第 ${enemy.pendingBasicAttack.dueTurn} 回合落下`);
+    if (!pending || pending.dueTurn > b.turn) return;
+  } else {
+    enemy.pendingBasicAttack = null;
+  }
+  const incoming = pending && pending.dueTurn <= b.turn ? pending.damage : strike.damage;
+  const protection = receivePlayerHit(b, incoming);
+  const damage = protection.damage;
+  const blocked = Math.min(b.block, damage);
+  b.block -= blocked;
+  const absorbed = blocked + protection.absorbed;
+  const taken = damage - blocked;
   state.blood -= taken;
   b.log.push(`<b>${enemy.name}</b> · 拳脚攻击，<span class="dmg">伤 ${taken}</span>${absorbed ? `（护体挡下 ${absorbed}）` : ''}`);
   b.lastBlow = { attacker: enemy.name, label: '拳脚攻击', damage: taken || damage, turn: b.turn, absorbed };
@@ -687,6 +778,7 @@ function enemyTurn(b) {
         : null;
       if (sealed) {
         b.guSealed[sealed.instanceId] = Math.max(1, Number(it.seal_turns || 1));
+        if (b.playerHuman) HumanRules.stopMaintained(b.playerHuman, sealed.instanceId, 'sealed');
         b.log.push(`${prefix}<b>${sealed.name}</b> 被封印 ${b.guSealed[sealed.instanceId]} 回合`);
       } else {
         b.log.push(`${prefix}无可封印的蛊虫`);
@@ -719,9 +811,11 @@ function enemyTurn(b) {
         enemy.intentWeaken = 0;
         b.log.push(`${prefix}<b>意图弱化</b> 减免 ${Math.min(rawDamage, weaken)}`);
       }
-      const absorbed = Math.min(b.block, damage);
-      b.block -= absorbed;
-      const taken = damage - absorbed;
+      const protection = receivePlayerHit(b, damage);
+      const blocked = Math.min(b.block, protection.damage);
+      b.block -= blocked;
+      const absorbed = blocked + protection.absorbed;
+      const taken = protection.damage - blocked;
       state.blood -= taken;
       b.log.push(absorbed
         ? `${prefix}<b>${it.label}</b>，<span class="dmg">伤 ${taken}</span>（护体挡下 ${absorbed}）`
@@ -741,10 +835,16 @@ function enemyTurn(b) {
     }
     if (it.soul_drain) {
       state.soul = RunRules.drainSoul(state.soul, it.soul_drain);
+      if (RunRules.soulDefeated(state.soul)) b.lastResourceBlow = {
+        attacker: enemy.name, label: it.label, resource: 'soul', amount: it.soul_drain, turn: b.turn,
+      };
       b.log.push(`${prefix}<span class="dmg">魂魄被抽 ${it.soul_drain}</span>`);
     }
     if (it.life_cost) {
       state.lifeTime = RunRules.spendLife(state.lifeTime, it.life_cost);
+      if (RunRules.lifeDefeated(state.lifeTime)) b.lastResourceBlow = {
+        attacker: enemy.name, label: it.label, resource: 'life', amount: it.life_cost, turn: b.turn,
+      };
       b.log.push(`${prefix}<span class="dmg">寿元被夺 ${it.life_cost}</span>`);
     }
     if (it.essence_burn) {
@@ -810,12 +910,14 @@ function enemyTurn(b) {
   if (b.playerHuman) {
     b.playerHuman.essence = state.qi;
     for (const event of HumanRules.upkeep(b.playerHuman)) {
+      if (event.ok && event.cost === 0) continue;
       const gu = GU_BY_ID[event.instanceId.split('::')[0]];
       b.log.push(event.ok
         ? `你维持 <b>${gu?.name || event.instanceId}</b> · 真元 -${event.cost}`
         : `你无法维持 <b>${gu?.name || event.instanceId}</b> · 效果解除`);
     }
     state.qi = b.playerHuman.essence;
+    state.thought = refreshHumanControl(b.playerHuman);
   }
   b.guUsedThisTurn = {};
   b.killMoveUsedThisTurn = {};
@@ -832,11 +934,13 @@ function enemyTurn(b) {
       enemy.human.essence + HumanRules.attribute(enemy.human, 'essenceRegen'),
     );
     for (const event of HumanRules.upkeep(enemy.human)) {
+      if (event.ok && event.cost === 0) continue;
       const gu = GU_BY_ID[event.instanceId.split('::')[0]];
       b.log.push(event.ok
         ? `<b>${enemy.name}</b> 维持 <b>${gu?.name || event.instanceId}</b> · 真元 -${event.cost}`
         : `<b>${enemy.name}</b> 无法维持 <b>${gu?.name || event.instanceId}</b> · 防护解除`);
     }
+    refreshHumanControl(enemy.human);
   }
   aliveEnemies(b).forEach((enemy) => act._pickIntent(b, enemy));
   return false;
@@ -849,12 +953,21 @@ function buildDeathReport(b) {
   const blow = b.lastBlow || null;
   const counter = b.lastCounter || null;
   const parts = [];
-  parts.push(blow
-    ? `败因：${blow.attacker} · ${blow.label}（伤 ${blow.damage}${blow.absorbed ? `，护体挡下 ${blow.absorbed}` : ''}）`
-    : `败因：资源耗尽于第 ${b.turn || 0} 回合`);
+  const resource = b.deathCause === 'soul' ? 'soul' : b.deathCause === 'life_cost' ? 'life' : '';
+  const resourceBlow = b.lastResourceBlow?.resource === resource ? b.lastResourceBlow : null;
+  if (resource) {
+    const label = resource === 'soul' ? '魂魄' : '寿元';
+    parts.push(resourceBlow
+      ? `败因：${resourceBlow.attacker} · ${resourceBlow.label}（${label}减少 ${resourceBlow.amount} 后耗尽）`
+      : `败因：${label}耗尽于第 ${b.turn || 0} 回合`);
+  } else {
+    parts.push(blow
+      ? `败因：${blow.attacker} · ${blow.label}（伤 ${blow.damage}${blow.absorbed ? `，护体挡下 ${blow.absorbed}` : ''}）`
+      : `败因：资源耗尽于第 ${b.turn || 0} 回合`);
+  }
   if (counter) parts.push(`关键失误：「${counter.label}」曾被「${counter.counterId}」反制吞掉（第 ${counter.turn} 回合）`);
-  if (last3.length) parts.push(`最后三回合：${last3.join(' / ')}`);
-  return { lastBlow: blow, lastCounter: counter, last3, detail: parts.join('；') };
+  if (last3.length) parts.push(`最后三条战斗记录：${last3.join(' / ')}`);
+  return { lastBlow: blow, lastResourceBlow: resourceBlow, lastCounter: counter, last3, detail: parts.join('；') };
 }
 
 function openBattleOutcome() {
@@ -885,8 +998,9 @@ function openBattleOutcome() {
     Sfx.lose();
   } else if (outcome === 'victory') {
     const loot = rollVictoryLoot(b);
-    const healed = Math.ceil(state.bloodMax * (DATA.flow.postBattleHealPct || 0) / 100);
-    state.blood = Math.min(state.bloodMax, state.blood + healed);
+    const healBudget = Math.ceil(state.bloodMax * (DATA.flow.postBattleHealPct || 0) / 100);
+    const healed = Math.min(healBudget, Math.max(0, state.bloodMax - state.blood));
+    state.blood += healed;
     state.qi = state.qiMax;
     state.stones += loot.stones;
     state.lootPity = loot.lootPity;
@@ -902,6 +1016,7 @@ function openBattleOutcome() {
       nodeId: b.nodeId,
       healed,
       turn: b.turn,
+      battleLog: b.log.slice(-80),
     };
     state.battle = null;
     showPage('reward');
@@ -909,11 +1024,44 @@ function openBattleOutcome() {
   draw();
 }
 
+function resolveProblemHit(b, target, plan, label) {
+  const problem = (typeof GuRules !== 'undefined' && GuRules.resolveProblemHit)
+    ? GuRules.resolveProblemHit(target, plan, plan.damage)
+    : { damage: plan.damage, notes: [] };
+  for (const note of problem.notes || []) {
+    if (note === 'evaded') b.log.push(`<b>${target.name}</b> · <b>${label}</b> <span class="dmg">被闪避</span>`);
+    if (note === 'armored') b.log.push(`<b>${target.name}</b> · 厚甲吞伤 · <b>${label}</b> 未破防`);
+    if (note === 'armor_tax') b.log.push(`<b>${target.name}</b> · 厚甲减伤`);
+    if (note === 'pierce_armor') b.log.push(`<b>${label}</b> · <span class="heal">破甲/穿透</span>`);
+    if (note === 'chip_through_armor') b.log.push(`<b>${label}</b> · 蹭血穿甲`);
+    if (note === 'ignore_evasion') b.log.push(`<b>${label}</b> · <span class="heal">稳定必中</span>`);
+    if (note === 'locked_on') b.log.push(`<b>${label}</b> · 已锁定 · 必中`);
+    if (note === 'stable_hit') b.log.push(`<b>${label}</b> · 稳定命中`);
+    if (note === 'suppressed_rule') b.log.push(`<b>${label}</b> · <span class="heal">镇压规则</span>`);
+    if (note === 'read_rule') b.log.push(`<b>${label}</b> · 已读破规则`);
+  }
+  if ((problem.notes || []).includes('unread_tax')) {
+    const tax = Math.max(1, Math.ceil(Number(problem.damage || 0) / 2));
+    state.blood = Math.max(0, state.blood - tax);
+    b.log.push(`未识破规则 · <span class="dmg">反噬 ${tax}</span>`);
+    BattleFx.selfDamage(tax);
+    if (state.blood <= 0) {
+      b.over = '败';
+      b.deathCause = 'info_tax';
+    }
+  }
+  if (target.human && problem.damage > 0) {
+    problem.damage = receiveHumanHit(b, target.human, problem.damage, target.name).damage;
+  }
+  return problem;
+}
+
 function applyEffectPlan(b, target, plan, label) {
   if (plan.heal) {
-    state.blood = Math.min(state.bloodMax, state.blood + plan.heal);
-    b.log.push(`<b>${label}</b> · <span class="heal">回气 +${plan.heal}</span>`);
-    BattleFx.heal(plan.heal);
+    const healed = Math.min(plan.heal, Math.max(0, state.bloodMax - state.blood));
+    state.blood += healed;
+    b.log.push(`<b>${label}</b> · <span class="heal">气血 +${healed}</span>`);
+    if (healed > 0) BattleFx.heal(healed);
   }
   if (plan.block) {
     b.block += plan.block;
@@ -926,27 +1074,7 @@ function applyEffectPlan(b, target, plan, label) {
     const asStrike = Number(plan.damage) > 0;
     if (core?.resolveDirectStrike && asStrike) {
       // L0 Phase 1：先结算问题轴（重甲/闪避/信息税），再进反制管线
-      const problem = (typeof GuRules !== 'undefined' && GuRules.resolveProblemHit)
-        ? GuRules.resolveProblemHit(target, plan, plan.damage)
-        : { damage: plan.damage, notes: [] };
-      for (const note of problem.notes || []) {
-        if (note === 'evaded') b.log.push(`<b>${target.name}</b> · <b>${label}</b> <span class="dmg">被闪避</span>`);
-        if (note === 'armored') b.log.push(`<b>${target.name}</b> · 厚甲吞伤 · <b>${label}</b> 未破防`);
-        if (note === 'armor_tax') b.log.push(`<b>${target.name}</b> · 厚甲减伤`);
-        if (note === 'pierce_armor') b.log.push(`<b>${label}</b> · <span class="heal">破甲/穿透</span>`);
-        if (note === 'chip_through_armor') b.log.push(`<b>${label}</b> · 蹭血穿甲`);
-        if (note === 'ignore_evasion') b.log.push(`<b>${label}</b> · <span class="heal">稳定必中</span>`);
-        if (note === 'locked_on') b.log.push(`<b>${label}</b> · 已锁定 · 必中`);
-        if (note === 'stable_hit') b.log.push(`<b>${label}</b> · 稳定命中`);
-        if (note === 'suppressed_rule') b.log.push(`<b>${label}</b> · <span class="heal">镇压规则</span>`);
-        if (note === 'read_rule') b.log.push(`<b>${label}</b> · 已读破规则`);
-      }
-      if ((problem.notes || []).includes('unread_tax')) {
-        const tax = Math.max(1, Math.ceil(Number(problem.damage || 0) / 2));
-        state.blood = Math.max(0, state.blood - tax);
-        b.log.push(`未识破规则 · <span class="dmg">反噬 ${tax}</span>`);
-        BattleFx.selfDamage(tax);
-      }
+      const problem = resolveProblemHit(b, target, plan, label);
       const coreEnemy = core.toCoreEnemy(target, globalThis.MVP_CONTENT?.enemyProfiles);
       const res = core.resolveDirectStrike(coreEnemy, {
         damage: problem.damage,
@@ -1010,9 +1138,18 @@ function applyEffectPlan(b, target, plan, label) {
     b.log.push(`<b>${label}</b> · 剑意 +${plan.swordIntent}`);
   }
   if (plan.support) {
-    b.turnSupports[plan.support.school] =
-      (b.turnSupports[plan.support.school] || 0) + plan.support.bonus;
-    b.log.push(`<b>${label}</b> · ${schoolLabel(plan.support.school)}支援 +${plan.support.bonus}`);
+    if (plan.support.targetGuId) {
+      const targets = b.turnSupports.guTargets ||= {};
+      const list = targets[plan.support.targetGuId] ||= [];
+      if (!plan.support.nonStacking || !list.some(s => s.multiplier === plan.support.multiplier && s.nonStacking)) {
+        list.push({ ...plan.support });
+      }
+      b.log.push(`<b>${label}</b> · 本回合下一次${GU_BY_ID[plan.support.targetGuId]?.name || plan.support.targetGuId} ×${plan.support.multiplier}（同类不叠加）`);
+    } else {
+      b.turnSupports[plan.support.school] =
+        (b.turnSupports[plan.support.school] || 0) + plan.support.bonus;
+      b.log.push(`<b>${label}</b> · ${schoolLabel(plan.support.school)}支援 +${plan.support.bonus}`);
+    }
   }
 }
 
@@ -1035,8 +1172,13 @@ function fireDelayedEffects(b) {
       remaining.push(entry);
       continue;
     }
-    const target = aliveEnemies(b)[0];
-    if (!target) break;
+    const target = entry.basicAttack
+      ? aliveEnemies(b).find(enemy => enemy.id === entry.targetId)
+      : aliveEnemies(b)[0];
+    if (!target) {
+      if (entry.basicAttack) { b.log.push('石臂拳脚 · 原目标已倒下，本击落空'); continue; }
+      break;
+    }
     const effect = { ...entry.effect };
     delete effect.delay;
     const plan = GuRules.effectPlan(effect, {
@@ -1045,8 +1187,18 @@ function fireDelayedEffects(b) {
       swordIntent: b.swordIntent,
       statusStacks: target.statuses || {},
     });
-    applyEffectPlan(b, target, plan, `${entry.label}（延迟）`);
+    if (entry.basicAttack) {
+      const hit = resolveProblemHit(b, target, plan, entry.label);
+      target.hp = Math.max(0, target.hp - hit.damage);
+      b.log.push(`<b>${target.name}</b> · <b>${entry.label}</b> 落下，<span class="dmg">伤 ${hit.damage}</span>`);
+      if (hit.damage > 0) BattleFx.damage(hit.damage);
+    } else applyEffectPlan(b, target, plan, `${entry.label}（延迟）`);
     b.log.push(`第 ${b.turn} 回合 · 延迟效果到期`);
+    if (b.over === '败' || state.blood <= 0) {
+      b.over = '败';
+      openBattleOutcome();
+      return true;
+    }
     if (target.hp <= 0) {
       b.log.push(`<b>${target.name}</b> 伏诛`);
       const next = aliveEnemies(b)[0];
@@ -1068,6 +1220,49 @@ function finishPlayerAction(b) {
 }
 
 const act = {
+  produceLeaf(guId) {
+    if (!assertRunMutable() || state.page !== 'prep' || !state.prepFor) return;
+    const gu = GU_BY_ID[guId];
+    const result = leafProductionPreview(gu);
+    if (!result.ok) return toast(guReasonLabel(result.reason), 'bad');
+    state.owned = result.owned;
+    state.qi = result.trueQi;
+    state.leafProductionVisit = state.prepFor;
+    state.journal.unshift(`${gu.name}催生 · 生机叶 +${result.produced} · 真元 -${result.cost}`);
+    recordEvent('produce_gu', { owned: { ...state.owned }, true_qi: state.qi,
+      production_visit: state.leafProductionVisit }, 'leaf_produced', [gu.id, gu.effect.output_gu_id]);
+    draw();
+  },
+
+  useLeaf(guId) {
+    if (!assertRunMutable() || state.page !== 'prep') return;
+    const gu = GU_BY_ID[guId];
+    const result = consumeLeaf(gu);
+    if (!result.ok) return toast(guReasonLabel(result.reason), 'bad');
+    state.journal.unshift(`生机叶疗伤 · 气血 +${result.healed} · 叶片 -1`);
+    draw();
+  },
+  trainBody(guId) {
+    if (!assertRunMutable() || state.page !== 'prep' || !state.prepFor) return;
+    const gu = GU_BY_ID[guId];
+    const preview = bodyTrainingPreview(gu);
+    if (!preview.ok) return toast('当前不能锻体 · ' + ({
+      repeated_visit: '本次整备已锻体', cap_reached: '已达同型力量上限',
+      insufficient_essence: '真元不足', insufficient_stone: '补饲元石不足',
+      gu_unavailable: '未持有可用蛊虫',
+    }[preview.reason] || preview.reason), 'bad');
+    state.qi = preview.human.essence;
+    state.stones -= gu.feedingCost;
+    state.modifierLedger = preview.human.modifierLedger.map(entry => ({ ...entry }));
+    state.journal.unshift(`${gu.name}锻体 · 永久力量 +${preview.gained} · 同型累计 ${preview.total}/${gu.effect.cap}`);
+    recordEvent('body_training', {
+      gu_id: gu.id, strength: preview.total, true_qi: state.qi,
+      stones: state.stones, modifier_ledger: state.modifierLedger.map(entry => ({ ...entry })),
+    }, 'permanent_strength_gained', [gu.id]);
+    Sfx.success();
+    draw();
+  },
+
   attuneGu(definitionId) {
     if (!assertRunMutable()) return;
     const gu = GU_BY_ID[definitionId];
@@ -1094,7 +1289,7 @@ const act = {
     state.lastGainInsight = GuRules.gainInsight(definitionId, {
       owned: state.owned,
       recipes: GuRules.liveRecipes(DATA.recipes),
-      killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+      killMoves: DATA.killMovesEnabled ? currentKillMoves().filter(move => move.playable === true) : [],
       buildKits: GuRules.BUILD_KITS,
       guById: GU_BY_ID,
     });
@@ -1116,7 +1311,7 @@ const act = {
     // 合炼吃掉组件后，卸下缺件杀招，避免幽灵可点。
     {
       const invalid = [];
-      for (const move of DATA.killMoves) {
+      for (const move of currentKillMoves()) {
         if (!state.equipped.includes(move.id)) continue;
         if (!GuRules.killMoveRecipeInstances(move, state.owned, {}, {}).every(Boolean)) invalid.push(move);
       }
@@ -1135,7 +1330,7 @@ const act = {
       state.lastGainInsight = GuRules.gainInsight(r.output, {
         owned: state.owned,
         recipes: GuRules.liveRecipes(DATA.recipes),
-        killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+        killMoves: DATA.killMovesEnabled ? currentKillMoves().filter(move => move.playable === true) : [],
         buildKits: GuRules.BUILD_KITS,
         guById: GU_BY_ID,
       });
@@ -1149,13 +1344,53 @@ const act = {
     draw();
   },
 
+  addMoveComponent(id) {
+    if (!assertRunMutable() || state.page !== 'prep') return;
+    if (!['moonlight_gu', 'small_light_gu', 'moon_glow_gu'].includes(id)) return toast('此蛊同催尚未验证', 'bad');
+    const draft = state.killmoveDraft || [];
+    if (draft.length >= 3) return toast('当前试验最多三个组件', 'bad');
+    if (draft.filter(item => item === id).length >= Number(state.owned[id] || 0)) return toast('没有可加入的该蛊实例', 'bad');
+    state.killmoveDraft = [...draft, id];
+    draw();
+  },
+
+  removeMoveComponent(index) {
+    if (!assertRunMutable() || state.page !== 'prep') return;
+    const draft = state.killmoveDraft || [];
+    if (!Number.isInteger(index) || index < 0 || index >= draft.length) return;
+    state.killmoveDraft = draft.filter((_, i) => i !== index);
+    draw();
+  },
+
+  rememberCustomMove() {
+    if (!assertRunMutable() || state.page !== 'prep') return;
+    const result = GuRules.composeKillMove(state.killmoveDraft || [], GU_BY_ID);
+    if (!result.ok) return toast('至少选两组件，并包含一只攻击蛊', 'bad');
+    if (GuRules.killMoveRecipeInstances(result.move, state.owned, {}, {}).some(instance => !instance)) return toast('组件库存不足', 'bad');
+    if ((state.customMoveRecipes || []).some(recipe => GuRules.composeKillMove(recipe, GU_BY_ID).move?.id === result.move.id)) return toast('此组件组合已记下', 'bad');
+    state.customMoveRecipes = [...(state.customMoveRecipes || []), [...result.move.recipe]];
+    state.killmoveDraft = [];
+    recordEvent('compose_kill_move', { move_id: result.move.id, recipe: [...result.move.recipe] }, 'experimental_recipe_remembered');
+    toast('已记下同催配方；可选择记入杀招槽', 'good');
+    draw();
+  },
+
+  forgetCustomMove(id) {
+    if (!assertRunMutable() || state.page !== 'prep') return;
+    state.customMoveRecipes = (state.customMoveRecipes || []).filter(recipe => GuRules.composeKillMove(recipe, GU_BY_ID).move?.id !== id);
+    state.equipped = state.equipped.filter(moveId => moveId !== id);
+    draw();
+  },
+
   toggleMove(id) {
+    if (!assertRunMutable()) return;
     if (!DATA.killMovesEnabled) return toast('杀招系统暂未开放', 'bad');
     const i = state.equipped.indexOf(id);
     if (i >= 0) { state.equipped.splice(i, 1); Sfx.click(); draw(); return; }
     if (state.equipped.length >= 3) return toast('杀招槽已满（三）', 'bad');
-    const move = DATA.killMoves.find((m) => m.id === id);
+    const move = currentKillMoves().find((m) => m.id === id);
     if (!move) return toast('未找到该杀招', 'bad');
+    if (move.playable !== true) return toast('此杀招尚未开放', 'bad');
     // 组件按实例占用校验：重复配方不能用「持有>0」蒙混。
     const instances = GuRules.killMoveRecipeInstances(move, state.owned, {}, {});
     if (instances.some((x) => !x)) return toast('组件不足 · 无法装备该杀招', 'bad');
@@ -1410,7 +1645,7 @@ const act = {
             const result = startMaintainedGu(human, instance.instanceId, gu, 0);
             if (result.ok) {
               human.thought -= gu.thoughtCost;
-              precastLog.push(`${gu.name}：真元 -${result.cost}、念头 -${gu.thoughtCost}`);
+              precastLog.push(`${gu.name}：真元 -${result.cost}、操控 -${gu.thoughtCost}`);
             }
           }
         }
@@ -1511,14 +1746,21 @@ const act = {
       finishPlayerAction(b);
       return;
     }
-    const raw = (b.playerHuman ? HumanRules.attribute(b.playerHuman, 'attack') : HumanRules.BASELINE.attack)
+    const strike = b.playerHuman ? HumanRules.basicStrikePlan(b.playerHuman) : { damage: HumanRules.BASELINE.attack, delayTurns: 0 };
+    const raw = strike.damage
       + Number(b.buffs?.force || 0)
       + Number(b.buffs?.yi_zhang || 0);
-    const damage = target.human
-      ? Math.max(1, raw - HumanRules.attribute(target.human, 'defense'))
-      : raw;
-    target.hp = Math.max(0, target.hp - damage);
-    b.log.push(`<b>${target.name}</b> · <b>拳脚</b> 命中，<span class="dmg">伤 ${damage}</span>`);
+    if (strike.delayTurns > 0) {
+      scheduleEffect(b, { kind: 'strike', amount: raw, delay: { turns: strike.delayTurns } }, '', '石臂拳脚');
+      Object.assign(b.delayedEffects.at(-1), { basicAttack: true, targetId: target.id });
+      finishPlayerAction(b);
+      return;
+    }
+    const problem = resolveProblemHit(b, target, { damage: raw }, '拳脚');
+    target.hp = Math.max(0, target.hp - problem.damage);
+    b.log.push(problem.damage > 0
+      ? `<b>${target.name}</b> · <b>拳脚</b> 命中，<span class="dmg">伤 ${problem.damage}</span>`
+      : `<b>${target.name}</b> · <b>拳脚</b> 未造成伤害`);
     Sfx.hit();
     const box = $('#foe-box');
     if (box) { box.classList.add('hit'); setTimeout(() => box.classList.remove('hit'), 300); }
@@ -1526,6 +1768,10 @@ const act = {
       b.log.push(`<b>${target.name}</b> 伏诛`);
       const next = aliveEnemies(b)[0];
       if (next) b.targetId = next.id;
+    }
+    if (b.over === '败') {
+      openBattleOutcome();
+      return;
     }
     if (!aliveEnemies(b).length) {
       b.over = '胜';
@@ -1536,12 +1782,12 @@ const act = {
     finishPlayerAction(b);
   },
 
-  /** MVP 逆息：真元锁死时 1 念头 · 气血-2 · 真元+3 */
+  /** MVP 逆息：真元锁死时 1 操控 · 气血-2 · 真元+3 */
   exhaust() {
     if (!assertRunMutable()) return;
     const b = state.battle;
     if (!b || b.over) return;
-    if (state.thought < 1) return toast('念头不足', 'bad');
+    if (state.thought < 1) return toast('本回合操控余量不足', 'bad');
     if (b.exhaustUsedThisTurn) return toast('本回合已逆息', 'bad');
     if (b.exhaustCooldown > 0) return toast(`逆息冷却 ${b.exhaustCooldown} 回合`, 'bad');
     const roster = currentCombatRoster(b.guUsedThisTurn, b.guSealed);
@@ -1568,7 +1814,7 @@ const act = {
     const target = targetOf(b);
     if (!target || target.revealed) return;
     if (b.actionsUsed >= b.actionLimit) return toast('本回合行动数已尽', 'bad');
-    if (state.thought < 1) return toast('念头不足', 'bad');
+    if (state.thought < 1) return toast('本回合操控余量不足', 'bad');
     state.thought -= 1;
     b.actionsUsed += 1;
     target.revealed = true;
@@ -1592,8 +1838,12 @@ const act = {
     if (!b || b.over) return;
     const target = targetOf(b);
     if (!target) return openBattleOutcome();
-    const m = DATA.killMoves.find((x) => x.id === id);
+    const m = currentKillMoves().find((x) => x.id === id);
     if (!m) return toast('未找到该杀招', 'bad');
+    if (m.playable !== true) return toast('此杀招尚未开放', 'bad');
+    if (!state.equipped.includes(id)) return toast('此杀招尚未记入', 'bad');
+    if (m.recipe.some(guId => !GuRules.canActivate(state.cultivation, GU_BY_ID[guId]?.rank, GU_BY_ID[guId]?.lowRankException)))
+      return toast('组件所需真元品质不足', 'bad');
     if (b.killMoveUsedThisTurn?.[id]) return toast('本回合已使用该杀招', 'bad');
     const recipeInstances = GuRules.killMoveRecipeInstances(
       m,
@@ -1605,7 +1855,7 @@ const act = {
       return toast('配方蛊本回合已使用或封印', 'bad');
     }
     if (b.actionsUsed >= b.actionLimit) return toast('本回合行动数已尽', 'bad');
-    if (state.qi < m.true_qi_cost || state.thought < m.thought_cost) return toast('真元或念头不足', 'bad');
+    if (state.qi < m.true_qi_cost || state.thought < m.thought_cost) return toast('真元或操控不足', 'bad');
     // L0 2026-09-25：门禁读组件合成权威，不再读预制 m.effect。
     const gate = GuRules.killMoveGateMissReason(m, GU_BY_ID, {
       hp: state.blood,
@@ -1621,8 +1871,16 @@ const act = {
     b.actionsUsed += 1;
     for (const instanceId of recipeInstances) b.guUsedThisTurn[instanceId] = true;
     b.killMoveUsedThisTurn[id] = true;
+    b.log.push(`同催 <b>${m.label}</b> · 真元 -${m.true_qi_cost} · 操控 -${m.thought_cost}`);
+    recordEvent('use_kill_move', { true_qi: state.qi, thought: state.thought,
+      move_id: id, component_instances: [...recipeInstances],
+      gu_used_this_turn: { ...b.guUsedThisTurn }, kill_move_used_this_turn: { ...b.killMoveUsedThisTurn },
+    }, 'components_activated', recipeInstances);
     if (m.life_cost) {
       state.lifeTime = RunRules.spendLife(state.lifeTime, m.life_cost);
+      if (RunRules.lifeDefeated(state.lifeTime)) b.lastResourceBlow = {
+        attacker: '自身催动', label: m.label, resource: 'life', amount: m.life_cost, turn: b.turn,
+      };
       b.log.push(`<b>${m.label}</b> · 寿元 -${m.life_cost}`);
       if (RunRules.lifeDefeated(state.lifeTime)) {
         state.lifeTime = 0;
@@ -1673,6 +1931,11 @@ const act = {
       if (next) b.targetId = next.id;
     }
 
+    if (b.over === '败' || state.blood <= 0) {
+      b.over = '败';
+      openBattleOutcome();
+      return;
+    }
     if (!aliveEnemies(b).length) {
       b.over = '胜';
       Sfx.win();
@@ -1681,6 +1944,16 @@ const act = {
     }
 
     finishPlayerAction(b);
+  },
+
+  stopGu(instanceId) {
+    if (!assertRunMutable()) return;
+    const b = state.battle;
+    if (!b || b.over || !b.playerHuman?.maintainedGu.some(item => item.instanceId === instanceId && item.active)) return;
+    HumanRules.stopMaintained(b.playerHuman, instanceId, 'player_stopped');
+    b.log.push(`你停止催动 <b>${GU_BY_ID[instanceId.split('::')[0]]?.name || instanceId}</b> · 防护解除`);
+    recordEvent('stop_gu', { instance_id: instanceId });
+    draw();
   },
 
   useGu(instanceId) {
@@ -1701,6 +1974,8 @@ const act = {
       usedThisTurn: !!b.guUsedThisTurn[instanceId],
       actionLimitReached: b.actionsUsed >= b.actionLimit,
       lowRankException: !!(state.lowRankGu && state.lowRankGu[gu.id]),
+      healingLocked: state.leafRecoveryNodeId === state.journey.nodeId,
+      health: state.blood, healthMax: state.bloodMax,
     });
     if (reason) return toast(guReasonLabel(reason), 'bad');
 
@@ -1722,19 +1997,29 @@ const act = {
       state.thought -= gu.thoughtCost;
       human.thought = state.thought;
       b.actionsUsed += 1;
+      b.usedDefenseThisTurn = true;
       b.guUsedThisTurn[instanceId] = true;
-      b.log.push(`你催动 <b>${gu.name}</b> · 真元 -${activated.cost} · 念头 -${gu.thoughtCost}；防御 ${HumanRules.attribute(human, 'defense')}`);
+      b.log.push(`你催动 <b>${gu.name}</b> · 真元 -${activated.cost} · 操控 -${gu.thoughtCost}；防御 ${HumanRules.attribute(human, 'defense')}`);
       finishPlayerAction(b);
       return;
     }
 
+    let consumedLeaf = null;
+    if (gu.battleEffect?.consumable) {
+      consumedLeaf = consumeLeaf(gu);
+      if (!consumedLeaf.ok) return toast(guReasonLabel(consumedLeaf.reason), 'bad');
+    }
     state.qi -= gu.trueQiCost;
     state.thought -= gu.thoughtCost;
-    b.actionsUsed += 1;
+    // 定向辅助作为同催准备；原有单行动回合仍能完成辅助 + 主蛊。
+    if (!(gu.battleEffect?.kind === 'support' && gu.battleEffect.target_gu_id)) b.actionsUsed += 1;
     b.guUsedThisTurn[instanceId] = true;
-    b.log.push(`催动 <b>${gu.name}</b> · 真元 -${gu.trueQiCost} · 念头 -${gu.thoughtCost}`);
+    b.log.push(`催动 <b>${gu.name}</b> · 真元 -${gu.trueQiCost} · 操控 -${gu.thoughtCost}`);
     if (gu.lifeCost) {
       state.lifeTime = RunRules.spendLife(state.lifeTime, gu.lifeCost);
+      if (RunRules.lifeDefeated(state.lifeTime)) b.lastResourceBlow = {
+        attacker: '自身催动', label: gu.name, resource: 'life', amount: gu.lifeCost, turn: b.turn,
+      };
       b.log.push(`<b>${gu.name}</b> · 寿元 -${gu.lifeCost}`);
       if (RunRules.lifeDefeated(state.lifeTime)) {
         state.lifeTime = 0;
@@ -1765,12 +2050,19 @@ const act = {
     }
 
     const plan = GuRules.effectPlan(gu.battleEffect, {
+      guId: gu.id,
       school: gu.school,
       supports: b.turnSupports,
       swordIntent: b.swordIntent,
       statusStacks: target.statuses || {},
     });
+    if (consumedLeaf) {
+      plan.heal = 0;
+      b.log.push(`<b>${gu.name}</b> · 气血 +${consumedLeaf.healed} · 叶片消耗1；本节点不再有效疗伤`);
+      BattleFx.heal(consumedLeaf.healed);
+    }
     applyEffectPlan(b, target, plan, gu.name);
+    if (plan.damage > 0 && b.turnSupports.guTargets) delete b.turnSupports.guTargets[gu.id];
 
     if (target.hp <= 0) {
       b.log.push(`<b>${target.name}</b> 伏诛`);
@@ -1778,6 +2070,11 @@ const act = {
       if (next) b.targetId = next.id;
     }
 
+    if (b.over === '败' || state.blood <= 0) {
+      b.over = '败';
+      openBattleOutcome();
+      return;
+    }
     if (!aliveEnemies(b).length) {
       b.over = '胜';
       Sfx.win();
@@ -1800,7 +2097,7 @@ const act = {
       state.lastGainInsight = GuRules.gainInsight(offer.gu_id, {
         owned: state.owned,
         recipes: GuRules.liveRecipes(DATA.recipes),
-        killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+        killMoves: DATA.killMovesEnabled ? currentKillMoves().filter(move => move.playable === true) : [],
         buildKits: GuRules.BUILD_KITS,
         guById: GU_BY_ID,
       });
@@ -1845,7 +2142,6 @@ const act = {
       return toast(reason, 'bad');
     }
 
-    const oldQiMax = state.qiMax;
     if (result.kind === 'small') {
       if (mode === 'sari') {
         if (!result.sariId || !result.canSari) return toast('没有当前转数同阶舍利蛊', 'bad');
@@ -1875,7 +2171,6 @@ const act = {
       }, `rank_${result.targetRank}_breakthrough`);
     }
     recomputeQiMax();
-    state.qi = Math.min(oldQiMax, state.qiMax);
     Sfx.success();
     toast(`突破成功 · ${RunFlow.stageLabel(state.cultivation, state.cultivationStage)}`, 'good');
     draw();
@@ -1911,7 +2206,7 @@ const act = {
     state.owned[guId] -= 1;
     state.stones += price;
     const invalid = [];
-    for (const move of DATA.killMoves) {
+    for (const move of currentKillMoves()) {
       if (!state.equipped.includes(move.id)) continue;
       const enough = GuRules.killMoveRecipeInstances(move, state.owned, {}, {}).every(Boolean);
       if (!enough) invalid.push(move);
@@ -1957,7 +2252,7 @@ const act = {
     const insight = GuRules.gainInsight(guId, {
       owned: state.owned,
       recipes: GuRules.liveRecipes(DATA.recipes),
-      killMoves: DATA.killMovesEnabled ? DATA.killMoves : [],
+      killMoves: DATA.killMovesEnabled ? currentKillMoves().filter(move => move.playable === true) : [],
       buildKits: GuRules.BUILD_KITS,
       guById: GU_BY_ID,
     });
@@ -1980,11 +2275,16 @@ const act = {
     act.openPrep();
   },
 
-  continueReward() {
+  continueReward(discardGu = false) {
     if (!assertRunMutable()) return;
     const reward = state.reward;
     if (!reward) return showPage('map');
-    if ((reward.guChoices || []).length) return toast('请先选择一只蛊虫', 'bad');
+    if ((reward.guChoices || []).length && !discardGu) return toast('选择一只蛊虫，或明确放弃本次蛊虫', 'bad');
+    if (discardGu && (reward.guChoices || []).length) {
+      recordEvent('battle_loot', { owned: { ...state.owned }, stones: state.stones }, 'loot_gu_declined');
+      state.journal.unshift('放弃本次蛊虫 · 已到账资源保留');
+      Sfx.click();
+    }
     state.reward = null;
     act.openPrep();
   },

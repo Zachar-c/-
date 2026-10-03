@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "骨枪蛊",
+  "route": "/gu/bone-def-3-01-gu",
+  "file": "bone-spear-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/bone-def-3-01-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0223｜第二十三节：白骨传承（上）",
+    "line": 19456,
+    "excerpt": "大小如常人食指，通体皆白。一头圆润，一头尖锐，如微型长枪。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Generate a BRAND NEW 《问真》 Gu collectible portrait card, exact 5:7. Supplied reference ONLY locks fine silver double-line rounded rectangular frame with restrained curled corners, no text, and physically credible fantasy realism. DO NOT COPY reference creature, papery white body, stone floor, background or composition. One distinct subject, fully within card, occupying about 55-65% width; whole four-sided frame visible. Real textures, physical soft sidelight, spatial depth; subdued dreamlike presence. No titles, lettering, numbers, rank badges, watermark, people, hands, UI, excessive glitter, magic circles or gratuitous jewellery. Subject: ONE miniature SPEAR-shaped white Gu, index-finger scale canonical, one straight continuous slender ivory-white shaft, softly rounded at one end and smoothly tapering to a sharp spear point at the other. It is a plain tiny bone-like living object, NOT an insect, weapon carried by character, iron arrow with feathers, lance with fittings or ornate spearhead. No spiral incised grooves (those belong to another Gu). Bone's softly matte organic density, minute pores, thin edge transmission, natural light white/cream tonal depth, unpolished and unadorned. Composition: diagonally suspended just beneath still milky-white spring water; pale milk surface opens into darker grey depth around edges, subject remains fully visible and clear, one rounded end lower left, sharp tip upper right. Background softly out of focus milk pool, no container lip or busy scene. Gentle oblique side light reveals relief of thin rounded shaft, subtle displacement of milk liquid nearby; shape must remain the only dominant focal point. Do not make it a segmented worm, tusk arc, fish skeleton or ribcage. A single beautifully observed plain micro-spear in a quiet pale fluid environment, not a mass-market fantasy weapon.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "单一细长白色骨质微枪，一端圆一端尖，无装饰或硬肢",
+      "乳白液体衬托体积与悬浮关系，完整银框"
+    ],
+    "risks": [
+      "骨面纹理比原文光滑程度更丰富，属于设计",
+      "液体流动与气泡为环境表达，不能声称原著固定外貌"
+    ]
+  }
+}

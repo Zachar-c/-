@@ -7,7 +7,7 @@ description: 酒虫晋升线 B 线的中间形态：酒虫可依家族秘方合�
 date: 2026-09-28
 tags: [gu, wine-insect-line, essence-refine, wolf-tide, thin-evidence]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

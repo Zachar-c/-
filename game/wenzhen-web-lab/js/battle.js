@@ -100,12 +100,13 @@ function bindBattleEvents(root, encounter) {
   root.dataset.bound = '1';
   root.addEventListener('click', (ev) => {
     const t = ev.target.closest(
-      '[data-target],[data-use],[data-use-gu],[data-basic-attack],[data-observe],'
+      '[data-target],[data-use],[data-use-gu],[data-stop-gu],[data-basic-attack],[data-observe],'
       + '[data-exhaust],[data-end-turn],[data-escape],[data-start-encounter],[data-foe]',
     );
     if (!t || !root.contains(t) || t.disabled) return;
     if (t.dataset.target) act.setTarget(t.dataset.target);
     else if (t.dataset.use) act.useMove(t.dataset.use);
+    else if (t.dataset.stopGu) act.stopGu(t.dataset.stopGu);
     else if (t.dataset.useGu) act.useGu(t.dataset.useGu);
     else if (t.dataset.basicAttack) act.basicAttack();
     else if (t.dataset.observe) act.observe();
@@ -162,15 +163,15 @@ function renderBattle(root) {
             ${(typeof MOONLIGHT_POC !== 'undefined' ? MOONLIGHT_POC.battleIcon(g.id) : '')}
             <div class="ml">${g.name}</div>
             <div class="me">${effectText(g.battleEffect)}</div>
-            <div class="mc">${g.rank} 转 · ${schoolLabel(g.school)} · 真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}</div>
+            <div class="mc">${g.rank} 转 · ${schoolLabel(g.school)} · 真元 ${g.trueQiCost} · 操控 ${g.thoughtCost}</div>
           </div>`).join('')
         : '<div class="move"><div class="mr" style="font-size:13px">暂无已炼化战斗蛊。</div></div>'}</div>
       <h2 style="margin-top:28px">出战杀招</h2>
       <div class="moves">${state.equipped.length
         ? state.equipped.map((id) => {
-            const m = DATA.killMoves.find((x) => x.id === id);
+            const m = currentKillMoves().find((x) => x.id === id);
             const kmDirect = GuRules.killMoveIsDirectStrike(m, GU_BY_ID, {});
-            return `<div class="move ready"><div class="ml">${m.label}</div><div class="me">${killMoveEffectText(m, GU_BY_ID)}</div><div class="mc">${kmDirect ? '直接攻击' : '非直接'} · 真元 ${m.true_qi_cost} · 念头 ${m.thought_cost}</div></div>`;
+            return `<div class="move ready"><div class="ml">${m.label}</div><div class="me">${killMoveEffectText(m, GU_BY_ID)}</div><div class="mc">${kmDirect ? '直接攻击' : '非直接'} · 真元 ${m.true_qi_cost} · 操控 ${m.thought_cost}</div></div>`;
           }).join('')
         : '<div class="move"><div class="mr" style="font-size:13px">尚未记入杀招。先到「杀招」页组装。</div></div>'}</div>`;
     bindBattleEvents(root, encounter);
@@ -200,7 +201,13 @@ function renderBattle(root) {
     ? `<span class="chip live">阶段 ${view.phase.index + 1}/${view.phase.total} · 血线 ≤${Math.round(view.phase.until * 100)}%</span>`
     : '<span class="chip none">无阶段</span>';
 
-  const intentChip = target.enemyIntent
+  const humanStrike = target.human ? HumanRules.basicStrikePlan(target.human) : null;
+  const humanIntent = target.plannedAction?.kind === 'gu'
+    ? `催动 ${target.plannedAction.label}`
+    : humanStrike ? `拳脚 · 伤 ${target.pendingBasicAttack?.damage ?? humanStrike.damage}${humanStrike.delayTurns > 0 && !target.pendingBasicAttack ? ' · 石臂迟缓，下回合落下' : ''}` : '';
+  const intentChip = humanIntent
+    ? `<span class="chip live">${humanIntent}</span>`
+    : target.enemyIntent
     ? `<span class="chip live">${intentText(target.enemyIntent)}</span>`
     : '<span class="chip spent">冷却中 · 本回合不攻击</span>';
   // P5-B1 敌人持蛊化：展示装载蛊（伤害杀招按 PROJ-LAB-ENEMY-ATTACK-001 组件合成）；
@@ -235,13 +242,14 @@ function renderBattle(root) {
   const statusChips = `${flagChips}${marked ? `<span class="chip">刻痕 ${marked}</span>` : ''}${intentWeaken ? `<span class="chip">意弱 ${intentWeaken}</span>` : ''}`;
   const delayedChips = (b.delayedEffects || []).map((entry) =>
     `<span class="chip spent">${entry.label} · 第 ${entry.dueTurn} 回合</span>`).join('');
-  const basicOk = state.thought >= 1 && b.actionsUsed < b.actionLimit && !b.over;
+  const basicOk = b.actionsUsed < b.actionLimit && !b.over;
   const basicWhy = b.over ? '本场战斗已结束'
-    : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽'
-      : state.thought < 1 ? '念头不足' : '';
+    : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽' : '';
+  const observeWhy = basicWhy || (state.thought < 1 ? '操控不足' : '');
 
   const buttons = state.equipped.map((id) => {
-    const m = DATA.killMoves.find((x) => x.id === id);
+    const m = currentKillMoves().find((x) => x.id === id);
+    if (!m) return '';
     const recipeInstances = GuRules.killMoveRecipeInstances(
       m,
       state.owned,
@@ -259,10 +267,11 @@ function renderBattle(root) {
       turn: b.turn,
       statusStacks: target.statuses || {},
     });
-    const blockedReason = b.over ? '战斗已经结束'
+    const blockedReason = !DATA.killMovesEnabled || m.playable !== true ? '此杀招尚未开放'
+      : b.over ? '战斗已经结束'
       : recipeBlocked ? '杀招已用，或配方蛊本回合不可用'
         : state.qi < qiCost ? '真元不足'
-          : state.thought < thoughtCost ? '念头不足'
+          : state.thought < thoughtCost ? '操控不足'
             : b.actionsUsed >= b.actionLimit ? '本回合行动数已尽'
               : moveGate ? battleReasonLabel(moveGate) : '';
     const ok = !blockedReason
@@ -271,15 +280,20 @@ function renderBattle(root) {
     const risky = (GuRules.killMoveIsDirectStrike(m, GU_BY_ID, {}) && live.length) || Number(m.life_cost || 0) > 0;
     const title = blockedReason;
     const life = Number(m.life_cost || 0) > 0 ? `寿元${m.life_cost}` : '';
-    return `<button ${ok ? '' : 'disabled'} data-use="${m.id}" class="${risky ? 'risky' : ''}" title="${title || (life ? '寿元代价：归零将当场陨落' : '')}"><span class="action-title">${m.label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${qiCost} · 念头 ${thoughtCost}${life ? ` · ${life}` : ''}</span>${!ok ? `<small class="action-blocked">${title || '当前不可用'}</small>` : ''}</button>`;
+    return `<button ${ok ? '' : 'disabled'} data-use="${m.id}" class="${risky ? 'risky' : ''}" title="${title || (life ? '寿元代价：归零将当场陨落' : '')}"><span class="action-title">${m.label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${qiCost} · 操控 ${thoughtCost}${life ? ` · ${life}` : ''}</span>${!ok ? `<small class="action-blocked">${title || '当前不可用'}</small>` : ''}</button>`;
   }).join('');
   const guButtons = guRoster.map((g) => {
+    const active = b.playerHuman?.maintainedGu.find(item => item.instanceId === g.instanceId && item.active);
+    if (active) return `<button ${b.over ? 'disabled' : ''} data-stop-gu="${g.instanceId}"><span class="action-title">停止 ${g.name}</span><span class="cost">正在催动 · 停止不耗资源或行动</span><small>${effectText(g.battleEffect)}</small></button>`;
+    const sameGuard = g.battleEffect?.defense_group && b.playerHuman?.maintainedGu.some(item => item.active && item.defenseGroup === g.battleEffect.defense_group);
     const used = !!b.guUsedThisTurn[g.instanceId];
     const reason = GuRules.activationReason(g, {
       playerRank: state.cultivation,
       trueQi: state.qi,
       thought: state.thought,
       usedThisTurn: used,
+      healingLocked: state.leafRecoveryNodeId === state.journey.nodeId,
+      health: state.blood, healthMax: state.bloodMax,
       actionLimitReached: b.actionsUsed >= b.actionLimit,
     });
     const gate = GuRules.gateMissReason(g.battleEffect, {
@@ -289,13 +303,13 @@ function renderBattle(root) {
       turn: b.turn,
       statusStacks: target.statuses || {},
     });
-    const blocked = reason || gate || (b.over ? 'battle_over' : '');
+    const blocked = reason || gate || (sameGuard ? 'defense_group_active' : '') || (b.over ? 'battle_over' : '');
     const risky = (isDirectStrike({ effect: g.battleEffect }) && live.length) || Number(g.lifeCost || 0) > 0;
-    const label = g.count > 1 ? `${g.name} ${g.instanceIndex}/${g.count}` : g.name;
+    const label = g.effect?.consumable ? `${g.name} · 库存 ${g.count}` : g.count > 1 ? `${g.name} ${g.instanceIndex}/${g.count}` : g.name;
     const life = Number(g.lifeCost || 0) > 0 ? `寿元${g.lifeCost}` : '';
     const blockedLabel = battleReasonLabel(blocked);
     const pocIcon = typeof MOONLIGHT_POC !== 'undefined' ? MOONLIGHT_POC.battleIcon(g.id) : '';
-    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${blockedLabel || (life ? '寿元代价：归零将当场陨落' : '')}">${pocIcon}<span class="action-title">${label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${g.trueQiCost} · 念头 ${g.thoughtCost}${life ? ` · ${life}` : ''}</span>${blocked ? `<small class="action-blocked">${blockedLabel || '当前不可用'}</small>` : ''}</button>`;
+    return `<button ${blocked ? 'disabled' : ''} data-use-gu="${g.instanceId}" class="${risky ? 'risky' : ''}" title="${blockedLabel || (life ? '寿元代价：归零将当场陨落' : '')}">${pocIcon}<span class="action-title">${label}${risky ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">真元 ${g.trueQiCost} · 操控 ${g.thoughtCost}${life ? ` · ${life}` : ''}</span><small>${effectText(g.battleEffect)}</small>${b.turnSupports.guTargets?.[g.id] ? '<small>定向增幅已就绪</small>' : ''}${blocked ? `<small class="action-blocked">${blockedLabel || '当前不可用'}</small>` : ''}</button>`;
   }).join('');
 
   root.innerHTML = `
@@ -345,12 +359,13 @@ function renderBattle(root) {
           <div><div class="kicker">出手时机</div><h3>选择本回合行动</h3></div>
           <div class="pick-remaining"><b>${Math.max(0, b.actionLimit - b.actionsUsed)}</b><span>行动余量</span></div>
         </div>
+        <p class="muted" data-control-budget>本回合操控余量 ${state.thought}/${state.thoughtMax} · 下回合重新可用${b.playerHuman && HumanRules.controlCapacity(b.playerHuman) < state.thoughtMax ? ` · 持续灌元占用 ${state.thoughtMax - HumanRules.controlCapacity(b.playerHuman)}` : ''}</p>
         ${live.length ? `<div class="forewarn">⚠ 对当前目标直接攻击会被「${live.map((r) => r.label).join('、')}」吞掉（反击预警）</div>` : ''}
         <section class="pick-group">
           <div class="pick-group-title">基础行动</div>
           <div class="pick-actions pick-basics">
-            <button ${basicOk ? '' : 'disabled'} data-basic-attack="1" class="${live.length ? 'risky' : basicOk ? 'primary' : ''}" title="${basicWhy}"><span class="action-title">拳脚攻击${live.length ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">念头 1</span>${basicWhy ? `<small class="action-blocked">${basicWhy}</small>` : ''}</button>
-            ${!target.revealed && !b.over ? `<button ${basicOk ? '' : 'disabled'} data-observe="1" title="${basicWhy}"><span class="action-title">观察敌手</span><span class="cost">念头 1 · 消耗本回合行动</span>${basicWhy ? `<small class="action-blocked">${basicWhy}</small>` : ''}</button>` : ''}
+            <button ${basicOk ? '' : 'disabled'} data-basic-attack="1" class="${live.length ? 'risky' : basicOk ? 'primary' : ''}" title="${basicWhy}"><span class="action-title">拳脚攻击${live.length ? ' <span class="warnmark" aria-label="高风险">⚠</span>' : ''}</span><span class="cost">力量 ${b.playerHuman ? HumanRules.attribute(b.playerHuman, 'attack') : HumanRules.BASELINE.attack} · 不耗真元或操控${b.playerHuman && HumanRules.basicStrikePlan(b.playerHuman).delayTurns > 0 ? ' · 石臂迟缓，敌人先行动' : ''}</span>${basicWhy ? `<small class="action-blocked">${basicWhy}</small>` : ''}</button>
+            ${!target.revealed && !b.over ? `<button ${observeWhy ? 'disabled' : ''} data-observe="1" title="${observeWhy}"><span class="action-title">观察敌手</span><span class="cost">操控 1 · 消耗本回合行动</span>${observeWhy ? `<small class="action-blocked">${observeWhy}</small>` : ''}</button>` : ''}
         ${(() => {
           const roster = currentCombatRoster(b.guUsedThisTurn, b.guSealed);
           const damageGu = roster.filter((g) => g.battleEffect?.kind === 'strike' || Number(g.battleEffect?.amount || 0) > 0);
@@ -359,8 +374,8 @@ function renderBattle(root) {
           const exhaustWhy = b.exhaustUsedThisTurn ? '本回合已逆息'
             : b.exhaustCooldown > 0 ? `逆息冷却 ${b.exhaustCooldown} 回合`
             : !qiLocked ? '未陷入真元枯竭'
-            : state.thought < 1 ? '念头不足' : '';
-          return `<button ${exhaustOk ? '' : 'disabled'} data-exhaust="1" title="${exhaustWhy}"><span class="action-title">逆息</span><span class="cost">念头 1 · 气血 −2 · 真元 +3</span>${exhaustWhy ? `<small class="action-blocked">${exhaustWhy}</small>` : ''}</button>`;
+            : state.thought < 1 ? '操控不足' : '';
+          return `<button ${exhaustOk ? '' : 'disabled'} data-exhaust="1" title="${exhaustWhy}"><span class="action-title">逆息</span><span class="cost">操控 1 · 气血 −2 · 真元 +3</span>${exhaustWhy ? `<small class="action-blocked">${exhaustWhy}</small>` : ''}</button>`;
         })()}
           </div>
         </section>

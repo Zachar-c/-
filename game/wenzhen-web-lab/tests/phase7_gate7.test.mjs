@@ -21,6 +21,25 @@ const rules = ctx.GuRules;
 const recipes = rules.liveRecipes(data.recipes);
 const offers = rules.liveShopOffers(data.shopOffers);
 
+function previewContext(overrides = {}) {
+  const context = vm.createContext({ DATA: data, GuRules: rules });
+  vm.runInContext(fs.readFileSync(new URL('../js/run_flow.js', import.meta.url), 'utf8'), context);
+  context.currentKillMoves = () => data.killMoves;
+  context.GU_BY_ID = Object.fromEntries(data.gu.map((gu) => [gu.id, gu]));
+  context.guById = (id) => context.GU_BY_ID[id] || null;
+  context.state = {
+    owned: {}, cultivation: 1, cultivationStage: 0, aptitude: 'bing', stones: 0,
+    modifierLedger: [], ...overrides,
+  };
+  context.schoolLabel = (school) => school;
+  const source = fs.readFileSync(new URL('../js/journey.js', import.meta.url), 'utf8');
+  const start = source.indexOf('function guChoicePreview(');
+  const end = source.indexOf('\nfunction shopOfferCard(', start);
+  assert.ok(start >= 0 && end > start, 'guChoicePreview source block exists');
+  vm.runInContext(`${source.slice(start, end)}; globalThis.preview = guChoicePreview;`, context);
+  return context;
+}
+
 test('Gate 7 · income unit I equals common fight revenue; costs are in fights of I', () => {
   const I = shop.incomeUnit(data.battle.stoneRewards, 'common', 1);
   assert.equal(I, 3);
@@ -85,4 +104,45 @@ test('Gate 7 · no risk-free net-asset loop (buy > sell)', () => {
     const sell = Math.floor(buy * 0.5);
     assert.ok(buy > sell, `${o.id} buy ${buy} must exceed sell ${sell}`);
   }
+});
+
+test('Gate 7 · purchase preview compares post-buy stones with the complete moon-glow recipe', () => {
+  const make = (stones, remaining) => {
+    const context = previewContext({ stones, owned: { moonlight_gu: 1, small_light_gu: 1 } });
+    const before = JSON.stringify(context.state);
+    const html = context.preview('small_light_gu', 6);
+    assert.equal(JSON.stringify(context.state), before, 'preview leaves state unchanged');
+    assert.match(html, new RegExp(`购后元石\\s*${remaining}`));
+    assert.match(html, /突破[^<]*(元石|资金)[^<]*(可付|足|能付)/);
+    return html;
+  };
+  const enough = make(16, 10);
+  assert.match(enough, /月芒蛊：组件齐备/);
+  assert.match(enough, /已备配方[^<]*月芒[^<]*可付 10 元石/);
+  const poor = make(15, 9);
+  assert.match(poor, /月芒蛊：组件齐备/);
+  assert.match(poor, /已备配方[^<]*月芒[^<]*资金还差 1/);
+});
+
+test('Gate 7 · reward preview without a purchase cost omits post-buy budget', () => {
+  const context = previewContext({ stones: 16, owned: { moonlight_gu: 1, small_light_gu: 1 } });
+  const html = context.preview('small_light_gu');
+  assert.doesNotMatch(html, /购后元石/);
+});
+
+test('Gate 7 · post-buy breakthrough preview respects sari, aptitude, and max-rank gates', () => {
+  const sari = previewContext({ stones: 6, owned: { gold_atk_2_12_gu: 1 } });
+  const sariHtml = sari.preview('small_light_gu', 6);
+  assert.match(sariHtml, /元石还差 2/);
+  assert.match(sariHtml, /已持有的同阶舍利/);
+  assert.doesNotMatch(sariHtml, /可突破|突破成功/);
+
+  const aptitude = previewContext({
+    stones: 30, cultivation: 1, cultivationStage: 3, aptitude: 'ding',
+  });
+  assert.match(aptitude.preview('small_light_gu', 6), /资质[^<]*(不足|未达|需要|需)/);
+  assert.doesNotMatch(aptitude.preview('small_light_gu', 6), /仍可突破/);
+
+  const maxed = previewContext({ stones: 30, cultivation: 5, cultivationStage: 3, aptitude: 'jia' });
+  assert.match(maxed.preview('small_light_gu', 6), /巅峰|max|上限/i);
 });

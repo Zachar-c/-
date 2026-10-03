@@ -7,7 +7,7 @@ description: 养蛊-炼蛊-用蛊三事的饲养消耗、炼化规则与组合�
 date: 2026-10-01
 tags: [world, gu-care, refinement]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-CARE-001"
   - "canon-index:CAN-GU-SYNERGY-001"
   - "canon-index:CAN-GU-SYNERGY-002"

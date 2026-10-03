@@ -7,7 +7,7 @@ description: 白骨传承的基础之蛊，原文明文「此蛊虽是一转」�
 date: 2026-09-28
 tags: [gu, bone-path, mass-produced, lineage-basic, nurture-cost]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

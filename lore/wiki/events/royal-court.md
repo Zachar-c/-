@@ -8,7 +8,7 @@ date: 2026-09-30
 tags: [event, royal-court, north-plain, wolf-king]
 sources:
   - "source:source/蛊真人-epub-canon.txt"
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "notes:game/分支：六卷精编版/读书笔记/B-45001-90000.md"
   - "notes:game/分支：六卷精编版/读书笔记/C-90001-135000.md"
   - "notes:game/分支：六卷精编版/读书笔记/00-覆盖总览与勘误.md"

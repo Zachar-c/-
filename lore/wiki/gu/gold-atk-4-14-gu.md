@@ -7,7 +7,7 @@ description: 四转舍利蛊：只对四转蛊师有效，直接提升四转一�
 date: 2026-09-28
 tags: [gu, human-path, consumable, rank4, restricted, aperture-boost, material]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

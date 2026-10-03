@@ -7,7 +7,7 @@ description: 一转护防系列（兽皮—铁皮—铜皮—石皮—玉皮）�
 date: 2026-09-28
 tags: [gu, defense, rank1, armor-skin-series, stone-shell, speed-cost]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-STONESHELL-001"
 schema: 2
 ---

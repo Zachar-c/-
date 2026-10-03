@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "至尊仙胎蛊",
+  "route": "/gu/supreme-immortal-fetus-gu",
+  "file": "supreme-immortal-fetus-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/supreme-immortal-fetus-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1028｜第三百七十三节还不归来？",
+    "line": 93750,
+    "excerpt": "在这漆黑如墨的圆球之中，一个胎盘外散绚烂的华彩，若隐若现。"
+  },
+  "design_boundary": "仅选催动转化的黑球/元胎酝酿瞬间，不代表未催动稳定种属。画非人形抽象生命胎膜，不能当方源新身体身份图。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE INK-BLACK SPHERE Gu in specific activation transition stage, basin-sized canon, containing an indistinct nascent PLACENTAL membrane giving off subdued multicolored iridescent light. Sphere is round black mass, opaque smoky ink-black thin edge, partial dim transparency only enough to glimpse an organic small folded pearly living membrane at center, NOT a visible human fetus, infant or person. Show quiet latent biological genesis rather than face, limbs, embryo portrait, gore or anatomical illustration. Tiny interior folds flicker with restrained green/amber/rose spectral highlights, nascent life indistinct and enclosed; black ball remains dominant. Entire sphere floating against cool dark soft empty grey air, minimal thin white vapor gathering near exterior, no full elaborate activation sequence, no branches/leaves/fruits, lightning cage, flames or ranks UI. Very low indirect physical light on black curved skin, subtle interior light physically filtered by shell rather than gold aura, faint shadow below against soft grey ground far away. No decorative orb stand, jewel facets, eye, mouth, stars, galaxy, yin-yang, geometric runes or fantasy throne. Clear solitary black spherical presence, mysterious believable impossible life container, border unchanged. Strictly no humans or humanoid figure.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用作明确标注的催动黑球阶段卡面，非未催动固定标准外形",
+    "visible_facts": [
+      "单一漆黑圆球，内有若隐若现的彩色胎膜般生命折层",
+      "白雾围球，无人形婴儿、角色、金饰符文或血腥"
+    ],
+    "risks": [
+      "球壳孔隙/内膜形态为设计，原文未锁这种具体壳纹",
+      "只截取变化过程之一，不能代表未催动本体或方源新身体"
+    ]
+  }
+}

@@ -7,7 +7,7 @@ description: 熊家寨标志蛊虫（与古月月光蛊、白家溪流蛊并列�
 date: 2026-09-28
 tags: [gu, force, bear-clan, signature-gu, rank-unstated, temp-burst]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-BEAR-001"
 schema: 2
 ---

@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "坚持仙蛊",
+  "route": "/gu/persistence-gu",
+  "file": "persistence-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/persistence-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_1301｜第二百六十六节：智劝雪胡老祖",
+    "line": 119893,
+    "excerpt": "它形如石碑，体积颇大，竟有巨鲸似的体积。底宽上窄，四四方方"
+  },
+  "design_boundary": "画原著巨鲸般石碑本体；黑铁色非确定铁材。海岸和波浪用于美术尺度参照，不声明原著出生地点为海岸。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE enormous WHALE-sized STONE STELE Gu, rectangular block, base WIDER than top, plain four-square geometric planes, crisp straight sharp edges, uniformly BLACK-IRON COLOR. A very heavy dark stone-like mass with subtle coarse dense mineral grain, weathering restrained, not made of polished iron metal. NO inscription, carving, rune, face, eyes, feet, arms, human-like statue, insect, miniature tablet, obelisk needle, door arch or gravestone symbols. It must read as huge solid tapered rectangular STELE with modest taper, flat top and grounded monumental volume. Slight low-angle three-quarter view, main stele about 65% card height, sits independently at bare low dark rocky coast; tiny wavelets and pebble band below make whale-scale mass credible. Sole plain block the focus, sea and distant cool fog lower contrast, no city/temple skyline or enormous background mountains. Gentle directional cloudy dawn light brushes one plane while broad black face remains deep; real heavy shadow and wet reflected ambient light, no magic light emanating from it. Mood implacable plain physical permanence, not massive decorative artifact. Border delicate and subordinate, quiet monumental asymmetry.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "巨型黑铁色方正石碑，底宽上窄、直边角、无字或人形",
+      "海岸碎石/波浪提供尺度关系，本体占主导"
+    ],
+    "risks": [
+      "海岸是美术背景，不代表原著生成环境或固有栖地",
+      "具体高度无法仅靠图测定，表达巨物量级而非精确米数"
+    ]
+  }
+}

@@ -1,0 +1,552 @@
+{
+  "date": "2026-10-02",
+  "status": "reliable_generation_complete_with_explicit_deferrals",
+  "authorization": "用户认可当前质量并授权持续交付至可靠缺图对象全部完成。不逐张等待批准。",
+  "format": "5:7 portrait / thin silver rounded double-line frame / no text",
+  "generation_tool": "built-in image_gen",
+  "integration_allowed": false,
+  "source_audit": "missing-art-audit.json",
+  "items": [
+    {
+      "name": "态度蛊",
+      "route": "/gu/attitude-gu",
+      "status": "existing_source_reviewed_no_regeneration",
+      "record": null,
+      "existing_sources": [
+        "game/wenzhen-web/assets/gu/attitude_gu/source/attitude_gu_card_01.png"
+      ],
+      "existing_source_review": {
+        "viewed": true,
+        "verdict": "只作面具形局部参考；不可作为当前主参考",
+        "visible_facts": "金色拟人面具、尖角、裂纹和红色眼孔，背后人影伸手",
+        "risk": "固定妖邪/恐怖情绪，金饰过强，与中性可投射面具原则不符"
+      }
+    },
+    {
+      "name": "血本仙蛊",
+      "route": "/gu/blood-atk-5-12-gu",
+      "status": "internally_reviewed_usable",
+      "record": "blood-asset-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "浑圆如珠；鹅蛋大小；珠面氤氲光纹持续变化；像万莲盛开或流云翻涌"
+    },
+    {
+      "name": "骨蛊",
+      "route": "/gu/bone-atk-1-08-gu",
+      "status": "defer_identity_conflict",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "复查全篇41条含‘骨蛊’精确文本命中；多数是玉骨蛊、铁骨蛊、白骨蛊等复合名。wiki所指白骨山野生骨系蛊泛称只在19189附近出现，未提供该泛称个体的外貌；保持身份冲突并不从复合词借形。"
+    },
+    {
+      "name": "骨枪蛊",
+      "route": "/gu/bone-def-3-01-gu",
+      "status": "internally_reviewed_usable",
+      "record": "bone-spear-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "微型长枪形；约常人食指大小；通体白色；一端圆润、一端尖锐"
+    },
+    {
+      "name": "玉骨蛊",
+      "route": "/gu/bone-def-3-05-gu",
+      "status": "internally_reviewed_usable",
+      "record": "jade-bone-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "骨状单体；两端圆润、中间修长；通体泛绿，如碧光玉石；本体大小未明"
+    },
+    {
+      "name": "关门蛊",
+      "route": "/gu/close-door-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "复核全篇两种名称命中及近邻上下文；涉及开闭传承空间、光门及催动用途，未检出蛊虫本体的物种、形状、颜色或尺寸。"
+    },
+    {
+      "name": "神游蛊",
+      "route": "/gu/divine-travel-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "逐条检查108条命中及邻近描写。神游蛊能对话、在心田孕育、醉酒后挪移，后结茧并转化为定仙游蛊；原文没有将转化前本体写成六足甲虫，也未给其脚数、甲壳、颜色或尺寸。34319的绿色蝴蝶明确是转化完成后的定仙游蛊，不能倒推神游蛊原形。"
+    },
+    {
+      "name": "梦蝶仙蛊",
+      "route": "/gu/dream-atk-5-02-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查全篇27条命中及邻近段落；均描述梦境侦查、信息范围／局限、催动或升炼，没有蝶形、翅膀、种属、颜色、尺寸等本体描写。名称中的‘蝶’不作为形态证据。"
+    },
+    {
+      "name": "地藏花蛊",
+      "route": "/gu/earth-atk-5-03-gu",
+      "status": "internally_reviewed_usable",
+      "record": "earth-treasury-flower-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "暗金色花苞；埋入地面两寸；寻常石磨大小；花苞表面细腻如绸；形似荷花与卷心菜结合；层层紧贴的厚花瓣，厚而滑润"
+    },
+    {
+      "name": "宿命蛊",
+      "route": "/gu/fate-gu",
+      "status": "existing_source_reviewed_no_regeneration",
+      "record": null,
+      "existing_sources": [
+        "game/wenzhen-web/assets/gu/fate_gu/source/fate_gu_card_01.png"
+      ],
+      "existing_source_review": {
+        "viewed": true,
+        "verdict": "只作小蜘蛛与尺度关系局部参考",
+        "visible_facts": "中央小黑蜘蛛悬在巨大金饰黑白塔器内，宫殿背景",
+        "risk": "巨器/金饰吞没主体；蜘蛛本体黑白与受损阶段伤口未明确"
+      }
+    },
+    {
+      "name": "定仙游蛊",
+      "route": "/gu/fixed-immortal-travel-gu",
+      "status": "internally_reviewed_usable",
+      "record": "fixed-immortal-travel-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "自由飞舞时：绿光莹莹、翩翩飞舞、形如翠玉蝴蝶；封印／储藏阶段：透明圆珠，拳头大小；圆珠大小不等于自由状态蝶体尺寸"
+    },
+    {
+      "name": "斤力蛊",
+      "route": "/gu/force-atk-1-05-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查全篇9条精确命中及近邻上下文；提及增力效果、价格、组合与蛊方，无本体物种、形状、色彩、尺寸描写。"
+    },
+    {
+      "name": "天蓬蛊",
+      "route": "/gu/force-atk-3-29-gu",
+      "status": "internally_reviewed_usable",
+      "record": "heavenly-canopy-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查全篇76条命中及近邻外形语境；13101-02直接写大瓢虫、乳白半圆甲壳黑斑、成人拳头大，13421再次确认白壳黑斑瓢虫飞舞。其他近邻多为白光虚甲等护体效果，不误作本体。"
+    },
+    {
+      "name": "直撞蛊",
+      "route": "/gu/force-atk-4-26-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查全篇57条精确命中及邻近动作描写；描述直线冲锋、距离、冷却和撞击效果，均是使用者／移动功能，不是蛊虫本体外形；无颜色尺寸与物种锚点。"
+    },
+    {
+      "name": "横冲蛊",
+      "route": "/gu/force-atk-4-27-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查全篇22条精确命中及近邻动作语境；横向冲锋、与直撞蛊合炼及使用场面描述的是移动效果，未给本体形状、物种、颜色或大小。"
+    },
+    {
+      "name": "我力仙蛊",
+      "route": "/gu/force-atk-5-20-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查所有全名命中及相邻叙述，内容涉及归属、交易、催动、杀招核心与蛊方构想；未找到本体物种、形状、颜色、大小或器官描写。手持／交付场景只说明位置，不形成外形锚点。"
+    },
+    {
+      "name": "飞熊之力蛊",
+      "route": "/gu/force-mov-5-21-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查两种名称全篇16条命中及近邻外形／使用上下文。54606附近只确认六转力道仙蛊及可释放飞熊虚影／力量；虚影是攻击效果，不是蛊虫本体为熊。没有本体形状、颜色、尺寸描述。"
+    },
+    {
+      "name": "黄金舍利蛊",
+      "route": "/gu/gold-atk-4-14-gu",
+      "status": "internally_reviewed_usable",
+      "record": "golden-relic-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查全篇34条命中及相邻文本；33185-87明确本体圆珠、金黄、拇指大小及金属光辉。其余命中主要为阶序、价格与流通，没有不同外形。"
+    },
+    {
+      "name": "古铜皮蛊",
+      "route": "/gu/gold-def-3-09-gu",
+      "status": "internally_reviewed_usable",
+      "record": "ancient-bronze-skin-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "复查全篇8条精确命中及上下文；32823-24是唯一具体本体描述，后续古铜皮多指蛊师皮肤／防御效果，无本体尺寸。"
+    },
+    {
+      "name": "胆识蛊",
+      "route": "/gu/guts-gu",
+      "status": "existing_source_reviewed_no_regeneration",
+      "record": null,
+      "existing_sources": [
+        "game/wenzhen-web/assets/gu/guts_gu/source/guts_gu_card_01.png"
+      ],
+      "existing_source_review": {
+        "viewed": true,
+        "verdict": "不可用作蛊虫本体图；仅场景气氛参考",
+        "visible_facts": "粉紫晶峰与花海占全图，低处若干光点",
+        "risk": "主体是荡魂山式场景，无法读出专属胆识蛊身体"
+      }
+    },
+    {
+      "name": "命运蛊",
+      "route": "/gu/heaven-atk-5-02-gu",
+      "status": "defer_identity_conflict",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "复查全篇29条命中及邻近上下文；本体身份仅作为宿命蛊与运道仙蛊合炼的目标被提及，未见命运蛊完成后形态。天庭叙述中的宿命蛊不能直接等同命运蛊，保留身份冲突与未知外形。"
+    },
+    {
+      "name": "天妒仙蛊",
+      "route": "/gu/heaven-atk-5-03-gu",
+      "status": "internally_reviewed_usable",
+      "record": "heavenly-envy-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "复查全篇两种称呼及邻近段落。chapter_2160明确给出水晶跳蚤形、拳头大小和蜷缩／舒展状态；197557附近的灰烟及198890光辉是催动表现，不单独当作稳定本体颜色。"
+    },
+    {
+      "name": "天机蛊",
+      "route": "/gu/heaven-atk-5-06-gu",
+      "status": "internally_reviewed_usable",
+      "record": "heavenly-secret-gu-card-v2.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "复查两种全名的全部命中与邻近上下文。chapter_1494炼成描写给出完整本体外形；chapter_1495再次写其摇摆七对羽翼、悠然漂浮，与前述形态相符。瓢虫假设不符原文。"
+    },
+    {
+      "name": "寿蛊",
+      "route": "/gu/heaven-atk-5-07-gu",
+      "status": "approved_by_user",
+      "record": "lifespan-gu-300-year-card-v1.json",
+      "existing_sources": []
+    },
+    {
+      "name": "自己蛊",
+      "route": "/gu/human-atk-1-01-gu",
+      "status": "internally_reviewed_usable",
+      "record": "self-miniature-form-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "逐条检查全篇106处命中及邻近外形叙述；chapter_0647第60036-38行明确本体像缩小千万倍的人祖、蚂蚁大小。后续命中未见与该描述冲突的另一稳定形态；其他拟人对话和飞行不补造物种。",
+      "format_note": "源图1059×1485，近5:7约0.16%误差；接入时精确规格化，不自动改像素"
+    },
+    {
+      "name": "爱情蛊",
+      "route": "/gu/human-atk-5-02-gu",
+      "status": "internally_reviewed_usable",
+      "record": "love-grey-pebble-view-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检索全篇两种文本写法共102行并检查近邻描写。关键的同一场景见chapter_1243第114730、114744-47行：赵怜云与太上大长老所见不同，长老还转述清水、桃花等历代观察者形象。明确特定阶段是获认可后寄于赵怜云肩头，但不能断言唯一客观外形或某一固定阶段体。其它命中多为认可、能力、持有和战斗作用。"
+    },
+    {
+      "name": "海誓蛊",
+      "route": "/gu/human-atk-5-31-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-a.json",
+      "evidence_note": "检查全篇10条命中及邻近上下文，未找到海誓蛊本体的形状、物种、颜色或大小。容易误并的兜虫外形在61196行；紧随其后的61197行明确说该蛊与海誓蛊齐名，且上下文明示所唤出的是黎山仙子的山盟仙蛊，因此兜虫外形属于山盟蛊，不能移给海誓蛊。其余命中是盟誓机制、叙事提及或同类列举。"
+    },
+    {
+      "name": "悔蛊",
+      "route": "/gu/human-atk-5-34-gu",
+      "status": "approved_by_user",
+      "record": "regret-gu-card-v3-edit.json",
+      "existing_sources": []
+    },
+    {
+      "name": "山盟蛊",
+      "route": "/gu/human-def-1-32-gu",
+      "status": "internally_reviewed_usable",
+      "record": "mountain-pledge-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "逐条查看名称命中及相邻行；61196为本体直接外形锚点。"
+    },
+    {
+      "name": "江山如故",
+      "route": "/gu/landscape-as-before-gu",
+      "status": "approved_by_user",
+      "record": "landscape-as-before-gu-card-v1.json",
+      "existing_sources": []
+    },
+    {
+      "name": "月旋蛊",
+      "route": "/gu/light-atk-1-01-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "四处命中及相邻行已全检；均指配方、催动印记/月刃或持有状态，未见蛊体外形。"
+    },
+    {
+      "name": "邀月蛊",
+      "route": "/gu/light-atk-3-02-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "两处命中及相邻行已全检；13912描述催动后漩涡状紫色月光，不是蛊体。"
+    },
+    {
+      "name": "星念蛊",
+      "route": "/gu/light-rec-5-12-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "凡蛊阶段命中全检：chapter_0506 line 46387–46400描写蛊凝结出的念头及其星光/尺度；chapter_0819 line 74275的灰白蝌蚪明确是净魂仙蛊，不归星念。仙蛊阶段命中全检：chapter_0822 line 74530–74540只述仙蛊方、产出星念数量及效果，未述本体。"
+    },
+    {
+      "name": "招灾蛊",
+      "route": "/gu/luck-atk-1-03-gu",
+      "status": "internally_reviewed_usable",
+      "record": "disaster-beckoning-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原著外形明文，可优先生图。"
+    },
+    {
+      "name": "鸿运齐天蛊",
+      "route": "/gu/luck-atk-5-01-gu",
+      "status": "internally_reviewed_usable",
+      "record": "fortune-rivaling-heaven-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "明确非实体昆虫，可按无形气运对象表现；本体无固定颜色/尺寸。可生图但必须避免虫体化。"
+    },
+    {
+      "name": "狗屎运蛊",
+      "route": "/gu/luck-atk-5-04-gu",
+      "status": "internally_reviewed_usable",
+      "record": "dog-shit-luck-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "外形硬锚明确，优先生图；与鸿运齐天蛊为不同实体，不能混同。"
+    },
+    {
+      "name": "排难蛊",
+      "route": "/gu/luck-atk-5-05-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇 24 处名称命中及相邻行已核；排难之光/光柱是效果或杀招表现，未见本体外形。"
+    },
+    {
+      "name": "人如故",
+      "route": "/gu/man-as-before-gu",
+      "status": "internally_reviewed_usable",
+      "record": "man-as-before-six-rank-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇命中已逐项复核；外形主证据为chapter_0612、chapter_1625的蝴蝶描述及chapter_1700七转形态变化。原著明确对象为人如故蛊，身份冲突解除。"
+    },
+    {
+      "name": "万我仙蛊",
+      "route": "/gu/myriads-self-immortal-gu",
+      "status": "internally_reviewed_usable",
+      "record": "myriad-self-gu-card-v2.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇 56 处命中及相邻行已核；chapter_1778 lines 162439/162442/162443炼制对象、形态描述和命名连续对应万我本体。"
+    },
+    {
+      "name": "开门蛊",
+      "route": "/gu/open-door-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇命中及相邻形态词核查；门/甬道均是功能结果，未发现本体形态。"
+    },
+    {
+      "name": "坚持仙蛊",
+      "route": "/gu/persistence-gu",
+      "status": "internally_reviewed_usable",
+      "record": "persistence-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原著外形明确，是石碑而非石碑巨人；优先生图。"
+    },
+    {
+      "name": "硬气蛊",
+      "route": "/gu/qi-atk-1-01-gu",
+      "status": "internally_reviewed_usable",
+      "record": "hard-qi-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原著外形明确，优先生图。"
+    },
+    {
+      "name": "九转升炼蛊",
+      "route": "/gu/refine-log-5-02-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇检索九转对象名及升炼蛊；chapter_2275 line 210687确认八转原型及来源，chapter_2281 line 211223只说九转与八转外貌差别不大。其余命中及相邻行均未给八转本体具体形状、颜色或尺寸。"
+    },
+    {
+      "name": "净魂仙蛊",
+      "route": "/gu/soul-atk-1-02-gu",
+      "status": "internally_reviewed_usable",
+      "record": "soul-cleanse-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原著外形明确，优先生图；需注明此锚对应悬浮状态。"
+    },
+    {
+      "name": "魂灯蛊",
+      "route": "/gu/soul-atk-5-01-gu",
+      "status": "internally_reviewed_usable",
+      "record": "soul-lantern-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇命中及相邻行已核；chapter_1358 line 125232明确称毁后碎片为瓢虫，并写出淡蓝烛光，仅支持所见形态/发光锚点。"
+    },
+    {
+      "name": "春秋蝉",
+      "route": "/gu/spring-autumn-cicada-gu",
+      "status": "existing_source_reviewed_no_regeneration",
+      "record": null,
+      "existing_sources": [
+        "game/wenzhen-web/assets/gu/spring_autumn_cicada/source/spring_autumn_cicada_card_01.png"
+      ],
+      "existing_source_review": {
+        "viewed": true,
+        "verdict": "只作蝉结构和时间空间气氛局部参考",
+        "visible_facts": "金棕蝉，四翼如枯叶残翅，螺旋纹遍布身体，金色河道背景",
+        "risk": "强装饰和巨大英雄化；未冻结为本轮新画风"
+      }
+    },
+    {
+      "name": "星门蛊",
+      "route": "/gu/star-gate-gu",
+      "status": "internally_reviewed_usable",
+      "record": "star-gate-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原著外形与颜色锚已逐行核对，明确为蓝宝石样蛊虫；催动后化为拱门是效果，不是蛊体。可生图，不补昆虫形状。"
+    },
+    {
+      "name": "至尊仙胎蛊",
+      "route": "/gu/supreme-immortal-fetus-gu",
+      "status": "internally_reviewed_usable",
+      "record": "supreme-immortal-fetus-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "这是炼蛊/使用时连续变化，不能把男婴当作未催动蛊体；本体图可据黑圆球阶段，结果图须标为重生阶段。"
+    },
+    {
+      "name": "飞剑蛊",
+      "route": "/gu/sword-atk-5-02-gu",
+      "status": "internally_reviewed_usable",
+      "record": "flying-sword-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原著外形明确，优先生图；不要与剑遁蛊（金针蜜蜂形）互换。"
+    },
+    {
+      "name": "蓝鸟冰棺蛊",
+      "route": "/gu/water-atk-3-07-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇 9 处命中及相邻行已核；line 11232/11720-11722明说的是催动后飞出的冰鸟，含北冥冰魄体增幅，属于效果形态而非蛊虫本体。"
+    },
+    {
+      "name": "浪迹天涯仙蛊",
+      "route": "/gu/water-rec-5-04-gu",
+      "status": "internally_reviewed_usable",
+      "record": "worldly-wave-trace-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原文描写本体为水母状、小如婴儿拳头，并包裹青提仙元；形态明确，优先生图。"
+    },
+    {
+      "name": "酒虫",
+      "route": "/gu/wine-insect-gu",
+      "status": "existing_source_reviewed_no_regeneration",
+      "record": null,
+      "existing_sources": [
+        "game/wenzhen-web/assets/gu/liquor_worm/source/liquor_worm_card_01.png"
+      ],
+      "existing_source_review": {
+        "viewed": true,
+        "verdict": "可用作圆白蚕体局部参考；本轮不重做",
+        "visible_facts": "乳白圆胖蚕体，湿润有珠光，水边花草暖光",
+        "risk": "萌化与花园气氛较强，不沿用到其它对象"
+      }
+    },
+    {
+      "name": "慧剑蛊",
+      "route": "/gu/wisdom-atk-5-05-gu",
+      "status": "internally_reviewed_usable",
+      "record": "wisdom-sword-gu-card-v1.json",
+      "existing_sources": []
+    },
+    {
+      "name": "智慧蛊",
+      "route": "/gu/wisdom-gu",
+      "status": "existing_source_reviewed_no_regeneration",
+      "record": null,
+      "existing_sources": [
+        "game/wenzhen-web/assets/gu/wisdom_gu/source/wisdom_gu_card_01.png"
+      ],
+      "existing_source_review": {
+        "viewed": true,
+        "verdict": "只作光晕/气氛参考，不可作蛊虫本体主图",
+        "visible_facts": "巨大黄金同心光球/几何法阵，中心过曝，无清楚翼体",
+        "risk": "五彩有翼活物不可辨，金色符号替代本体"
+      }
+    },
+    {
+      "name": "青藤蛊",
+      "route": "/gu/wood-atk-1-05-gu",
+      "status": "defer_unknown_shape",
+      "record": null,
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "全篇 7 处命中及相邻行已核；line 8228明示藤条是掌心催出的用蛊表现，其余命中描述增幅/持有/木行蛊虫，均非本体形态。"
+    },
+    {
+      "name": "年蛊",
+      "route": "/gu/year-gu",
+      "status": "internally_reviewed_usable",
+      "record": "year-gu-card-v1.json",
+      "existing_sources": [],
+      "evidence_audit": "evidence-audit-b.json",
+      "evidence_note": "原著外形、颜色、大小明确，优先生图。"
+    }
+  ],
+  "completion_scope": "当前92个Wiki蛊页面中无专名源图的50个条目：31份已保存卡面（本轮新对象28，先前验收3），19项缺本体外形/身份冲突明确暂缓。已有6项源图审查但未重做。不是全部Wiki已经接入图片。",
+  "counts": {
+    "existing_source_reviewed_no_regeneration": 6,
+    "internally_reviewed_usable": 28,
+    "defer_identity_conflict": 2,
+    "defer_unknown_shape": 17,
+    "approved_by_user": 3
+  }
+}

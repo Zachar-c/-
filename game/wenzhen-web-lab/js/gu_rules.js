@@ -26,16 +26,46 @@ globalThis.GuRules = (() => {
     };
   }
 
+  function produceGu(gu, context = {}) {
+    const cost = Number(gu?.trueQiCost || 0);
+    const output = gu?.effect?.output_gu_id;
+    let reason = '';
+    if (gu?.effect?.kind !== 'production' || !output) reason = 'not_production_gu';
+    else if (!(context.owned?.[gu.id] > 0)) reason = 'gu_unavailable';
+    else if (!canActivate(context.playerRank, gu.rank)) reason = 'insufficient_qi_quality';
+    else if (!context.visitId) reason = 'not_preparing';
+    else if (context.lastVisitId === context.visitId) reason = 'production_visit_used';
+    else if (Number(context.trueQi || 0) < cost) reason = 'insufficient_true_qi';
+    if (reason) return { ok: false, reason, cost };
+    const produced = Number(gu.effect.amount);
+    return { ok: true, cost, produced, trueQi: context.trueQi - cost,
+      owned: { ...context.owned, [output]: Number(context.owned[output] || 0) + produced } };
+  }
+
+  function consumeHealingGu(gu, context = {}) {
+    let reason = '';
+    if (!gu?.effect?.consumable || gu.effect.kind !== 'heal') reason = 'not_healing_consumable';
+    else if (!(context.owned?.[gu.id] > 0)) reason = 'gu_unavailable';
+    else if (context.healingLocked) reason = 'healing_recovery';
+    else if (context.health >= context.healthMax) reason = 'health_full';
+    if (reason) return { ok: false, reason };
+    const healed = Math.min(Number(gu.effect.amount), context.healthMax - context.health);
+    return { ok: true, healed, health: context.health + healed,
+      owned: { ...context.owned, [gu.id]: context.owned[gu.id] - 1 } };
+  }
+
   function activationReason(gu, player = {}) {
     if (!gu) return 'unknown_gu';
     if (gu.consumed) return 'gu_consumed';
     if (gu.sealed) return 'gu_sealed';
+    if (gu.effect?.consumable && player.healingLocked) return 'healing_recovery';
+    if (gu.effect?.consumable && player.health >= player.healthMax) return 'health_full';
     if (gu.usedThisTurn || player.usedThisTurn) return 'gu_used_this_turn';
     if (!canActivate(player.playerRank, gu.rank, gu.lowRankException)) {
       return 'insufficient_qi_quality';
     }
     if (player.actionLimitReached) return 'action_limit_reached';
-    if (Number(player.thought || 0) < Number(gu.thoughtCost || 1)) {
+    if (Number(player.thought || 0) < Number(gu.thoughtCost ?? 1)) {
       return 'insufficient_thought';
     }
     if (Number(player.trueQi || 0) < Number(gu.trueQiCost || 0)) {
@@ -51,7 +81,12 @@ globalThis.GuRules = (() => {
     for (const gu of guList || []) {
       if (!gu || !String(gu.combat || '') || String(gu.combat) === 'none') continue;
       const count = Math.max(0, Math.floor(Number(owned[gu.id] || 0)));
-      for (let index = 0; index < count; index += 1) {
+      const actionCount = gu.effect?.consumable ? Math.min(1, count) : count;
+      const firstIndex = gu.effect?.consumable
+        ? Array.from({ length: count }, (_, i) => i).find(i =>
+          !sealedInstances[instanceId(gu.id, i)] && !usedInstances[instanceId(gu.id, i)]) ?? 0
+        : 0;
+      for (let index = firstIndex; index < firstIndex + actionCount; index += 1) {
         const entry = {
           ...gu,
           count,
@@ -122,6 +157,8 @@ globalThis.GuRules = (() => {
   // 才允许突破组件限制；否则任一配方组件门禁失败，整式杀招不可用。
   function killMoveGateMissReason(move, guById = {}, context = {}) {
     if (!move) return 'unknown_gu';
+    if ((move.recipe || []).some(id => (guById[id]?.v1_effect || guById[id]?.battleEffect)?.kind === 'maintained')) return 'maintained_component_unsupported';
+    if ((move.recipe || []).some(id => { const g = guById[id]; return g?.effect?.consumable || g?.effect?.kind === 'production'; })) return 'resource_component_unsupported';
     if (move.componentConditionOverride) return '';
     for (const definitionId of move.recipe || []) {
       const gu = guById[definitionId] || {};
@@ -174,10 +211,20 @@ globalThis.GuRules = (() => {
     ignoreEvasion: false,
   });
 
-  function addSupport(plan, effect) {
-    const school = String(effect.support_school || '');
+  function addSupport(plan, effect, context = {}) {
+    const school = String(effect.support_school || context.school || '');
     const bonus = Number(effect.support_bonus || 0);
-    if (school && bonus > 0) plan.support = { school, bonus };
+    const targetGuId = String(effect.target_gu_id || effect.targetGuId || '');
+    const multiplier = Number(effect.multiplier || 0);
+    if ((school && bonus > 0) || targetGuId) {
+      plan.support = {
+        school,
+        bonus,
+        ...(targetGuId ? { targetGuId } : {}),
+        ...(multiplier > 0 ? { multiplier } : {}),
+        ...(effect.nonStacking ? { nonStacking: true } : {}),
+      };
+    }
     return plan;
   }
 
@@ -273,11 +320,26 @@ globalThis.GuRules = (() => {
   function applyPart(plan, part, context = {}) {
     switch (String(part?.kind || '')) {
       case 'strike': {
+        const targeted = context.supports?.guTargets?.[context.guId];
+        const targetSupports = (Array.isArray(targeted) ? targeted : targeted ? [targeted] : [])
+          .filter((entry) => !entry.targetGuId || entry.targetGuId === context.guId);
+        const multipliers = [];
+        for (const entry of targetSupports) {
+          const multiplier = Number(entry.multiplier || 1);
+          if (entry.nonStacking) {
+            const type = `${entry.targetGuId || context.guId}:${multiplier}`;
+            if (multipliers.some((item) => item.type === type)) continue;
+            multipliers.push({ type, value: multiplier });
+          } else {
+            multipliers.push({ value: multiplier });
+          }
+        }
+        const multiplier = multipliers.reduce((value, entry) => value * entry.value, 1);
         const support = Number(context.supports?.[context.school] || 0);
         const swordIntent = String(context.school || '') === 'sword'
           ? Number(context.swordIntent || 0)
           : 0;
-        plan.damage += Number(part.amount || 0) + support + swordIntent;
+        plan.damage += Number(part.amount || 0) * multiplier + support + swordIntent;
         if (part.consume_status) {
           const name = String(part.consume_status.name || 'marked');
           plan.damage += Number(context.statusStacks?.[name] || 0)
@@ -314,6 +376,8 @@ globalThis.GuRules = (() => {
       case 'inspect':
         plan.inspect = true;
         break;
+      case 'support':
+        break;
       default:
         // RUL-2026-09-25-001 frozen_invariant「No Silent Fallback」：未知 effect verb 一律
         // fail-fast，禁止静默 no-op——Canon 新机制看似进数据实则无效是最危险的换皮形态。
@@ -323,7 +387,7 @@ globalThis.GuRules = (() => {
         );
     }
     addVerbs(plan, part);
-    return addSupport(plan, part);
+    return addSupport(plan, part, context);
   }
 
   function effectPlan(effect, context = {}) {
@@ -341,7 +405,29 @@ globalThis.GuRules = (() => {
   function killMoveEffectPlan(move, guById = {}, context = {}) {
     const plan = emptyPlan();
     plan.components = [];
+    if ((move?.recipe || []).some(id => (guById[id]?.v1_effect || guById[id]?.battleEffect)?.kind === 'maintained')) {
+      plan.unavailableReason = 'maintained_component_unsupported';
+      return plan;
+    }
+    if ((move?.recipe || []).some(id => guById[id]?.effect?.consumable || guById[id]?.effect?.kind === 'production')) {
+      plan.unavailableReason = 'resource_component_unsupported';
+      return plan;
+    }
     const override = !!move?.componentConditionOverride;
+    // 同催的定向辅助先进入上下文，配方书写顺序不改变协同结果。
+    const supports = { ...context.supports, guTargets: { ...context.supports?.guTargets } };
+    for (const definitionId of move?.recipe || []) {
+      const gu = guById[definitionId] || {};
+      const effect = gu.v1_effect || gu.battleEffect;
+      const partContext = { ...context, guId: definitionId, school: gu.school || context.school };
+      if (!effect || (gateMissReason(effect, partContext) && !override)) continue;
+      const support = addSupport(emptyPlan(), effect, partContext).support;
+      if (!support?.targetGuId) continue;
+      const previous = supports.guTargets[support.targetGuId];
+      supports.guTargets[support.targetGuId] = [
+        ...(Array.isArray(previous) ? previous : previous ? [previous] : []), support,
+      ];
+    }
     for (const definitionId of move?.recipe || []) {
       const gu = guById[definitionId] || {};
       const effect = gu.v1_effect || gu.battleEffect || null;
@@ -350,7 +436,7 @@ globalThis.GuRules = (() => {
         plan.components.push(entry);
         continue;
       }
-      const partContext = { ...context, school: gu.school || context.school || move?.tag || '' };
+      const partContext = { ...context, supports, guId: definitionId, school: gu.school || context.school || move?.tag || '' };
       entry.gate = gateMissReason(effect, partContext);
       if (entry.gate && !override) {
         plan.components.push(entry);
@@ -365,6 +451,44 @@ globalThis.GuRules = (() => {
       plan.components.push(entry);
     }
     return plan;
+  }
+
+  // Experimental composition is deliberately limited to the three verified light Gu.
+  function composeKillMove(recipe, guById = {}) {
+    const allowed = ['moonlight_gu', 'small_light_gu', 'moon_glow_gu'];
+    if (!Array.isArray(recipe) || recipe.length < 1 || recipe.length > 3) {
+      return { ok: false, reason: 'invalid_recipe_size' };
+    }
+    if (recipe.length < 2) return { ok: false, reason: 'too_few_components' };
+    if (recipe.some(id => !allowed.includes(id))) return { ok: false, reason: 'unknown_component' };
+    if (recipe.some(id => !guById[id] || guById[id].sourceClass !== 'canon_driven_v1'
+      || !(guById[id].v1_effect || guById[id].battleEffect))) {
+      return { ok: false, reason: 'unverified_component' };
+    }
+    const components = recipe.map(id => guById[id]);
+    const sortedRecipe = [...recipe].sort();
+    const effectGuById = guById;
+    const effectPlan = killMoveEffectPlan({ recipe: sortedRecipe }, effectGuById);
+    if (!(effectPlan.damage > 0)) return { ok: false, reason: 'strike_required' };
+    const notes = [];
+    if (sortedRecipe.includes('small_light_gu')) {
+      notes.push('小光蛊只辅助月光蛊；同类辅助不叠加。');
+    }
+    if (sortedRecipe.includes('small_light_gu') && !sortedRecipe.includes('moonlight_gu')) {
+      notes.push('配方没有月光蛊时，小光蛊不会增强其他组件。');
+    }
+    const move = {
+      id: `km_custom_${sortedRecipe.join('__')}`,
+      label: sortedRecipe.map(id => guById[id].name || id).join('＋'),
+      recipe: sortedRecipe,
+      playable: true,
+      experimental: true,
+      tag: 'light',
+      true_qi_cost: components.reduce((sum, gu) => sum + Number(gu.trueQiCost || 0), 0),
+      thought_cost: components.reduce((sum, gu) => sum + Number(gu.thoughtCost || 0), 0),
+      life_cost: components.reduce((sum, gu) => sum + Number(gu.lifeCost || 0), 0),
+    };
+    return { ok: true, move, notes };
   }
 
   // 直接攻击口径必须跟合成语义一致，而不是预制 m.effect.kind。
@@ -412,25 +536,25 @@ globalThis.GuRules = (() => {
   const BUILD_KITS = Object.freeze({
     kit_info_suppress: Object.freeze({
       id: 'kit_info_suppress',
-      label: '信息→压制',
+      label: '月芒高耗爆发',
       axis: 'info',
-      members: Object.freeze(['small_light_gu', 'moon_glow_gu']),
-      optional: Object.freeze(['light_rec_1_10_gu', 'wisdom_rec_1_20_gu']),
-      structure: Object.freeze(['inspect', 'suppress', 'strike']),
+      members: Object.freeze(['moon_glow_gu']),
+      optional: Object.freeze(['jade_skin_gu', 'vitality_leaf_gu']),
+      structure: Object.freeze(['inspect', 'burst', 'recover']),
     }),
     kit_pierce_burst: Object.freeze({
       id: 'kit_pierce_burst',
-      label: '破甲→爆发',
+      label: '肉身投资→伤势反攻',
       axis: 'armor',
       members: Object.freeze(['white_boar_strength_gu', 'blood_farewell_gu']),
       optional: Object.freeze(['moon_ray_gu', 'blood_atk_5_02_gu']),
-      structure: Object.freeze(['pierce', 'burst']),
+      structure: Object.freeze(['train_body', 'punch', 'burst']),
     }),
     kit_stable_sustain: Object.freeze({
       id: 'kit_stable_sustain',
       label: '稳定命中→持续',
       axis: 'evasion',
-      members: Object.freeze(['moonlight_gu', 'blood_droplet_gu', 'vitality_grass_gu']),
+      members: Object.freeze(['moonlight_gu', 'blood_droplet_gu', 'vitality_leaf_gu']),
       optional: Object.freeze(['blood_bat_gu', 'bear_strength_gu']),
       structure: Object.freeze(['stable_hit', 'chip', 'sustain']),
     }),
@@ -460,9 +584,9 @@ globalThis.GuRules = (() => {
     const axis = String(enemyOrAxis.problemAxis || enemyOrAxis.axis || '');
     const steps = [];
     if (kitId === 'kit_info_suppress') {
-      if (axis === 'info') steps.push('inspect', 'suppress', 'controlled_strike');
-      else if (axis === 'armor') steps.push('inspect', 'suppress', 'chip_strike');
-      else if (axis === 'evasion') steps.push('inspect', 'suppress', 'low_stable_strike');
+      if (axis === 'info') steps.push('inspect', 'burst', 'recover');
+      else if (axis === 'armor') steps.push('burst', 'recover');
+      else if (axis === 'evasion') steps.push('stable_hit', 'burst', 'recover');
       else steps.push(...kit.structure);
     } else if (kitId === 'kit_pierce_burst') {
       if (axis === 'armor') steps.push('pierce', 'burst');
@@ -493,11 +617,12 @@ globalThis.GuRules = (() => {
     const baseTags = new Set(buildTagsOf(base, guById));
     const baseEffect = base.v1_effect || base.battleEffect || {};
     const baseKind = String(baseEffect.kind || '');
+    if (['body_training', 'maintained', 'production'].includes(baseKind) || ['body_training', 'production'].includes(base.effect?.kind) || base.effect?.consumable) return [];
     const baseAttack = Number(baseEffect.amount || 0) > 0
       || baseKind === 'strike' || baseKind === 'heal_and_strike';
     return Object.values(guById)
       .filter((g) => {
-        if (!g || g.id === definitionId) return false;
+        if (!g || g.id === definitionId || g.effect?.consumable || ['body_training', 'production'].includes(g.effect?.kind) || ['body_training', 'maintained', 'production'].includes((g.v1_effect || g.battleEffect)?.kind)) return false;
         if (!g.battleEffect && !g.v1_effect) return false;
         if (buildRoleOf(g, guById) === baseRole) return true;
         const tags = buildTagsOf(g, guById);
@@ -532,6 +657,7 @@ globalThis.GuRules = (() => {
     const walk = (index, recipe) => {
       if (variants.length >= MAX_VARIANTS) return;
       if (index >= slotOptions.length) {
+        if (recipe.some(id => (guById[id]?.v1_effect || guById[id]?.battleEffect)?.kind === 'maintained' || guById[id]?.effect?.consumable || guById[id]?.effect?.kind === 'production')) return;
         const plan = killMoveEffectPlan({ ...move, recipe }, guById, {});
         const changed = recipe.join('+') !== (move.recipe || []).join('+');
         variants.push({
@@ -687,6 +813,7 @@ globalThis.GuRules = (() => {
 
     const killMoveForms = [];
     for (const move of killMoves || []) {
+      if ((move.recipe || []).some(id => (guById[id]?.v1_effect || guById[id]?.battleEffect)?.kind === 'maintained' || guById[id]?.effect?.consumable || guById[id]?.effect?.kind === 'production')) continue;
       const slots = move.recipe || [];
       const usesDirectly = slots.includes(id);
       const fillsGap = slots.some((sid) => Number(owned[sid] || 0) <= 0
@@ -794,6 +921,7 @@ globalThis.GuRules = (() => {
 
   return Object.freeze({
     canActivate,
+    produceGu, consumeHealingGu,
     activationReason,
     instanceId,
     attuneCost,
@@ -809,6 +937,7 @@ globalThis.GuRules = (() => {
     liveShopOffers,
     effectPlan,
     killMoveEffectPlan,
+    composeKillMove,
     killMoveIsDirectStrike,
     resolveProblemHit,
     carriedGuPassiveArmor,

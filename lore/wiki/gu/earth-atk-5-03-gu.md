@@ -7,7 +7,7 @@ description: 二转的储藏之蛊、一次性的消耗蛊；一旦种植在地�
 date: 2026-09-28
 tags: [gu, earth-path, storage-gu, one-shot, concealment, legacy-aid]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

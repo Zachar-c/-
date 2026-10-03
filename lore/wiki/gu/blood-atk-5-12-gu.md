@@ -7,7 +7,7 @@ description: 六转血道仙蛊，上一任琅琊地灵独创：在炼蛊过程�
 date: 2026-09-28
 tags: [gu, blood-path, immortal-gu, refinement, six-rank]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

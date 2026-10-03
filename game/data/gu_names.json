@@ -4,7 +4,7 @@
   "moon_glow_gu": "月芒蛊",
   "moon_ray_gu": "月痕蛊",
   "moon_shadow_gu": "月影蛊",
-  "vitality_grass_gu": "生机草蛊",
+  "vitality_grass_gu": "九叶生机草",
   "force_gu": "力量蛊",
   "bear_strength_gu": "熊力蛊",
   "white_boar_strength_gu": "白豕蛊",
@@ -800,5 +800,6 @@
   "wood_rec_2_37_gu": "木根蛊",
   "wood_log_2_38_gu": "木草蛊",
   "wood_atk_3_39_gu": "木花蛊",
-  "wood_atk_3_40_gu": "木果蛊"
+  "wood_atk_3_40_gu": "木果蛊",
+  "vitality_leaf_gu": "生机叶"
 }

@@ -10,7 +10,7 @@ function node(selector) {
     nodes.set(selector, {
       innerHTML: '', value: '', classList: { toggle() {} }, listeners,
       addEventListener(type, handler) { listeners.set(type, handler); },
-      setAttribute() {}, querySelector: node,
+      setAttribute() {}, querySelector: node, querySelectorAll: () => [],
     });
   }
   return nodes.get(selector);
@@ -28,8 +28,17 @@ const run = code => vm.runInContext(code, context);
 const fire = (selector, type, event = {}) => nodes.get(selector).listeners.get(type)(event);
 run(readFileSync(new URL('./app.js', import.meta.url), 'utf8'));
 for (const file of ['app.js', 'style.css', 'index.html']) {
-  assert.equal(readFileSync(new URL(`./${file}`, import.meta.url), 'utf8'), readFileSync(new URL(`./dist/${file}`, import.meta.url), 'utf8'), `served ${file} matches source`);
+  const source = readFileSync(new URL(`./${file}`, import.meta.url), 'utf8');
+  const served = readFileSync(new URL(`./dist/${file}`, import.meta.url), 'utf8');
+  // 构建会按 app.js/style.css 内容哈希改写 dist/index.html 的 ?v=，比对时归一化该查询串，
+  // 这样既能发现 dist 被手工改动，又不会每次构建都误报。
+  const normalize = t => (file === 'index.html' ? t.replace(/(\?v=)[^"']*/g, '$1') : t);
+  assert.equal(normalize(served), normalize(source), `served ${file} matches source`);
 }
+// 缓存版本号必须随前端内容变化：改代码不换版本号会让回访者继续用旧脚本。
+const servedIndex = readFileSync(new URL('./dist/index.html', import.meta.url), 'utf8');
+const assetStamp = servedIndex.match(/(?:app\.js|style\.css)\?v=([a-z0-9]+)/)?.[1];
+assert.ok(assetStamp && assetStamp !== '20260930' && assetStamp !== '20261001', `assets carry a content-hash version (got ${assetStamp})`);
 context.data = JSON.parse(readFileSync(new URL('./dist/data.json', import.meta.url), 'utf8'));
 run('db = data; pageByRouteMap = new Map(db.pages.map(p => [p.route, p])); buildArtIndex(); render();');
 
@@ -185,4 +194,118 @@ assert.equal(run('searchQuery'), '后退词', 'search hashchange restores query 
 location.hash = '#/search';
 windowHandlers.get('hashchange')();
 assert.equal(run('searchQuery'), '', 'search hashchange clears the query when URL has no q');
-console.log('PASS: kind lists/routes, article navigation and layer visibility, classification/search URL behavior, hash restoration and empty-query clearing.');
+
+// Accessibility regressions in the stylesheet. Static checks so they need no browser:
+// keyboard focus must stay visible, sticky chrome must not hide focused headings,
+// motion must respect the OS setting, and no var() may silently fall back.
+const css = readFileSync(new URL('./style.css', import.meta.url), 'utf8');
+const focusRule = css.match(/:focus-visible\s*\{([^}]*)\}/);
+assert.ok(focusRule, 'stylesheet defines a :focus-visible ring');
+const focusWidth = Number(focusRule[1].match(/outline:\s*(\d+)px/)?.[1]);
+assert.ok(focusWidth >= 2, `focus ring is at least 2px wide (got ${focusWidth}px)`);
+assert.match(focusRule[1], /outline:\s*(?!none)\d+px\s+solid/, 'focus ring is a solid outline, not none');
+const rootBlock = css.slice(css.indexOf(':root{'), css.indexOf('color-scheme'));
+const declared = new Set([...rootBlock.matchAll(/(--[a-z0-9-]+)\s*:/g)].map(m => m[1]));
+const referenced = new Set([...css.matchAll(/var\((--[a-z0-9-]+)/g)].map(m => m[1]));
+assert.deepEqual([...referenced].filter(t => !declared.has(t)), [], 'every var() resolves to a declared token');
+assert.deepEqual([...css.matchAll(/var\((--[a-z0-9-]+),/g)].map(m => m[1]), [], 'no var() hides a missing token behind a fallback literal');
+assert.ok(!/(^|[;{\s])outline:\s*none/.test(css), 'no outline is removed without a visible replacement');
+assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/, 'motion respects prefers-reduced-motion');
+const topbarHeight = Number(css.match(/\.topbar\{[^}]*height:(\d+)px/)?.[1]);
+const scrollPad = Number(css.match(/scroll-padding-top:(\d+)px/)?.[1]);
+assert.ok(topbarHeight && scrollPad && scrollPad >= topbarHeight, 'scroll-padding clears the sticky topbar so anchors are not hidden');
+
+// 导航改造：窄屏导航壳、返回所属列表、面包屑当前项、滚动位置记忆。
+location.hash = '#/characters/fang-yuan';
+run('render()');
+// context.window is the vm stub; keep its scroll position settable for the memory test
+context.window.scrollY = 0;
+const articleHtml = node('#main').innerHTML;
+assert.ok(articleHtml.includes('class="rail-fold" data-open="false"'), 'rail renders as a collapsible shell');
+assert.ok(articleHtml.includes('class="rail-toggle"') && articleHtml.includes('aria-expanded="false"'), 'rail toggle starts collapsed and exposes its state');
+assert.ok(articleHtml.includes('aria-controls="rail-body"'), 'rail toggle points at the region it controls');
+assert.ok(articleHtml.includes('class="back-link" href="#/kind/character"'), 'article offers a way back to its kind list');
+assert.ok(articleHtml.includes('aria-current="page">方源<'), 'breadcrumb marks the current page');
+const skipLink = readFileSync(new URL('./index.html', import.meta.url), 'utf8').match(/<a[^>]*class="skip-link"[^>]*>[^<]*<\/a>/)?.[0];
+assert.ok(skipLink, 'index offers a skip link to the body');
+assert.ok(skipLink.includes('href="#main"'), 'skip link targets the main landmark');
+
+// 滚动记忆必须按「正在离开的 URL」归档：hashchange 触发时 location.hash 已是新值。
+// 故意让两者不同，否则用 scrollKey() 归档的实现也能通过这个断言。
+location.hash = '#/kind/gu';
+run('leavingKey = "#/characters/fang-yuan"');
+context.window.scrollY = 1234;
+const scrollProbe = run(`(() => { scrollMemory.clear(); rememberScroll(); return { saved: [...scrollMemory.entries()], leaving: leavingKey }; })()`);
+assert.deepEqual(Object.fromEntries(scrollProbe.saved), { '#/characters/fang-yuan': 1234 }, 'scroll is filed under the page being left, not the page being entered');
+assert.equal(scrollProbe.leaving, '#/kind/gu', 'leaving key advances to the new URL');
+assert.ok(readFileSync(new URL('./app.js', import.meta.url), 'utf8').includes("history.scrollRestoration = 'manual'"), 'browser scroll restoration is disabled so it cannot override ours');
+
+// 窄屏导航壳的 CSS 行为：收起时必须真的隐藏，开关触摸目标不得低于 WCAG 2.2 AA 的 24px。
+const mobileCss = readFileSync(new URL('./style.css', import.meta.url), 'utf8').slice(
+  readFileSync(new URL('./style.css', import.meta.url), 'utf8').indexOf('@media(max-width:900px)'));
+assert.match(mobileCss, /\.rail-fold\[data-open="false"\]\s*\.rail-body\s*\{[^}]*display:\s*none/, 'collapsed rail hides its body on narrow screens');
+assert.match(mobileCss, /\.rail-toggle\s*\{[^}]*display:\s*flex/, 'narrow screens show the rail toggle');
+const toggleMinHeight = Number(mobileCss.match(/\.rail-toggle\s*\{[^}]*min-height:\s*(\d+)px/)?.[1]);
+assert.ok(toggleMinHeight >= 24, `rail toggle meets the 24px WCAG 2.2 AA target size (got ${toggleMinHeight}px)`);
+assert.ok(readFileSync(new URL('./style.css', import.meta.url), 'utf8').indexOf('.rail-toggle{display:none}') < readFileSync(new URL('./style.css', import.meta.url), 'utf8').indexOf('@media(max-width:900px)'), 'base rule hides the toggle without overriding the narrow-screen rule');
+
+// EPUB 引用：数据侧抽取 + 前端可点击展开
+const fangYuan = context.data.pages.find(p => p.route === '/characters/fang-yuan');
+assert.ok(Array.isArray(fangYuan.epubRefs) && fangYuan.epubRefs.length > 0, 'article carries EPUB excerpts');
+for (const ref of fangYuan.epubRefs) {
+  assert.ok(Number.isInteger(ref.c) && Number.isInteger(ref.p) && ref.p >= 1 && ref.p <= ref.n,
+    `locator in range: chapter_${ref.c} para_${ref.p} of ${ref.n}`);
+  assert.ok(typeof ref.t === 'string' && ref.t.length > 0, 'excerpt has text');
+}
+// 抽出的原文必须逐字来自 canonical 源，不能是占位文本。
+// 只断言「够长」挡不住 TODO 之类的占位，所以对已知定位钉一个具体句子。
+const known = fangYuan.epubRefs.find(r => r.c === 20 && r.p === 19);
+assert.ok(known, 'known locator chapter_0020 para_019 is present');
+assert.equal(known.t, '他如法炮制，泄露出一丝春秋蝉的气息，压在月光蛊上。',
+  'excerpt text matches the canonical paragraph verbatim');
+// 章号与段落号也钉死，避免索引口径整体偏移一位这类错误蒙混过关
+assert.equal(known.n, 62, 'chapter_0020 paragraph count comes from the canonical source');
+// 点击后可展开：绑定函数存在且对无引文页面安全返回
+// 沙箱 DOM 不含真实 <code>，这里用合成节点验证配对逻辑：
+// 存量写法把定位拆成 `chapter_0020` + `para_019` 两段，para 需沿用上文的 chapter。
+const fakeCode = (text) => {
+  const attrs = {};
+  const listeners = {};
+  return {
+    textContent: text, attrs, listeners,
+    classList: { _s: new Set(), add(c) { this._s.add(c); }, toggle(c) { this._s.has(c) ? this._s.delete(c) : this._s.add(c); return this._s.has(c); }, contains(c) { return this._s.has(c); } },
+    setAttribute(k, v) { attrs[k] = v; },
+    addEventListener(t, fn) { listeners[t] = fn; },
+    nextElementSibling: null, after() {},
+  };
+};
+context.__codes = [
+  fakeCode('EPUB chapter_0020 para_019'),   // 迁移后的连续写法
+  fakeCode('chapter_0300'),                 // 存量写法：章节单独成段
+  fakeCode('para_012'),                     // 段落单独成段，应沿用 chapter_0300
+  fakeCode('chapter_9999'),                 // 无对应原文，不应绑定
+  fakeCode('para_001'),
+];
+const fakeRoot = { querySelectorAll: () => context.__codes };
+context.__fakeRoot = fakeRoot;
+const pairing = run(`(() => {
+  const target = { epubRefs: [
+    {c:20,p:19,t:'连续写法原文',n:30},
+    {c:300,p:12,t:'拆段写法原文',n:40},
+  ] };
+  const n = bindEpubCitations(__fakeRoot, target);
+  return { n, bound: __codes.map(c => c.classList.contains('cite')),
+           titles: __codes.map(c => c.title || null),   // title 是属性赋值，不是 setAttribute
+           roles: __codes.map(c => c.attrs.role || null) };
+})()`);
+assert.equal(pairing.n, 2, 'only locators with real excerpts are bound');
+// 拆段写法里只有 para_ 那一段可展开：单有 chapter_0300 时还不知道段落，无法定位原文。
+assert.deepEqual(pairing.bound, [true, false, true, false, false],
+  'contiguous form binds; split form binds the para half; chapter_9999 has no excerpt so nothing binds');
+assert.match(pairing.titles[2], /第 300 章第 12 段/, 'split-form para inherits the preceding chapter');
+assert.deepEqual([pairing.roles[0], pairing.roles[2]], ['button', 'button'], 'bound citations expose button semantics');
+assert.equal(run("bindEpubCitations(__fakeRoot, {epubRefs: []})"), 0, 'no refs means nothing bound');
+delete context.__codes; delete context.__fakeRoot;
+assert.ok(readFileSync(new URL('./app.js', import.meta.url), 'utf8').includes("el.classList.add('cite')"), 'citations get the cite hook class');
+
+console.log('PASS: kind lists/routes, article navigation and layer visibility, classification/search URL behavior, hash restoration and empty-query clearing, stylesheet focus/motion/token accessibility, EPUB citation excerpts and click-to-expand.');

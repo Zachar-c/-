@@ -30,7 +30,7 @@ function parseArgs(argv) {
     else throw new Error(`未知参数: ${a}`);
   }
   if (!['easy', 'normal', 'hard'].includes(opts.difficulty)) throw new Error(`--difficulty 无效: ${opts.difficulty}`);
-  if (!['balanced', 'refine', 'gu_first'].includes(opts.policy)) throw new Error(`--policy 无效: ${opts.policy}`);
+  if (!['balanced', 'refine', 'gu_first', 'survival', 'moon'].includes(opts.policy)) throw new Error(`--policy 无效: ${opts.policy}`);
   if (!Number.isFinite(opts.seed)) throw new Error('--seed 无效');
   return opts;
 }
@@ -42,7 +42,7 @@ function clickFirstSelectors(policy) {
       prep: ['[data-forge]', '[data-attune]', '[data-buy-offer]', '[data-km]', '[data-break]', '[data-prep-continue]'],
     };
   }
-  if (policy === 'gu_first') {
+  if (['gu_first', 'survival', 'moon'].includes(policy)) {
     // 蛊技优先：拳脚在战斗内是带 ⚠ 的高风险动作，只有无技可用时才落到它。
     return {
       battle: ['[data-use-gu]', '[data-use]', '[data-observe]', '[data-basic-attack]', '[data-end-turn]'],
@@ -66,6 +66,98 @@ async function clickFirst(lab, selectors, skip = new Set()) {
   return null;
 }
 
+// 按玩家可见的整备按钮锻体；不会写入或注入游戏状态。
+async function trainAtPrep(lab, snap) {
+  const rows = (snap.modifierLedger || []).filter(r => r.sourceGuDefinitionId === 'white_boar_strength_gu' && r.sourceEffectId === 'body_training');
+  if (!snap.owned?.white_boar_strength_gu || !snap.prepFor || snap.qi < 1 || snap.stones < 1
+    || rows.some(r => r.createdAt === snap.prepFor) || rows.reduce((n, r) => n + r.amount, 0) >= 3) return null;
+  await lab.click('[data-prep-tab="gu"]');
+  try {
+    await lab.click('[data-train-body="white_boar_strength_gu"]');
+    return 'body_training';
+  } finally { await lab.click('[data-prep-tab="shop"]'); }
+}
+
+async function investAtPrep(lab, snap, policy) {
+  if (!['survival', 'moon'].includes(policy)) return null;
+  const leafActions = [];
+  if (snap.owned.vitality_leaf_gu && snap.blood <= snap.bloodMax - 3
+    && snap.leafRecoveryNodeId !== snap.journey.nodeId) leafActions.push('[data-use-leaf="vitality_leaf_gu"]');
+  if (snap.owned.vitality_grass_gu && snap.cultivation >= 2 && snap.qi >= 2
+    && snap.leafProductionVisit !== snap.prepFor) leafActions.push('[data-produce-leaf="vitality_grass_gu"]');
+  if (leafActions.length) {
+    await lab.click('[data-prep-tab="gu"]');
+    let acted;
+    try { acted = await clickFirst(lab, leafActions); }
+    finally { await lab.click('[data-prep-tab="shop"]'); }
+    if (acted) return acted;
+  }
+  if (policy === 'moon') {
+    if (!snap.owned.moon_glow_gu) {
+      await lab.click('[data-prep-tab="alchemy"]');
+      let acted;
+      try {
+        if ((snap.owned.small_light_gu || 0) < 2 && snap.wild?.small_light_gu && snap.qi >= 4)
+          acted = await clickFirst(lab, ['[data-attune="small_light_gu"]']);
+        else acted = await clickFirst(lab, ['[data-forge="moonlight_glow"]']);
+      } finally { await lab.click('[data-prep-tab="shop"]'); }
+      return acted || await clickFirst(lab, ['[data-prep-continue]']);
+    }
+    if (snap.cultivation < 2) return await clickFirst(lab, ['[data-break]', '[data-prep-continue]']);
+    return await clickFirst(lab, ['[data-prep-continue]']);
+  }
+  const strength = (snap.modifierLedger || []).filter(r => r.sourceGuDefinitionId === 'white_boar_strength_gu' && r.sourceEffectId === 'body_training').reduce((sum, r) => sum + Number(r.amount), 0);
+  if (strength >= 3 && !snap.owned.white_jade_gu && snap.owned.white_boar_strength_gu && snap.owned.jade_skin_gu) {
+    await lab.click('[data-prep-tab="alchemy"]');
+    let forged = null;
+    try { forged = await clickFirst(lab, ['[data-forge="white_jade_basic"]']); }
+    finally { await lab.click('[data-prep-tab="shop"]'); }
+    // 买零散蛊与攒钱合炼是实际机会成本；不足时保留资金继续行程。
+    return forged || await clickFirst(lab, ['[data-prep-continue]']);
+  }
+  if (snap.owned.white_jade_gu && snap.cultivation < 2) {
+    return await clickFirst(lab, ['[data-break]', '[data-prep-continue]']);
+  }
+  return null;
+}
+
+function tacticalSelectors(snap, policy) {
+  if (!['gu_first', 'survival', 'moon'].includes(policy)) return [];
+  const target = snap.battle.enemies.find(e => e.id === snap.battle.targetId);
+  const out = [];
+  // 意图已经展示在敌人按钮上：先选中本回合会耗尽魂魄的敌手。
+  const soulThreat = snap.battle.enemies.find(e => e.hp > 0
+    && Number(e.enemyIntent?.soul_drain || 0) >= snap.soul
+    && Number(e.enemyIntent?.soul_drain || 0) > 0);
+  if (soulThreat && soulThreat.id !== snap.battle.targetId)
+    return [`[data-target="${soulThreat.id}"]`];
+  if (target?.problemAxis === 'info' && !target.revealed) out.push('[data-observe]');
+  if (['survival', 'moon'].includes(policy)) {
+    const incoming = snap.battle.enemies.filter(e => e.hp > 0).reduce((sum, e) => sum + Number(e.enemyIntent?.damage || 0), 0);
+    // 已展示的肉身力量用于无耗出拳；闪避敌仍需月道补足命中。
+    const human = snap.battle.playerHuman;
+    const strength = Number(human?.baseline.attack || 3) + (human?.modifierLedger || []).filter(r => r.active && r.attribute === 'attack' && r.persistence === 'session_permanent').reduce((sum, r) => sum + Number(r.amount), 0);
+    if (incoming >= snap.blood && (target?.hp > strength || target?.problemAxis === 'evasion')) {
+      out.push('[data-use-gu="white_jade_gu::1"]', '[data-use-gu="stone_shell_gu::1"]', '[data-use-gu="jade_skin_gu::1"]');
+    }
+    if (soulThreat?.id === target?.id && target.hp > strength && snap.owned.moon_glow_gu)
+      out.push('[data-use-gu="moon_glow_gu::1"]');
+    if (policy === 'survival' && strength >= 4 && target?.problemAxis !== 'evasion') out.push('[data-basic-attack]');
+    if (snap.blood < snap.bloodMax && incoming === 0) out.push('[data-use-gu="vitality_leaf_gu::1"]');
+  }
+  if (policy === 'moon') {
+    // 仅消费已揭示的反击提示：先用拳脚试探，避免吞掉高耗月芒。
+    if (target?.revealed && (target.reactions || []).some(r => r.trigger === 'direct_strike'
+      && r.window === 'before_damage' && !(r.counter_status === 'bound' && target.flags.enemy_bound)
+      && !(r.counter_status === 'guarded' && target.flags.guarded))) out.push('[data-basic-attack]');
+    if (snap.owned.moon_glow_gu) out.push('[data-use-gu="moon_glow_gu::1"]');
+  }
+  if (snap.qi >= 3 && snap.thought >= 2 && snap.owned.moonlight_gu && snap.owned.small_light_gu
+    && !snap.battle.guUsedThisTurn['moonlight_gu::1'] && !snap.battle.turnSupports.guTargets?.moonlight_gu)
+    out.push('[data-use-gu="small_light_gu::1"]');
+  return out;
+}
+
 function deepDiff(a, b, prefix = '', out = []) {
   if (a === b) return out;
   if (typeof a !== typeof b || a == null || b == null || typeof a !== 'object') {
@@ -81,13 +173,22 @@ function deepDiff(a, b, prefix = '', out = []) {
   return out;
 }
 
-function pickNodeId(state, visited) {
+function pickNodeId(state, visited, policy) {
   const available = state?.journey?.availableNodeIds || [];
   if (!available.length) return null;
   const nodes = state?.journey?.graph?.nodes || [];
   const byId = new Map(nodes.map((n) => [n.id, n]));
+  // 生存策略只用已展示的路线类型与当前气血，不读取未来随机结果。
+  if (['survival', 'moon'].includes(policy) && state.blood < state.bloodMax * 0.75) {
+    const rest = available.find(id => ['rest', 'rest_site'].includes(byId.get(id)?.type));
+    if (rest) return rest;
+  }
   // 异闻优先：优先进入事件节点（保证代价结算覆盖）；否则按可见顺序取第一个。
   const eventNode = available.find((id) => byId.get(id)?.type === 'event' && !visited.includes(id));
+  if (['survival', 'moon'].includes(policy) && state.blood < state.bloodMax * 0.75) {
+    const safer = available.find(id => { const node = byId.get(id); return node && !['elite', 'boss'].includes(node.type) && !(node.type === 'event' && Number(node.event?.health_cost || 0) > 0); });
+    if (safer) return safer;
+  }
   return eventNode || available[0];
 }
 
@@ -104,6 +205,8 @@ async function runFullRun({ lab, seed, difficulty, policy, shots, record }) {
   const skip = new Set();
   let stall = 0;
   let lastKey = '';
+  let unchangedCombat = 0;
+  let lastCombatProgress = '';
   const stateAt = () => record.stateAt();
 
   let snap = await lab.snapshot();
@@ -131,7 +234,7 @@ async function runFullRun({ lab, seed, difficulty, policy, shots, record }) {
     // ① 奖励页
     if (snap.page === 'reward' || snap.reward) {
       acted = await clickFirst(lab, ['[data-reward-gu]', '[data-reward-continue]']);
-      if (acted) record.push({ step: steps, kind: 'reward', via: acted });
+      if (acted) record.push({ step: steps, kind: 'reward', via: acted, choices: snap.reward?.guChoices });
     }
 
     // ② 战斗中
@@ -165,12 +268,13 @@ async function runFullRun({ lab, seed, difficulty, policy, shots, record }) {
         acted = 'reload_battle';
       } else {
         const before = snap;
-        acted = await clickFirst(lab, actions.battle, skip);
+        const tactical = tacticalSelectors(snap, policy);
+        acted = await clickFirst(lab, [...tactical, ...actions.battle], skip);
         if (acted) {
           const afterSnap = await lab.snapshot();
-          if (JSON.stringify(afterSnap.battle?.enemies?.map((e) => e.hp)) === JSON.stringify(before.battle?.enemies?.map((e) => e.hp))
-            && afterSnap.battle?.turn === before.battle.turn
-            && afterSnap.battle?.actionsUsed === before.battle?.actionsUsed) {
+          if (JSON.stringify(afterSnap.battle) === JSON.stringify(before.battle)
+            && afterSnap.qi === before.qi && afterSnap.thought === before.thought
+            && afterSnap.blood === before.blood) {
             skip.add(acted);
             stall += 1;
           } else {
@@ -189,7 +293,7 @@ async function runFullRun({ lab, seed, difficulty, policy, shots, record }) {
 
     // ④ 整备页
     if (!acted && (snap.page === 'prep' || snap.prepFor)) {
-      acted = await clickFirst(lab, actions.prep);
+      acted = (policy === 'moon' ? null : await trainAtPrep(lab, snap)) || await investAtPrep(lab, snap, policy) || await clickFirst(lab, actions.prep);
       if (acted) record.push({ step: steps, kind: 'prep', via: acted });
     }
 
@@ -244,7 +348,7 @@ async function runFullRun({ lab, seed, difficulty, policy, shots, record }) {
 
     // ⑥ 选节点
     if (!acted && !snap.battle && !snap.prepFor) {
-      const nodeId = pickNodeId(snap, visited);
+      const nodeId = pickNodeId(snap, visited, policy);
       if (nodeId) {
         try {
           await lab.click(`[data-choose-node="${nodeId}"]`);
@@ -267,6 +371,16 @@ async function runFullRun({ lab, seed, difficulty, policy, shots, record }) {
       outcome = 'softlock';
       break;
     }
+
+    const afterAction = await lab.snapshot();
+    record.push({ step: steps, kind: 'action_result', via: acted,
+      before: { blood: snap.blood, qi: snap.qi, thought: snap.thought, stones: snap.stones, cultivation: snap.cultivation, owned: snap.owned },
+      after: { blood: afterAction.blood, qi: afterAction.qi, thought: afterAction.thought, stones: afterAction.stones, cultivation: afterAction.cultivation, owned: afterAction.owned },
+      enemiesBefore: snap.battle?.enemies.map(e => ({ id: e.id, hp: e.hp, intent: e.enemyIntent })),
+      enemiesAfter: afterAction.battle?.enemies.map(e => ({ id: e.id, hp: e.hp })),
+      log: afterAction.battle?.log.slice(snap.battle?.log.length || 0),
+      events: afterAction.eventLog?.slice(snap.eventLog?.length || 0),
+    });
 
     // ⑧ 地图页重载（一次）：完成 ≥6 节点后、不在战斗
     if (!mapReloadDone && !snap.battle && snap.page === 'map'
@@ -292,8 +406,24 @@ async function runFullRun({ lab, seed, difficulty, policy, shots, record }) {
       continue;
     }
 
+    const combatProgress = snap.battle ? JSON.stringify([
+      snap.battle.nodeId, snap.blood, snap.qi, snap.thought, snap.soul, snap.lifeTime,
+      snap.battle.enemies.map(enemy => [enemy.id, enemy.hp, enemy.statuses, enemy.flags]),
+      snap.battle.delayedEffects.map(entry => [entry.label, Math.max(0, entry.dueTurn - snap.battle.turn)]),
+    ]) : '';
+    unchangedCombat = combatProgress && combatProgress === lastCombatProgress ? unchangedCombat + 1 : 0;
+    lastCombatProgress = combatProgress;
+    if (unchangedCombat >= STALL_LIMIT) {
+      record.push({ kind: 'combat_stalled', nodeId: snap.battle.nodeId, turn: snap.battle.turn, resources: { blood: snap.blood, qi: snap.qi, thought: snap.thought, soul: snap.soul }, enemies: snap.battle.enemies.map(enemy => ({ id: enemy.id, hp: enemy.hp, axis: enemy.problemAxis })), log: snap.battle.log.slice(-24) });
+      outcome = 'stalled';
+      terminalReason = '连续行动没有改变气血、真元、念头、敌人或待结算效果';
+      break;
+    }
     const key = JSON.stringify([
-      snap.page, snap.ending?.outcome || '', snap.battle?.over || '', snap.battle?.turn ?? '',
+      snap.page, snap.ending?.outcome || '', snap.battle?.over || '',
+      snap.battle?.enemies.map(enemy => [enemy.id, enemy.hp, enemy.statuses, enemy.flags]),
+      snap.thought, snap.soul, snap.lifeTime,
+      snap.battle?.delayedEffects.map(entry => [entry.label, Math.max(0, entry.dueTurn - snap.battle.turn)]),
       snap.stones, snap.blood, snap.qi, snap.journey?.completed?.length,
     ]);
     if (key === lastKey) {
@@ -359,13 +489,13 @@ async function replayFromHall({ lab, seed, policy, shots, record, originalVisite
       acted = await clickFirst(lab, ['[data-reward-gu]', '[data-reward-continue]']);
     }
     if (!acted && snap.battle && !snap.battle.over) {
-      acted = await clickFirst(lab, actions.battle);
+      acted = await clickFirst(lab, [...tacticalSelectors(snap, policy), ...actions.battle]);
     }
     if (!acted && snap.battle?.over) {
       acted = await clickFirst(lab, ['[data-reward-continue]', '[data-prep-continue]', '[data-go-map]', '[data-open-outcome]']);
     }
     if (!acted && (snap.page === 'prep' || snap.prepFor)) {
-      acted = await clickFirst(lab, actions.prep);
+      acted = (policy === 'moon' ? null : await trainAtPrep(lab, snap)) || await investAtPrep(lab, snap, policy) || await clickFirst(lab, actions.prep);
     }
     if (!acted && !snap.battle) {
       const nodeId = (snap.journey?.nodeId) ? snap.journey.nodeId : null;
@@ -385,7 +515,7 @@ async function replayFromHall({ lab, seed, policy, shots, record, originalVisite
     }
     if (!acted && !snap.battle && !snap.prepFor) {
       const nextExpected = originalVisited[visited.length];
-      const nodeId = nextExpected || pickNodeId(snap, visited);
+      const nodeId = nextExpected || pickNodeId(snap, visited, policy);
       if (nodeId) {
         try {
           await lab.click(`[data-choose-node="${nodeId}"]`);

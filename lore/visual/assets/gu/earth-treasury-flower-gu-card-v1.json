@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "地藏花蛊",
+  "route": "/gu/earth-atk-5-03-gu",
+  "file": "earth-treasury-flower-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/earth-atk-5-03-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0065｜第六十三节：月下赠玉皮，地花藏白豕",
+    "line": 4944,
+    "excerpt": "花苞表面细腻如绸，暗金作色，显得幽静神秘而又高贵典雅。"
+  },
+  "design_boundary": "除证据摘录所锁外观之外，机位、材质细化、具体比例、自然解剖细节及环境布置为美术推断，不新增原著事实、不沿用游戏id转数。",
+  "prompt": "Use case: stylized-concept. Generate a BRAND NEW 《问真》 Gu collectible portrait card, exact 5:7. Supplied reference ONLY locks fine silver double-line rounded rectangular frame with restrained curled corners, no text, and physically credible fantasy realism. DO NOT COPY reference creature, papery white body, stone floor, background or composition. One distinct subject, fully within card, occupying about 55-65% width; whole four-sided frame visible. Real textures, physical soft sidelight, spatial depth; subdued dreamlike presence. No titles, lettering, numbers, rank badges, watermark, people, hands, UI, excessive glitter, magic circles or gratuitous jewellery. Subject: ONE closed DULL DARK-GOLD flower bud, morphology halfway between lotus and densely wrapped cabbage. Scale of an ordinary stone mill; grows shallowly buried in soil, only base embedded. Numerous THICK smooth broad petals pressed tightly over one another, folding inward and layering into one rounded unopened bud; closed, not an open lotus flower. Petal surfaces naturally fine and silky with subtle organic wrinkles, pliable plant tissue not metal sheets, gold foil or jewellery; dusky ochre-gold, soft satin reflection on curved thickness, restrained not brilliant yellow. Three-quarter slightly elevated view shows tight layered folds, dark bare red-brown soil cradles its lower two inches. Background an unobtrusive dark dry-earth recess softly recedes, no lush garden, grass, moss, bouquets, statues or decorative planter. Soft raking light emphasizes broad petal overlaps and silk texture, inner folds stay mysterious and closed. Sole flower fully readable with room for frame. No stems/leaves invented above it, no beetles, no baby faces, no insect hidden inside, no transparent orb, no open bloom or luminous crystal. Exact light arrangement is design, closed layered dark-gold bud is canon.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "暗金色闭合厚瓣花苞，莲花/包菜层叠轮廓，根部埋入土面",
+      "整图主体单一、无花园或可爱化，银框完整"
+    ],
+    "risks": [
+      "瓣面纹理偏粗糙/纤维，略弱于原文细腻如绸",
+      "尺度无外部参照，不能借画面测定真实石磨大小"
+    ]
+  }
+}

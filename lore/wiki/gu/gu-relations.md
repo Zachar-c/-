@@ -7,7 +7,7 @@ description: 蛊虫与蛊虫、蛊虫与蛊师的关系总纲：合炼/逆炼/�
 date: 2026-09-28
 tags: [gu, relations, refinement, roster, recipe-schema]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
   - "canon-index:CAN-GU-CARE-001"
   - "canon-index:CAN-GU-SYNERGY-001"
   - "canon-index:CAN-GU-SYNERGY-002"

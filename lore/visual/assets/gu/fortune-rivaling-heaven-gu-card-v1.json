@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "鸿运齐天蛊",
+  "route": "/gu/luck-atk-5-01-gu",
+  "file": "fortune-rivaling-heaven-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/luck-atk-5-01-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0618｜第二百一十二节鸿运之因",
+    "line": 57052,
+    "excerpt": "它无形无质，本就是一团恢弘气运"
+  },
+  "design_boundary": "无形无质为硬锚；折射、暖冷光与涡流都是显现无形气运的美术解释，不冻结其颜色或实体轮廓。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: an INTANGIBLE FORMLESS vast concentration of good fortune; canonical Gu has NO MATERIAL BODY, it is itself magnificent luck. NO insect, gemstone, solid bubble sphere, creature, gold statue, horn, animal or humanoid. Visualize a singular quiet concentration in the central air ONLY through extremely fine refractive distortions and soft layered flowing light: an irregular open-ended translucent field of warm pale amber against cooler grey-blue space, faint volumetric folds gather and release without a hard boundary, no closed orb. It has depth and immaterial presence as if natural light bends into a place that cannot be touched, modest sense of grandeur from spatial folds not ornament. No assertable fixed anatomy, color is interpretive, no gold coins, crowns, lucky clovers, runes, magic rings, bright core, exploding nebula or sparkles. Sparse unobtrusive dark rocky horizon at bottom below field gives real spatial depth and a few subtle refracted shadows, field occupies primary center 60% width but dissolves into empty upper space. Physical environmental diffused side light should make air deformation plausible and dreamlike, delicate restrained radiance never fully blown out. No portal, tornado, literal thick smoke blob, spaceship, cosmic sky or panoramic epic scene. A card for a bodiless Gu, absence of solid subject must be intentional and clearly conveyed; fantasy realism not symbol-heavy generic spell effect.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用作无形气运的解释性卡面；不作固定本体形态主参考",
+    "visible_facts": [
+      "没有实体虫、球或像，空中暖色折射流纹散开、无硬边界",
+      "底部低对比地形托空间，细银框完整，无符文或宝物"
+    ],
+    "risks": [
+      "暖金色及流纹完全为无形概念的美术可视化，不是原文色形事实",
+      "倾向场域表现而非实体特写，使用时必须保留无形无质说明"
+    ]
+  }
+}

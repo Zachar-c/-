@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-02",
+  "name": "星门蛊",
+  "route": "/gu/star-gate-gu",
+  "file": "star-gate-gu-card-v1.png",
+  "status": "internally_reviewed_usable",
+  "user_approved": false,
+  "batch_authorized_by_user": true,
+  "integration_allowed": false,
+  "generation_tool": "built-in image_gen",
+  "reference": "regret-gu-card-v3.png",
+  "reference_role": "仅卡框、比例、可信光影材质，非身体和背景",
+  "source_paths": [
+    "lore/wiki/gu/star-gate-gu.md"
+  ],
+  "evidence": {
+    "source": "source/蛊真人-epub-canon.txt",
+    "chapter": "chapter_0466｜第六十节：今夜星空真美",
+    "line": 42740,
+    "excerpt": "拿着这两颗蓝宝石样儿的蛊虫"
+  },
+  "design_boundary": "画成一对椭圆蓝宝石样蛊，补锚42739椭圆石头。晶面及布置为设计；不将催动星门拱门当本体。",
+  "prompt": "Use case: stylized-concept. Create a NEW 《问真》 Gu portrait collectible card, exact 5:7. Reference image ONLY supplies fine silver double-line rounded-corner frame with restrained curled corners and physical fantasy realism, not its creature, body, color, background or floor. One fully visible specific subject approximately 55-65% card width; clear subject hierarchy, physical sidelight, realistic textures, restful dreamlike space, complete frame on all sides. No text, title, number, rank, watermark, people, hands, halo, gratuitous gems or decorative symbols. Subject: ONE matched PAIR of discrete sapphire-like Gu stones, naturally OVAL blue gem-shaped pebbles, no insect anatomy. Two oval rounded smooth gem-stones, complete separate silhouettes, one lying diagonally closer, one offset slightly behind, both same plausible size, about 55% card width together. Deep sapphire blue with credible transparent mineral depth, soft subtle inclusions and refracted light, rounded slightly uneven polished natural surfaces, not intricately faceted jewelry, engraved amulets, stars or glowing galaxy trapped inside. Quietly resting on a flat plain dark blue-grey mineral surface with a small realistic soft contact shadow and restrained blue reflected light. Background near-empty low contrast twilight-grey, no green vegetation or forest. Soft angled diffused ambient light reveals two stone bodies clearly, little star-like specular points only from real light, no magic halo, portal arch, stargate machine, ornamental clasp, golden setting, necklaces, beams connecting gems, orbiting stars or cosmic explosion. The paired two blue ovals are the primary identity, not scene of teleportation.",
+  "inspection": {
+    "viewed": true,
+    "verdict": "可用",
+    "visible_facts": [
+      "一对独立椭圆蓝宝石状本体，体积透光和接触影可辨",
+      "未画门、虫体、金饰或星空法阵"
+    ],
+    "risks": [
+      "内裂纹明显，是宝石材质设计，不是原著指定损伤",
+      "石面与其它卡面相近，但主色及成对身份清楚"
+    ]
+  }
+}

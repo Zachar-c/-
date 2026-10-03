@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-02",
+  "name": "悔蛊",
+  "intent": "严格局部编辑；仅竖版扩图与加边框，不重新设计本体或气氛。",
+  "tool": "built-in image_gen",
+  "file": "regret-gu-card-v3.png",
+  "status": "approved_by_user",
+  "edit_target": "/home/usrs/.codex-desktop-ssh/generated_images/01a0f6ff-97f7-7441-9da4-68c90287993d/exec-f4d67cc7-6409-4b23-9a3a-6f2d8fcf75be.png",
+  "other_references": [],
+  "prompt": "Use case: precise-object-edit.\nEdit the supplied exact image. ONLY TWO CHANGES ALLOWED: convert square canvas into a 5:7 PORTRAIT card by extending the canvas ABOVE AND BELOW with a seamless continuation of the same dark grey-blue textured stone ground, and add a delicate thin SILVER rounded-corner double-line card border with restrained fine curled corner ornament, completely inside all four edges. Full bleed card artwork, no exterior backdrop.\nPRESERVE the original source image's entire square central area, creature and composition as exactly as possible: the same one pale paper-white segmented centipede body, the same head at lower left and tail at upper right, same proportions and pose, same abundant translucent drifting fine filaments, same paper texture, same dark stone, cold desaturated palette, same light direction, shadows, depth of field and quiet uncanny mood. Do not redraw, beautify, modify the creature anatomy, give it cute large eyes, rotate it, compress it vertically, crop off its feelers, or change camera angle. Keep the source square scene at its original proportions within the taller canvas, not stretched.\nThe added upper and lower background is ONLY original grey-blue stone texture continuing naturally, not new scenery. No trees, vegetation, flowers, moss, garden, water, golden sunlight, warm tones, glow, particles, gems, extra insects, words, card name, numbers, symbols or watermarks. Border is a thin elegant silver metallic ornamental card frame, similar to a fine collectible card, visually subordinate to the source art. Do not change the image's own colour or brightness. This is a layout/outpainting plus frame edit, NOT a new illustration or reinterpretation. Output a single finished vertical 5:7 card.",
+  "inspection": {
+    "viewed": true,
+    "changes": "竖幅上下石面扩图，细银色圆角双线边框。",
+    "preserved_visually": "纸白分节长体、原头尾方向、半透明软须、冷灰蓝石面及侧光；无绿树、花园、暖日或萌眼。",
+    "limits": "生成式编辑，未证明原图中心区像素逐点不变；肉眼检查整体造型和气氛保持。",
+    "user_approved": true
+  },
+  "user_approved": true,
+  "approval": "2026-10-02 用户：这个我很满意，这是一个很好的开始。认可悔蛊v3图，不自动授权游戏/Wiki接入。",
+  "integration_allowed": false,
+  "dimensions": {
+    "width": 1060,
+    "height": 1484,
+    "aspect_ratio": "5:7"
+  }
+}

@@ -7,7 +7,7 @@ description: 三转功能蛊（原文明文）：化身为树精，从空气中�
 date: 2026-09-28
 tags: [gu, combat, transformation, wood-path, lifespan-material, ancient-moon-clan]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

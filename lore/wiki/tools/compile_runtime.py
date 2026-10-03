@@ -26,6 +26,7 @@ import hashlib
 import json
 import re
 import sys
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -651,9 +652,9 @@ def main() -> None:
     rules = canon_rules + page_rules
 
     # 规则 id 唯一性
-    ids = [r["id"] for r in rules]
-    if len(ids) != len(set(ids)):
-        dup = sorted({i for i in ids if ids.count(i) > 1})
+    id_counts = Counter(r["id"] for r in rules)
+    dup = sorted(rule_id for rule_id, count in id_counts.items() if count > 1)
+    if dup:
         fail(f"规则 id 重复：{dup}")
 
     # E-ID 段域校验（全对象收集）

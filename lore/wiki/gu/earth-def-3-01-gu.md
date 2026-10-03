@@ -7,7 +7,7 @@ description: 三转消耗蛊：形如骰子、通体灰白坚硬，用后把空�
 date: 2026-09-28
 tags: [gu, consumable, aperture, emergency, qing-mao-mountain]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

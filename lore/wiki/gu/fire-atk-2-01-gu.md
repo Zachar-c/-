@@ -7,7 +7,7 @@ description: 鬼系攻杀类蛊虫；原文明文「是二转魂道蛊虫」，�
 date: 2026-09-28
 tags: [gu, fire-path, soul-path, refinement, repair-component]
 sources:
-  - "source:source/蛊真人-clean.txt"
+  - "source:source/蛊真人-epub-canon.txt"
 schema: 2
 ---
 

@@ -4,6 +4,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -40,3 +41,24 @@ for cfg in compiler.RELATION_SOURCES:
     del missing[st_id]
     must_fail(missing)
 print("PASS baseline matches runtime; 12 field mutations and 3 missing ST rows rejected")
+
+# Duplicate IDs must fail before evidence validation, with a sorted unique report.
+with patch.multiple(
+    compiler,
+    compile_canon_rules=lambda: [{"id": key} for key in ["Z", "A", "Z", "A", "Z"]],
+    compile_roster_entities=lambda: ([], {}, []),
+    merge_entity_pages=lambda entities: [],
+    compile_page_rules=lambda: [],
+    index_state_rows=lambda: {},
+    compile_relations=lambda names, states: [],
+), patch("sys.argv", ["compile_runtime.py"]), contextlib.redirect_stdout(io.StringIO()):
+    errors = io.StringIO()
+    with contextlib.redirect_stderr(errors):
+        try:
+            compiler.main()
+        except SystemExit as exc:
+            assert exc.code == 1
+        else:
+            raise AssertionError("duplicate rule IDs unexpectedly compiled")
+    assert errors.getvalue().strip() == "[compile_runtime] 错误：规则 id 重复：['A', 'Z']"
+print("PASS duplicate rule IDs rejected with sorted unique diagnostics")
